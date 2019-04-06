@@ -32,6 +32,11 @@
           # List of IPs assigned to this peer within the tunnel subnet. Used to configure routing.
           allowedIPs = [ "10.100.0.2/32" ];
         }
+        { # Squiz iPhone
+          publicKey = "41p3cS/BvnaecDDJhOUfucbiXaMmil5ks2X22xJXlG4=";
+          # List of IPs assigned to this peer within the tunnel subnet. Used to configure routing.
+          allowedIPs = [ "10.100.0.3/32" ];
+        }
       ];
     };
   };
