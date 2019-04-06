@@ -1,7 +1,9 @@
+{ config, lib, pkgs, ... }:
+
 {
   # enable NAT
   networking.nat.enable = true;
-  networking.nat.externalInterface = "eth0";
+  networking.nat.externalInterface = "ens3";
   networking.nat.internalInterfaces = [ "wg0" ];
 
   networking.wireguard.interfaces = {
@@ -21,16 +23,10 @@
       privateKeyFile = "/etc/wireguard.privkey";
 
       peers = [
-        # List of allowed peers.
-        { # Feel free to give a meaning full name
-          # Public key of the peer (not a file path).
-          publicKey = "{client public key}";
+        { # Squiz MBA
+          publicKey = "czbfummmWDNTWVXzDo2uSfp1/4oYnWS4rI7xUXPbCVg=";
           # List of IPs assigned to this peer within the tunnel subnet. Used to configure routing.
           allowedIPs = [ "10.100.0.2/32" ];
-        }
-        { # John Doe
-          publicKey = "{john doe's public key}";
-          allowedIPs = [ "10.100.0.3/32" ];
         }
       ];
     };
