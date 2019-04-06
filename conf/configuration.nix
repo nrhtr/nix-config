@@ -19,7 +19,7 @@
   services.openssh.ports = [622];
   security.sudo.wheelNeedsPassword = false;
   networking.firewall.logRefusedConnections = false;
-  networking.firewall.allowPing = true;
+  networking.firewall.allowPing = truee;
 
   networking.firewall.allowedTCPPortRanges = [
     { from = 80;  to = 80;  } # HTTP
@@ -52,6 +52,7 @@
       git
       htop
       mtr
+      mosh
   ];
 
   users.users.jenga = {
