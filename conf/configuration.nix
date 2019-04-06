@@ -50,6 +50,7 @@
       vim
       git
       htop
+      mtr
   ];
 
   users.users.jenga = {
