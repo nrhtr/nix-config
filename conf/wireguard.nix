@@ -6,6 +6,10 @@
   networking.nat.externalInterface = "ens3";
   networking.nat.internalInterfaces = [ "wg0" ];
 
+  networking.firewall.allowedUDPPortRanges = [
+    { from = 51820; to = 51820; }
+  ];
+
   networking.wireguard.interfaces = {
     # "wg0" is the network interface name. You can name the interface arbitrarily.
     wg0 = {
@@ -14,10 +18,6 @@
 
       # The port that Wireguard listens to. Must be accessible by the client.
       listenPort = 51820;
-      
-      networking.firewall.allowedUDPPortRanges = [
-        { from = 51820; to = 51820; }
-      ];
 
       # Path to the private key file.
       #
