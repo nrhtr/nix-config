@@ -14,6 +14,10 @@
 
       # The port that Wireguard listens to. Must be accessible by the client.
       listenPort = 51820;
+      
+      networking.firewall.allowedUDPPortRanges = [
+        { from = 51820; to = 51820; }
+      ];
 
       # Path to the private key file.
       #
