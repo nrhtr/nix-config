@@ -19,7 +19,7 @@
   services.openssh.ports = [622];
   security.sudo.wheelNeedsPassword = false;
   networking.firewall.logRefusedConnections = false;
-  networking.firewall.allowPing = truee;
+  networking.firewall.allowPing = true;
 
   networking.firewall.allowedTCPPortRanges = [
     { from = 80;  to = 80;  } # HTTP
