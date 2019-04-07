@@ -50,4 +50,4 @@ cat << EOF > /mnt/etc/nixos/configuration.nix
 EOF
 
 nixos-install --no-root-passwd
-reboot
+read -p "Unmount ISO and reboot..."
