@@ -37,7 +37,7 @@ cat << EOF > /mnt/etc/nixos/configuration.nix
 
   # Security settings
   security.sudo.wheelNeedsPassword = false;
-  services.sshd.permitRootLogin = "no";
+  services.openssh.permitRootLogin = "no";
 
   users.users.jenga = {
     isNormalUser = true;
