@@ -18,6 +18,7 @@
 
   # Enable the OpenSSH server.
   services.sshd.enable = true;
+  services.sshd.permitRootLogin = no;
 
   services.openssh.ports = [622];
   security.sudo.wheelNeedsPassword = false;
