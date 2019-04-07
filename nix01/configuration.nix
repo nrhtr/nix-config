@@ -35,6 +35,12 @@
       forceSSL = true;
       enableACME = true;
       root = "/var/www/jenga.xyz";
+
+      locations."/nixos-vultr.sh" =
+        let file = "${./nixos-vultr.sh}";
+        in
+        { alias = file;
+        };
     };
 
     "boycrisis.net" = {

@@ -1,7 +1,8 @@
 #!/bin/sh
+limit=2000
 mem=$(free -tm | awk '/Total:/ {print $2}')
 dev="/dev/vda"
-let swap=mem*2
+swap=$(( mem*2 < limit ? mem*2 : limit ))
 
 parted "$dev" -- mklabel msdos
 parted "$dev" -- mkpart primary 1MiB -"$swap"MiB
