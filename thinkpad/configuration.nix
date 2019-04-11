@@ -30,8 +30,25 @@
   # Set your time zone.
   time.timeZone = "Australia/Sydney";
 
+  services.gpm.enable = true;
+  services.tlp.enable = true;
+  services.tlp.extraConfig = ''
+  CPU_SCALING_GOVERNOR_ON_AC=performance
+  CPU_SCALING_GOVERNOR_ON_BAT=powersave
+
+  CPU_BOOST_ON_AC=1
+  CPU_BOOST_ON_BAT=0
+
+  DISK_DEVICES="sda"
+  DISK_APM_LEVEL_ON_AC="254"
+  DISK_APM_LEVEL_ON_BAT="128"
+
+  SATA_LINKPWR_ON_AC=max_performance
+  SATA_LINKPWR_ON_BAT=min_power
+  '';
+
   # Disable the OpenSSH server.
-  services.sshd.enable = true;
+  services.sshd.enable = false;
   security.sudo.wheelNeedsPassword = false;
   networking.firewall.logRefusedConnections = true;
 
@@ -40,6 +57,6 @@
       git
       htop
       mtr
-      mosh
+      linuxPackages.acpi_call
   ];
 }
