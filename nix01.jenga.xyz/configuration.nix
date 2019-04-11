@@ -9,6 +9,8 @@
   boot.loader.grub.device = "/dev/vda";   # (for BIOS systems only)
   #boot.loader.systemd-boot.enable = true; # (for UEFI systems only)
 
+  networking.hostName = "nix01.jenga.xyz";
+
   # Note: setting fileSystems is generally not
   # necessary, since nixos-generate-config figures them out
   # automatically in hardware-configuration.nix.
