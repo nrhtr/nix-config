@@ -9,7 +9,7 @@
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
     ./wireguard.nix
-    ../common/users.nix
+    ../common/shared.nix
   ];
 
   # Use the systemd-boot EFI boot loader.

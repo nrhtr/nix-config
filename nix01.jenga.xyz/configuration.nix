@@ -3,7 +3,7 @@
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
     ./wireguard.nix
-    ../common/users.nix
+    ../common/shared.nix
   ];
 
   boot.loader.grub.device = "/dev/vda";   # (for BIOS systems only)
