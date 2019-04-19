@@ -55,10 +55,6 @@
   networking.firewall.logRefusedConnections = true;
 
   environment.systemPackages = with pkgs; [
-      vim
-      git
-      htop
-      mtr
       linuxPackages.acpi_call
   ];
 }
