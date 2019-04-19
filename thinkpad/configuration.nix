@@ -18,14 +18,16 @@
 
   networking.hostName = "thinkpad"; # Define your hostname.
   networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+  networking.extraHosts = ''
+    10.100.0.1 nix01
+  '';
 
   # Use a swapfile, because we don't want to bother with another LUKS partition
   swapDevices = [
     { device = "/swapfile"; size = 10000; }
   ];
 
-  system.autoUpgrade.enable = true;
-  system.autoUpgrade.channel = "https://nixos.org/channels/nixos-18.09-small";
+  programs.fish.enable = true;
 
   # Set your time zone.
   time.timeZone = "Australia/Sydney";
