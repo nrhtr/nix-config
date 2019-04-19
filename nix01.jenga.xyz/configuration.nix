@@ -23,7 +23,7 @@
   services.sshd.enable = true;
   services.openssh.permitRootLogin = "no";
 
-  services.openssh.ports = [622];
+  services.openssh.ports = [18061];
   security.sudo.wheelNeedsPassword = false;
   networking.firewall.logRefusedConnections = false;
   networking.firewall.allowPing = true;
