@@ -62,12 +62,4 @@
       root = "/var/www/paulfl.art";
     };
   };
-
-  environment.systemPackages = with pkgs; [
-      vim
-      git
-      htop
-      mtr
-      mosh
-  ];
 }
