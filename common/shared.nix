@@ -4,7 +4,7 @@
   nixpkgs.config.allowUnfree = true;
 
   environment.systemPackages = with pkgs; [
-    vim git htop mtr mosh pass tmux
+    vim git htop mtr mosh pass tmux gnupg
   ];
 
   users.users.jenga = {
