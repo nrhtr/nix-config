@@ -6,7 +6,7 @@
           paths = "/home/jenga";
           exclude = [ "/home/jenga/.cache" ];
           repo = "20379@hk-s020.rsync.net:~/backup/main";
-          user = "jenga"
+          user = "jenga";
 
           encryption = {
             mode = "repokey";
