@@ -3,7 +3,7 @@
 {
   nixpkgs.config.allowUnfree = true;
 
-  environment.systemPackages = [
+  environment.systemPackages = with pkgs; [
     vim git htop mtr mosh pass tmux
   ];
 
