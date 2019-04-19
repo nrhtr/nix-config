@@ -5,7 +5,7 @@
 
   environment.systemPackages = [
     vim git htop mtr mosh pass tmux
-  ]
+  ];
 
   users.users.jenga = {
     isNormalUser = true;
