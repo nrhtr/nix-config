@@ -28,8 +28,6 @@
     { device = "/swapfile"; size = 10000; }
   ];
 
-  programs.fish.enable = true;
-
   # Set your time zone.
   time.timeZone = "Australia/Sydney";
 
