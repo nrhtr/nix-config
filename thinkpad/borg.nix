@@ -1,16 +1,16 @@
 { config, lib, pkgs, ... }:
 
 {
-  services.borgbackup = {
+  services.borgbackup.jobs = {
     main = {
           paths = "/home/jenga";
           exclude = [ "/home/jenga/.cache" ];
-          repo = "20379@hk-s020.rsync.net:~/backup/main";
+          repo = "20379@hk-s020.rsync.net:backup";
           user = "jenga";
 
           encryption = {
             mode = "repokey";
-            passCommand = "pass show rsync.net.borg-passphrase";
+            passCommand = "cat /home/jenga/.secrets/borg-passphrase";
           };
 
           compression = "auto,lzma";
