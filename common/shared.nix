@@ -11,7 +11,7 @@
     isNormalUser = true;
     home = "/home/jenga";
     description = "Jeremy Parker";
-    shell = pkgs.fish;
+    #shell = pkgs.fish;
     extraGroups = [ "wheel" "networkmanager" "video" ];
     openssh.authorizedKeys.keys = [
       "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBBroC7fhTdO17jn7U4FE97IFUYE4NfWxFcxax6bwVzsIXBRCQ9mYlNvmYokWTYX+rlSVi1ifpiwaveJHqcZX4hM="
