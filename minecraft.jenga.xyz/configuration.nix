@@ -46,7 +46,7 @@
       max-players = 4;
       motd = "NixOS Minecraft server!";
       white-list = true;
-    }
+    };
     vmOpts = "-Xmx1024M -Xms1536M";
   };
 }
