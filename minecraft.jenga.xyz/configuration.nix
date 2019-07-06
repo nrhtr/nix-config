@@ -31,8 +31,8 @@
     { from = 25565;  to = 25565;  } # Minecraft
   ];
 
-  config.services.minecraft-server.enable = true;
   config.services.minecraft-server = {
+    enable = true;
     declarative = true;
     eula = true;
     openFirewall = false; # manage this ourselves
