@@ -40,8 +40,8 @@
       jenga = "de7e40bc-9fa7-486f-9e7e-cbd337e2ef74";
     };
     serverProperties = {
-      difficulty = 3;
-      gamemode = 1;
+      difficulty = 1;
+      gamemode = 0;
       max-players = 4;
       motd = "NixOS Minecraft server!";
       white-list = true;
