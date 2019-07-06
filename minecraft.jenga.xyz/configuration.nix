@@ -38,7 +38,6 @@
     openFirewall = false; # manage this ourselves
     whitelist = {
       jenga = "de7e40bc-9fa7-486f-9e7e-cbd337e2ef74";
-      balfourine = "3a35d9cf-e22c-4137-bc17-12c89689d8a7";
     };
     serverProperties = {
       difficulty = 3;
@@ -47,6 +46,6 @@
       motd = "NixOS Minecraft server!";
       white-list = true;
     };
-    jvmOpts = "-Xmx1536M -Xms1024";
+    jvmOpts = "-Xmx1536M -Xms1024M";
   };
 }
