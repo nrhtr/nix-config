@@ -47,6 +47,6 @@
       motd = "NixOS Minecraft server!";
       white-list = true;
     };
-    jvmOpts = "-Xmx1536M -Xms1024M";
+    jvmOpts = "-Xmx2560M -Xms1024M -Dfml.readTimeout=60";
   };
 }
