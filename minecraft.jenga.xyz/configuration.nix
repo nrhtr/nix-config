@@ -2,6 +2,7 @@
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
+    ./custom-packages.nix
     ../common/shared.nix
   ];
 
@@ -26,10 +27,21 @@
 
   networking.firewall.allowedTCPPortRanges = [
     { from = 25565;  to = 25565;  } # Minecraft
+    { from = 80;  to = 80;  } # HTTP
+    { from = 443; to = 443; } # HTTPS
   ];
   networking.firewall.allowedUDPPortRanges = [
     { from = 25565;  to = 25565;  } # Minecraft
   ];
+
+  services.nginx.enable = true;
+  services.nginx.virtualHosts = {
+    "minecraft.jenga.xyz" = {
+      forceSSL = true;
+      enableACME = true;
+      root = "/var/www/minecraft-overviewer";
+    };
+  };
 
   services.minecraft-server = {
     enable = true;
