@@ -51,6 +51,7 @@
     whitelist = {
       jenga = "de7e40bc-9fa7-486f-9e7e-cbd337e2ef74";
       balfourine = "3a35d9cf-e22c-4137-bc17-12c89689d8a7";
+      the_sikness = "5324eaec-1fc7-4fc7-8123-0f077e700cd5";
     };
     serverProperties = {
       difficulty = 1;
