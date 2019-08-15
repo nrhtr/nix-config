@@ -54,7 +54,7 @@
       the_sikness = "5324eaec-1fc7-4fc7-8123-0f077e700cd5";
     };
     serverProperties = {
-      difficulty = 1;
+      difficulty = 4;
       gamemode = 0;
       max-players = 4;
       motd = "NixOS Minecraft server!";
