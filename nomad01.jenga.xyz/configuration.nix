@@ -10,6 +10,10 @@
 
   networking.hostName = "nomad01.jenga.xyz";
 
+  environment.systemPackages = with pkgs; [
+    nomad
+  ];
+
   # Note: setting fileSystems is generally not
   # necessary, since nixos-generate-config figures them out
   # automatically in hardware-configuration.nix.
