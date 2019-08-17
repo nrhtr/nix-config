@@ -32,6 +32,10 @@ cat << EOF > /mnt/etc/nixos/configuration.nix
   # automatically in hardware-configuration.nix.
   #fileSystems."/".device = "/dev/disk/by-label/nixos";
 
+  environment.systemPackages = with pkgs; [
+    git 
+  ];
+
   # Enable the OpenSSH server.
   services.sshd.enable = true;
 
