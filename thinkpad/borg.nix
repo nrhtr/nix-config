@@ -4,7 +4,7 @@
   services.borgbackup.jobs = {
     main = {
           paths = "/home/jenga";
-          exclude = [ "/home/jenga/.cache" ];
+          exclude = [ "/home/jenga/.cache" "/home/jenga/download" ];
           repo = "20379@hk-s020.rsync.net:backup";
           user = "jenga";
 
