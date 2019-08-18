@@ -23,7 +23,7 @@
           };
 
           environment = {
-            BORG_RSH = "ssh -i /home/jenga/.ssh/hk-s021.rsync.net_ed25519";
+            BORG_RSH = "ssh -i /home/jenga/.ssh/hk-s020.rsync.net_ed25519";
             BORG_REMOTE_PATH = "borg1"; # Use borg 1.x
           };
      };
