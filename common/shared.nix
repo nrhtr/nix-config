@@ -9,8 +9,17 @@
 
   programs.fish.enable = true;
 
+  services.sshd.enable = true;
+  services.openssh.permitRootLogin = "no";
+  services.openssh.ports = [18061];
+
+  security.sudo.wheelNeedsPassword = false;
+
   system.autoUpgrade.enable = true;
   system.autoUpgrade.channel = "https://nixos.org/channels/nixos-19.03-small";
+
+  networking.firewall.logRefusedConnections = false;
+  networking.firewall.allowPing = true;
 
   users.users.jenga = {
     isNormalUser = true;

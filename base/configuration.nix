@@ -9,13 +9,4 @@
   #boot.loader.systemd-boot.enable = true; # (for UEFI systems only)
 
   networking.hostName = "nixos.jenga.xyz";
-
-  # Enable the OpenSSH server.
-  services.sshd.enable = true;
-  services.openssh.permitRootLogin = "no";
-
-  services.openssh.ports = [18061];
-  security.sudo.wheelNeedsPassword = false;
-  networking.firewall.logRefusedConnections = false;
-  networking.firewall.allowPing = true;
 }

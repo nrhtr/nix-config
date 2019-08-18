@@ -50,7 +50,6 @@
 
   # Disable the OpenSSH server.
   services.sshd.enable = false;
-  security.sudo.wheelNeedsPassword = false;
   networking.firewall.logRefusedConnections = true;
 
   environment.systemPackages = with pkgs; [
