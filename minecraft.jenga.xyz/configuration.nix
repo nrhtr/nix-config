@@ -31,13 +31,14 @@
   };
 
   systemd.services.overviewer = rec {
-    description = "Update minecraft world map on minecraft.jenga.xyz"
-    startAt = "hourly"
+    description = "Update minecraft world map on minecraft.jenga.xyz";
+    startAt = "hourly";
 
     serviceConfig = {
-      ExecStart = "${minecraft-overviewer}/bin/overviewer.py /var/lib/minecraft/world /var/www/minecraft-overviewer/";
+      User = "minecraft";
+      ExecStart = "${pkgs.minecraft-overviewer}/bin/overviewer.py /var/lib/minecraft/world /var/www/minecraft-overviewer/";
     };
-  }
+  };
 
   services.minecraft-server = {
     enable = true;
