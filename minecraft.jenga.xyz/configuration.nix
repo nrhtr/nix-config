@@ -3,6 +3,7 @@
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
     ./custom-packages.nix
+    ./borg.nix
     ../common/shared.nix
   ];
 
