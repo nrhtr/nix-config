@@ -21,6 +21,12 @@
   networking.firewall.logRefusedConnections = false;
   networking.firewall.allowPing = true;
 
+  # LetsEncrypt
+  security.acme = {
+    acceptTerms = true;
+    email = "jeremy@jenga.xyz";
+  };
+
   users.users.jenga = {
     isNormalUser = true;
     home = "/home/jenga";
