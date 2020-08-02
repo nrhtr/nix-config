@@ -18,25 +18,11 @@
 
   services.nginx.enable = true;
   services.nginx.virtualHosts = {
-    "jenga.xyz" = {
-      serverAliases = ["www.jenga.xyz"];
-      forceSSL = true;
-      enableACME = true;
-      root = "/var/www/jenga.xyz";
-    };
-
     "boycrisis.net" = {
       serverAliases = ["www.boycrisis.net"];
       forceSSL = true;
       enableACME = true;
       root = "/var/www/boycrisis.net";
-    };
-
-    "paulfl.art" = {
-      serverAliases = ["www.paulfl.art"];
-      forceSSL = true;
-      enableACME = true;
-      root = "/var/www/paulfl.art";
     };
   };
 
