@@ -43,7 +43,7 @@
           allowedIPs = [ "10.100.0.4/32" ];
         }
         { # PC-Engines APU2
-          publickey = "JjF0kfttyDXhbjUVDGGUHAaUEWJUz4mNYns2X/iKdGM=";
+          publicKey = "JjF0kfttyDXhbjUVDGGUHAaUEWJUz4mNYns2X/iKdGM=";
           # List of IPs assigned to this peer within the tunnel subnet. Used to configure routing.
           allowedIPs = [ "10.100.0.5/32" ];
         }
