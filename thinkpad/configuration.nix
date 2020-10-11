@@ -13,6 +13,12 @@
     ../common/shared.nix
   ];
 
+  nixpkgs.overlays = [
+    (self: super: {
+      xwobf = self.callPackage ./xwobf.nix { };
+    })
+  ];
+
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -85,6 +91,21 @@
   # Set your time zone.
   time.timeZone = "Australia/Sydney";
 
+  services.xserver = {
+    enable = true;
+
+    displayManager.startx.enable = true;
+
+    windowManager.i3 = {
+      enable = true;
+      package = pkgs.i3-gaps;
+
+      extraPackages = with pkgs; [
+        dmenu i3status i3lock
+      ];
+    };
+  };
+
   services.gpm.enable = true;
   services.tlp.enable = true;
   services.tlp.extraConfig = ''
@@ -107,6 +128,8 @@
   #networking.firewall.logRefusedConnections = true;
 
   environment.systemPackages = with pkgs; [
+      luakit
+      xwobf
       linuxPackages.acpi_call
   ];
 }
