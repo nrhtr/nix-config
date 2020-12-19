@@ -1,0 +1,57 @@
+diff --git a/Makefile b/Makefile
+index 97a1460..5b3ebde 100644
+--- a/Makefile
++++ b/Makefile
+@@ -12,4 +12,4 @@ clean:
+ 
+ install:
+ 	make -C $(KERNELDIR) M=$(PWD) modules_install
+-	/sbin/depmod -a $(KERNELVER)
++	#/sbin/depmod -a $(KERNELVER)
+diff --git a/config.h b/config.h
+index 4153c87..2fb285d 100644
+--- a/config.h
++++ b/config.h
+@@ -1,14 +1,15 @@
+ /* Files silk-guardian will remove upon detecting change in usb state. */
+ static char *remove_files[] = {
+-	"/home/user/privatekey",
+-	"/private/ssnumber.pdf",
+ 	NULL,	/* Must be NULL terminated */
+ };
+ 
++/* Userspace poweroff routine */
++static  char *shutdown_argv[] = { "/run/current-system/sw/bin/poweroff", "-p", "-f", NULL, };
++
+ /* How many times to shred file. The more iterations the longer it takes. */
+ static char *shredIterations = "3";
+ 
+ /* List of all USB devices you want whitelisted (i.e. ignored) */
+ static const struct usb_device_id whitelist_table[] = {
+-	{ USB_DEVICE(0x0000, 0x0000) },
++    { USB_DEVICE(0x27ac, 0x1050) },
+
+ };
+diff --git a/silk.c b/silk.c
+index f1c0346..013c4dc 100644
+--- a/silk.c
++++ b/silk.c
+@@ -28,11 +28,14 @@ static void panic_time(struct usb_device *usb)
+ 		call_usermodehelper(shred_argv[0], shred_argv,
+ 				    NULL, UMH_WAIT_EXEC);
+ 	}
+-	printk("...done.\n");
+-	for (dev = &usb->dev; dev; dev = dev->parent)
++	pr_info("...done.\n");
++
++	for (dev = &usb->dev; dev; dev = dev->parent) {
+ 		mutex_unlock(&dev->mutex);
+-	printk("Syncing & powering off.\n");
+-	kernel_power_off();
++	}
++
++	pr_info("Syncing & powering off.\n");
++	call_usermodehelper(shutdown_argv[0], shutdown_argv, NULL, UMH_NO_WAIT);
+ }
+ 
+ /*

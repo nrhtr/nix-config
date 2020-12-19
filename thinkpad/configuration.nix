@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ config, pkgs, fetchFromGitHub, ... }:
 
 {
   imports = [
@@ -14,14 +14,39 @@
   ];
 
   nixpkgs.overlays = [
-    (self: super: {
-      xwobf = self.callPackage ./xwobf.nix { };
-    })
+    (self: super:
+      {
+        luakit = super.luakit.overrideAttrs ( old: rec {
+          version = "2.1";
+          src = super.fetchFromGitHub {
+            owner = "luakit";
+            repo = "luakit";
+            rev = version;
+            sha256 = "11wd8r8n9y3qd1da52hzhyzxvif3129p2ka7gannkdm7bkjxd4df";
+          };
+        });
+        sonata = super.sonata.overrideAttrs ( old: rec {
+          version = "9999";
+          src = super.fetchFromGitHub {
+            owner = "multani";
+            repo = "sonata";
+            rev = "d6445e21d20f66edd1d2d53d329e654b4dce3cdc";
+            sha256 = "1sqhbwqwiblwf38hljbwnc1163mi8mb5mha65gvmygnc2gij3h38";
+          };
+        });
+        silk-guardian = self.callPackage ../packages/silk-guardian/default.nix { };
+        xwobf = self.callPackage ./xwobf.nix { };
+      }
+    )
   ];
+
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+
+  boot.extraModulePackages = [ pkgs.silk-guardian ];
+  boot.kernelModules = [ "silk" ];
 
   networking = {
     hostName = "thinkpad"; # Define your hostname.
@@ -91,6 +116,9 @@
   # Set your time zone.
   time.timeZone = "Australia/Sydney";
 
+  # Auto-login TTY
+  services.mingetty.autologinUser = "jenga";
+
   services.xserver = {
     enable = true;
 
@@ -106,9 +134,25 @@
     };
   };
 
+  sound.enable = true;
+  hardware.pulseaudio.enable = true;
+  users.extraUsers.jenga.extraGroups = [ "audio" ];
+
+  services.mpd.enable = true;
+  services.mpd.extraConfig = ''
+    audio_output {
+      type "pulse"
+      name "Pulseaudio"
+      server "127.0.0.1"
+    }
+  '';
+
+  hardware.pulseaudio.extraConfig = "load-module module-native-protocol-tcp auth-ip-acl=127.0.0.1";
+
   services.gpm.enable = true;
   services.tlp.enable = true;
   services.tlp.extraConfig = ''
+  USB_BLACKLIST="05ac:12a8"
   CPU_SCALING_GOVERNOR_ON_AC=performance
   CPU_SCALING_GOVERNOR_ON_BAT=powersave
 
@@ -130,6 +174,18 @@
   environment.systemPackages = with pkgs; [
       luakit
       xwobf
+      dejavu_fonts
+      st # suckless terminal
+      stow
+      tmux
+      xautolock
       linuxPackages.acpi_call
+      xss-lock
+      xclip
+      sonata
+      playerctl
+      pavucontrol
+      unzip
+      spotify
   ];
 }
