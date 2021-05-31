@@ -28,7 +28,7 @@
 
       peers = [
         { # Squiz MBA
-          publicKey = "zCc5xpI0ul94qOjiOoHdn1VHEUBnTCfljdjLNoeoFTs=";
+          publicKey = "7S+Zqqv8bHQtlQuXdVbVSbgLGT4O2x6H2QLWvt/68QE=";
           # List of IPs assigned to this peer within the tunnel subnet. Used to configure routing.
           allowedIPs = [ "10.100.0.2/32" ];
         }
