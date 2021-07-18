@@ -35,6 +35,7 @@
           };
         });
         silk-guardian = self.callPackage ../packages/silk-guardian/default.nix { };
+        obsidian = self.callPackage ../packages/obsidian/default.nix { };
         xwobf = self.callPackage ./xwobf.nix { };
       }
     )
@@ -172,7 +173,10 @@
   #networking.firewall.logRefusedConnections = true;
 
   environment.systemPackages = with pkgs; [
+      pywal
+      file
       luakit
+      obsidian # note taking
       xwobf
       dejavu_fonts
       st # suckless terminal
