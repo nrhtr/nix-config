@@ -41,6 +41,7 @@
     )
   ];
 
+  services.lorri.enable = true;
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
@@ -52,6 +53,8 @@
   networking = {
     hostName = "thinkpad"; # Define your hostname.
     wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+    wireless.interfaces = [ "wlp3s0" ];
+
     extraHosts = ''
       10.100.0.1 nix01
     '';
@@ -118,7 +121,7 @@
   time.timeZone = "Australia/Sydney";
 
   # Auto-login TTY
-  services.mingetty.autologinUser = "jenga";
+  services.getty.autologinUser = "jenga";
 
   services.xserver = {
     enable = true;
@@ -173,6 +176,7 @@
   #networking.firewall.logRefusedConnections = true;
 
   environment.systemPackages = with pkgs; [
+      direnv # lorri/nix-shell
       pywal
       file
       luakit
