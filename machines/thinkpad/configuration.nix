@@ -34,21 +34,34 @@
             sha256 = "1sqhbwqwiblwf38hljbwnc1163mi8mb5mha65gvmygnc2gij3h38";
           };
         });
-        silk-guardian = self.callPackage ../packages/silk-guardian/default.nix { };
+        #silk-guardian = self.callPackage ../packages/silk-guardian/default.nix { };
         obsidian = self.callPackage ../packages/obsidian/default.nix { };
         xwobf = self.callPackage ./xwobf.nix { };
       }
     )
   ];
 
-  services.lorri.enable = true;
+  nix = {
+    package = pkgs.nixUnstable;
+    extraOptions = "experimental-features = nix-command flakes";
+  };
 
+  programs.neovim = {
+    enable = true;
+    viAlias = true;
+    vimAlias = true;
+  };
+  environment.variables.EDITOR = "nvim";
+
+  services.lorri.enable = true;
+  services.blueman.enable = true;
+  
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  boot.extraModulePackages = [ pkgs.silk-guardian ];
-  boot.kernelModules = [ "silk" ];
+  #boot.extraModulePackages = [ pkgs.silk-guardian ];
+  #boot.kernelModules = [ "silk" ];
 
   networking = {
     hostName = "thinkpad"; # Define your hostname.
@@ -139,17 +152,22 @@
   };
 
   sound.enable = true;
+  hardware.bluetooth.enable = true;
   hardware.pulseaudio.enable = true;
   users.extraUsers.jenga.extraGroups = [ "audio" ];
 
-  services.mpd.enable = true;
-  services.mpd.extraConfig = ''
-    audio_output {
-      type "pulse"
-      name "Pulseaudio"
-      server "127.0.0.1"
-    }
-  '';
+  services.mpd = {
+    enable = true;
+    extraConfig = ''
+      audio_output {
+        type "pulse"
+        name "Pulseaudio"
+        server "127.0.0.1"
+      }
+    '';
+    musicDirectory = "/home/jenga/music";
+    user = "jenga";
+  };
 
   hardware.pulseaudio.extraConfig = "load-module module-native-protocol-tcp auth-ip-acl=127.0.0.1";
 
@@ -176,6 +194,10 @@
   #networking.firewall.logRefusedConnections = true;
 
   environment.systemPackages = with pkgs; [
+      cargo # vim-clap
+      pinentry-curses # for pass/gpg
+      youtube-dl
+      neofetch # full unixporn redditeur
       direnv # lorri/nix-shell
       pywal
       file
