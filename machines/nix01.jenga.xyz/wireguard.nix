@@ -27,24 +27,16 @@
       privateKeyFile = "/etc/wireguard.privkey";
 
       peers = [
-        { # Squiz MBA
-          publicKey = "7S+Zqqv8bHQtlQuXdVbVSbgLGT4O2x6H2QLWvt/68QE=";
-          # List of IPs assigned to this peer within the tunnel subnet. Used to configure routing.
-          allowedIPs = [ "10.100.0.2/32" ];
-        }
-        { # Squiz iPhone
-          publicKey = "41p3cS/BvnaecDDJhOUfucbiXaMmil5ks2X22xJXlG4=";
-          # List of IPs assigned to this peer within the tunnel subnet. Used to configure routing.
+        { # iPhone
+          publicKey = "vaD8ITVvM5mNJW4Z+iXZvsN6WJIgi7ZjVxDWIh42XV4=";
           allowedIPs = [ "10.100.0.3/32" ];
         }
         { # Thinkpad
           publicKey = "dIJ1EYTiyRbT5TJQ+5wi04uyFOjvoti09wrNYmwmBUI=";
-          # List of IPs assigned to this peer within the tunnel subnet. Used to configure routing.
           allowedIPs = [ "10.100.0.4/32" ];
         }
         { # PC-Engines APU2
           publicKey = "3Px0oJgiRegKzctSdhzfuuUAy62PyN5z65WWVmiyDyM=";
-          # List of IPs assigned to this peer within the tunnel subnet. Used to configure routing.
           allowedIPs = [ "10.100.0.5/32" ];
         }
       ];
