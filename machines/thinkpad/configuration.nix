@@ -10,12 +10,12 @@
     ./hardware-configuration.nix
     ./wireguard.nix
     ./borg.nix
-    ../common/shared.nix
+    ../../common/shared.nix
   ];
 
   nixpkgs.overlays = [
     (self: super:
-      {
+      rec {
         luakit = super.luakit.overrideAttrs ( old: rec {
           version = "2.1";
           src = super.fetchFromGitHub {
@@ -34,17 +34,33 @@
             sha256 = "1sqhbwqwiblwf38hljbwnc1163mi8mb5mha65gvmygnc2gij3h38";
           };
         });
-        #silk-guardian = self.callPackage ../packages/silk-guardian/default.nix { };
-        obsidian = self.callPackage ../packages/obsidian/default.nix { };
+        #silk-guardian = self.callPackage ../../packages/silk-guardian/default.nix { };
+        obsidian = self.callPackage ../../packages/obsidian/default.nix { };
         xwobf = self.callPackage ./xwobf.nix { };
+	python38 = super.python38.override {
+	  # Careful, we're using a different self and super here!
+	  packageOverrides = self: super: {
+	    yt-dlp = super.buildPythonPackage rec {
+	      pname = "yt-dlp";
+	      version = "2022.1.21";
+	      src = super.fetchPypi {
+	        inherit pname version;
+	        sha256 = "1qm9p1fh9qjma8fk2maw0y89nj23wlq1rhfz4lpafplv703w83i2";
+	       };
+	    };
+	  };
+        };
+
+	#python3Packages = python3.pkgs;
       }
     )
+    (import "${builtins.fetchTarball https://github.com/vlaci/openconnect-sso/archive/master.tar.gz}/overlay.nix")
   ];
 
-  nix = {
-    package = pkgs.nixUnstable;
-    extraOptions = "experimental-features = nix-command flakes";
-  };
+  #nix = {
+    #package = pkgs.nixUnstable;
+    #extraOptions = "experimental-features = nix-command flakes";
+  #};
 
   programs.neovim = {
     enable = true;
@@ -55,6 +71,8 @@
 
   services.lorri.enable = true;
   services.blueman.enable = true;
+
+  virtualisation.docker.enable = true;
   
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
@@ -154,7 +172,7 @@
   sound.enable = true;
   hardware.bluetooth.enable = true;
   hardware.pulseaudio.enable = true;
-  users.extraUsers.jenga.extraGroups = [ "audio" ];
+  users.extraUsers.jenga.extraGroups = [ "audio" "docker" ];
 
   services.mpd = {
     enable = true;
@@ -194,15 +212,18 @@
   #networking.firewall.logRefusedConnections = true;
 
   environment.systemPackages = with pkgs; [
+      texlive.combined.scheme-basic
+      docker-compose
       cargo # vim-clap
       pinentry-curses # for pass/gpg
-      youtube-dl
+      pinentry-gtk2
       neofetch # full unixporn redditeur
       direnv # lorri/nix-shell
       pywal
       file
       luakit
       obsidian # note taking
+      python3Packages.yt-dlp
       xwobf
       dejavu_fonts
       st # suckless terminal
@@ -212,10 +233,37 @@
       linuxPackages.acpi_call
       xss-lock
       xclip
-      sonata
-      playerctl
       pavucontrol
       unzip
+      python38
+      anki-bin
+      signal-desktop
+      discord
+
+      # media
+      youtube-dl
+      sonata
+      playerctl
       spotify
+      ffmpeg
+      vlc
+      mpv
+
+      # games
+      dwarf-fortress-packages.dwarf-fortress-full
+
+      # unimelb
+      protobuf
+      slack
+      openconnect-sso
+      zoom-us
+      yubikey-manager
+      thunderbird
+      virtmanager
+      git-review
+      jq
+      #evolution
+      #evolution-ews
   ];
+
 }
