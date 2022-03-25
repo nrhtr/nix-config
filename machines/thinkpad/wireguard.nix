@@ -14,19 +14,17 @@
       # recommended.
       privateKeyFile = "/etc/wireguard.privkey";
 
-      peers = [
-        { # nix01.jenga.xyz
-          publicKey = "AlkTmqNuOHKyDRq6O4Pxg+fy/YDiAK8sos6Ylvx/aSk=";
+      peers = [{ # nix01.jenga.xyz
+        publicKey = "AlkTmqNuOHKyDRq6O4Pxg+fy/YDiAK8sos6Ylvx/aSk=";
 
-          # List of IPs assigned to this peer within the tunnel subnet. Used to configure routing.
-          allowedIPs = [ "10.100.0.0/16" ];
+        # List of IPs assigned to this peer within the tunnel subnet. Used to configure routing.
+        allowedIPs = [ "10.100.0.0/16" ];
 
-          endpoint = "45.76.124.245:51820";
+        endpoint = "45.76.124.245:51820";
 
-          # Send keepalives every 25 seconds. Important to keep NAT tables alive.
-          persistentKeepalive = 25;
-        }
-      ];
+        # Send keepalives every 25 seconds. Important to keep NAT tables alive.
+        persistentKeepalive = 25;
+      }];
     };
   };
 }

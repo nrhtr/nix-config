@@ -1,0 +1,33 @@
+diff --git a/Makefile b/Makefile
+index 97a1460..5b3ebde 100644
+--- a/Makefile
++++ b/Makefile
+@@ -12,4 +12,4 @@ clean:
+ 
+ install:
+ 	make -C $(KERNELDIR) M=$(PWD) modules_install
+-	/sbin/depmod -a $(KERNELVER)
++	#/sbin/depmod -a $(KERNELVER)
+diff --git a/silk.c b/silk.c
+index f1c0346..013c4dc 100644
+--- a/silk.c
++++ b/silk.c
+@@ -28,11 +28,14 @@ static void panic_time(struct usb_device *usb)
+ 		call_usermodehelper(shred_argv[0], shred_argv,
+ 				    NULL, UMH_WAIT_EXEC);
+ 	}
+-	printk("...done.\n");
+-	for (dev = &usb->dev; dev; dev = dev->parent)
++	pr_info("...done.\n");
++
++	for (dev = &usb->dev; dev; dev = dev->parent) {
+ 		mutex_unlock(&dev->mutex);
+-	printk("Syncing & powering off.\n");
+-	kernel_power_off();
++	}
++
++	pr_info("Syncing & powering off.\n");
++	call_usermodehelper(shutdown_argv[0], shutdown_argv, NULL, UMH_NO_WAIT);
+ }
+ 
+ /*

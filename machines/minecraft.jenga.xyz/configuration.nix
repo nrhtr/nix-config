@@ -7,7 +7,7 @@
     ../../common/shared.nix
   ];
 
-  boot.loader.grub.device = "/dev/vda";   # (for BIOS systems only)
+  boot.loader.grub.device = "/dev/vda"; # (for BIOS systems only)
   #boot.loader.systemd-boot.enable = true; # (for UEFI systems only)
 
   networking.hostName = "minecraft.jenga.xyz";
@@ -36,7 +36,8 @@
 
     serviceConfig = {
       User = "minecraft";
-      ExecStart = "${pkgs.minecraft-overviewer}/bin/overviewer.py /var/lib/minecraft/world /var/www/minecraft-overviewer/";
+      ExecStart =
+        "${pkgs.minecraft-overviewer}/bin/overviewer.py /var/lib/minecraft/world /var/www/minecraft-overviewer/";
     };
   };
 

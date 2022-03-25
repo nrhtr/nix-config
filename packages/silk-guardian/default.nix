@@ -2,7 +2,7 @@
 
 stdenv.mkDerivation rec {
   name = "silk-guardian-${linuxPackages.kernel.version}";
-  version = "1.0";
+  version = "1.1";
 
   src = fetchFromGitHub {
     owner = "NateBrune";
@@ -11,9 +11,20 @@ stdenv.mkDerivation rec {
     sha256 = "18q8wvydmzyy4r5h3d3kcs4yh8iss1zh0fdp1nfr4mvjhg7zj22k";
   };
 
-  nativeBuildInputs = [ linuxPackages.kernel.moduleBuildDependencies kmod ];
-  patches = [ ./silk-custom.diff ];
+  patches = [
+    ./orderly-shutdown.patch
+  ];
 
-  makeFlags = [ "KERNELDIR=${linuxPackages.kernel.dev}/lib/modules/${linuxPackages.kernel.modDirVersion}/build" "INSTALL_MOD_PATH=$(out)" ];
+  preConfigure = ''
+    sed -i 's|/sbin/depmod|#/sbin/depmod|' Makefile
+  '';
+
+  nativeBuildInputs = [ linuxPackages.kernel.moduleBuildDependencies kmod ];
+
+  makeFlags = [
+    "KERNELDIR=${linuxPackages.kernel.dev}/lib/modules/${linuxPackages.kernel.modDirVersion}/build"
+    "INSTALL_MOD_PATH=$(out)"
+  ];
+
   installTargets = [ "install" ];
 }

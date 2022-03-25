@@ -2,9 +2,7 @@
   services.networking.consul = {
     enable = false;
     webUi = true;
-  }
+  };
 
-  environment.systemPackages = with pkgs; [
-    nomad
-  ];
+  environment.systemPackages = with pkgs; [ nomad ];
 }

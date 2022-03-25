@@ -6,7 +6,7 @@
     ../../common/shared.nix
   ];
 
-  boot.loader.grub.device = "/dev/vda";   # (for BIOS systems only)
+  boot.loader.grub.device = "/dev/vda"; # (for BIOS systems only)
   #boot.loader.systemd-boot.enable = true; # (for UEFI systems only)
 
   networking.hostName = "nix01.jenga.xyz";
@@ -19,7 +19,7 @@
   services.nginx.enable = true;
   services.nginx.virtualHosts = {
     "boycrisis.net" = {
-      serverAliases = ["www.boycrisis.net"];
+      serverAliases = [ "www.boycrisis.net" ];
       forceSSL = true;
       enableACME = true;
       root = "/var/www/boycrisis.net";
@@ -78,17 +78,13 @@
     privateNetwork = true;
     localAddress = "10.60.0.1";
     #hostAddress  = "10.60.1.1";
-    config = { config, pkgs, ... }:
-    {
-    };
+    config = { config, pkgs, ... }: { };
   };
 
   containers.wg-node02 = {
     privateNetwork = true;
     localAddress = "10.60.0.2";
     #hostAddress  = "10.60.1.2";
-    config = { config, pkgs, ... }:
-    {
-    };
+    config = { config, pkgs, ... }: { };
   };
 }

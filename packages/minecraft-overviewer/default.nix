@@ -9,7 +9,9 @@ buildPythonApplication rec {
   nativeBuildInputs = [ pkgconfig ];
 
   src = fetchurl {
-    url = "https://overviewer.org/builds/src/${lib.versions.patch version}/overviewer-${version}.tar.gz";
+    url = "https://overviewer.org/builds/src/${
+        lib.versions.patch version
+      }/overviewer-${version}.tar.gz";
     sha256 = "0xb81b2zhn2jrvmns9dq9ny27w7mzaj5lzw2j1x1q8xi01s5k54a";
   };
 
@@ -22,7 +24,8 @@ buildPythonApplication rec {
   '';
 
   meta = with lib; {
-    description = "A command-line tool for rendering high-resolution maps of Minecraft worlds";
+    description =
+      "A command-line tool for rendering high-resolution maps of Minecraft worlds";
     homepage = "https://overviewer.org/";
     maintainers = with maintainers; [ lheckemann ];
     license = licenses.gpl3;
