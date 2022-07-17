@@ -23,7 +23,7 @@ in
       ];
 
       deployment.targetUser = "root";
-      #deployment.targetPort = 18061;
+      deployment.targetPort = 18061;
 
       deployment.substituteOnDestination = true;
     };

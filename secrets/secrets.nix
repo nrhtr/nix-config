@@ -16,4 +16,5 @@ in
   "borg-phrase.age".publicKeys = all;
   "sonata.age".publicKeys = all;
   "twilio-env.age".publicKeys = all;
+  "fastmail-nix02.age".publicKeys = all;
 }

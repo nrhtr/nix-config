@@ -47,7 +47,7 @@ let
     host = "smtp.fastmail.com";
     port = "465";
     user = "jeremy@jenga.xyz";
-    password = "esfqb2qcj58vkvfb";
+    passwordeval = "cat ${config.age.secrets.fastmail-nix02.path}";
     from = emailFrom;
   };
 
@@ -64,6 +64,11 @@ in {
     ./hardware-configuration.nix
     ../../common/shared.nix
   ];
+
+  age.secrets = {
+    fastmail-nix02.file = ../../secrets/fastmail-nix02.age;
+    twilio-env.file     = ../../secrets/twilio-env.age;
+  };
 
   # We want to still be able to boot without one of these
   fileSystems."/boot-1".options = [ "nofail" ];
@@ -242,7 +247,6 @@ in {
     timerConfig.OnCalendar = "weekly";
   };
 
-  age.secrets.twilio-env.file = ../../secrets/twilio-env.age;
   systemd.services."wakeup" = {
     description = "Morning wake up call";
     serviceConfig = {
