@@ -27,7 +27,7 @@ in {
     };
 
     settings = mkOption {
-      inherit (initFormat) type;
+      inherit (iniFormat) type;
       default = { };
       example = literalExpression ''
         {
