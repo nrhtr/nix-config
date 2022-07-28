@@ -17,11 +17,7 @@ in {
 
     # stuff with home-manager
     # fixme: still assumes NixOS
-    ./../../home/colours.nix
-    ./../../home/terminal.nix
-    ./../../home/desktop.nix
-    ./../../home/gpg.nix
-    ./../../home/ssh.nix
+    ./../../home/all.nix
   ];
 
   displayOutput = "LVDS-1";
@@ -51,7 +47,6 @@ in {
       #}/overlay.nix")
   ];
 
-  services.lorri.enable = true;
   services.blueman.enable = true;
 
   # iphone
@@ -64,7 +59,10 @@ in {
   system.autoUpgrade.enable = true;
 
   # Distribute builds to nix02 (consider nix01?)
-  #nix.distributedBuilds = true;
+  nix.distributedBuilds = true;
+  nix.extraOptions = ''
+    builders-use-substitutes = true
+  '';
   nix.buildMachines = [
     {
       hostName = "local";
@@ -72,11 +70,12 @@ in {
       speedFactor = 1;
     }
     {
-      hostName = "95.217.114.169";
+      #hostName = "95.217.114.169";
+      hostName = "nix02";
       system = "x86_64-linux";
       sshUser = "root";
       sshKey = "/root/.ssh/id_ed25519";
-      speedFactor = 2;
+      speedFactor = 4;
     }
   ];
 
@@ -152,6 +151,14 @@ in {
   # Disable the OpenSSH server.
   services.openssh.enable = false;
 
+  # Make sure we do remote builds on the right port
+  programs.ssh.extraConfig = ''
+    Host nix02
+    Port 18061
+  '';
+
+  system.stateVersion = "22.05";
+
   environment.systemPackages = with pkgs; [
     libimobiledevice ifuse # iphone
     darktable # photo shit
@@ -169,25 +176,20 @@ in {
     signal-desktop
     discord
     openssl
-
-    (morph.overrideAttrs (old: {
-      patches = [
-        (fetchpatch {
-          name = "add-targetPort";
-          url = "https://github.com/DBCDK/morph/commit/00ad27bc34598558d67aa14c59b28855d4d415e0.patch";
-          sha256 = "sha256-QWPSDnuRVr61dVtPAZgD85V9dACVndwlVWwWRmvDTUE=";
-        })
-      ];
-    }))
-
+    morph
     playerctl
     spotify
     ffmpeg
-    vlc
+    #vlc
+    (vlc.overrideAttrs (old: {
+      buildInputs = lib.lists.remove (samba) (old.buildInputs);
+    }))
     mpv
 
     # ???
     linuxPackages.acpi_call
+
+    # pimutils/khal
 
     # games
     #dwarf-fortress-packages.dwarf-fortress-full

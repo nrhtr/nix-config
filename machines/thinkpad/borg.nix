@@ -24,6 +24,7 @@ with lib; {
 
         "/home/jenga/download"
         "/home/jenga/rtorrent/download"
+        "/home/jenga/Desktop"
       ];
       repo = "20379@hk-s020.rsync.net:backup";
       user = "jenga";
@@ -37,6 +38,7 @@ with lib; {
 
       compression = "auto,lzma";
       startAt = "*-*-* 00/02:00:00";
+      persistentTimer = true;
 
       prune.keep = {
         within = "1d"; # Keep all archives from the last day
@@ -53,10 +55,9 @@ with lib; {
   };
 
   # FIXME: https://github.com/NixOS/nixpkgs/commit/697198834c6a861d30b8fbfe4162525c87155e00
-  # persistentTimer = true;
-  systemd.timers = flip mapAttrs' config.services.borgbackup.jobs
-    (name: value:
-      nameValuePair "borgbackup-job-${name}" {
-        timerConfig.Persistent = true;
-      });
+  #systemd.timers = flip mapAttrs' config.services.borgbackup.jobs
+    #(name: value:
+      #nameValuePair "borgbackup-job-${name}" {
+        #timerConfig.Persistent = true;
+      #});
 }

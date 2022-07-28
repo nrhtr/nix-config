@@ -23,6 +23,7 @@ in rec {
     hooks = {
       shellcheck.enable = true;
       statix.enable = true;
+      alejandra.enable = true;
 
       # Custom hooks
       gitleaks = {

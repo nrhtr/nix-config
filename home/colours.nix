@@ -1,6 +1,6 @@
 { pkgs, lib, ... }:
 
-let nix-colors = import <nix-colors>;
+let nix-colors = import <nix-colors> {};
 in {
   imports = [ nix-colors.homeManagerModule ];
   config = {

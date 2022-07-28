@@ -1,18 +1,41 @@
-{ config, pkgs, lib, ... }:
-
-let
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}: let
   nix-colors = import <nix-colors>;
-  inherit (nix-colors.lib { inherit pkgs; }) vimThemeFromScheme;
+  inherit (nix-colors.lib-contrib {inherit pkgs;}) vimThemeFromScheme;
 in {
-  imports = [ <agenix/modules/age.nix> ];
+  imports = [<agenix/modules/age.nix>];
 
   nixpkgs.config.allowUnfree = true;
 
   environment.systemPackages = with pkgs; [
-    vim git htop mtr mosh pass tmux gnupg magic-wormhole iotop lsof go # direnv
-    jq poetry gron unzip python310 stow tmux file docker nixfmt
+    vim
+    git
+    htop
+    mtr
+    mosh
+    pass
+    tmux
+    gnupg
+    magic-wormhole
+    iotop
+    lsof
+    go # direnv
+    jq
+    poetry
+    gron
+    unzip
+    python310
+    stow
+    tmux
+    file
+    docker
+    nixfmt
     niv
-    (pkgs.callPackage <agenix/pkgs/agenix.nix> { })
+    (pkgs.callPackage <agenix/pkgs/agenix.nix> {})
   ];
 
   nix = {
@@ -25,7 +48,7 @@ in {
     };
     optimise = {
       automatic = true;
-      dates = [ "weekly" ];
+      dates = ["weekly"];
     };
   };
 
@@ -51,13 +74,13 @@ in {
 
   networking.extraHosts = ''
     10.100.0.1 nix01
-    95.217.114.169 nix02.deploy
+    95.217.114.169 nix02 nix02.deploy
   '';
 
   # LetsEncrypt
   security.acme = {
     acceptTerms = true;
-    email = "jeremy@jenga.xyz";
+    defaults.email = "jeremy@jenga.xyz";
   };
 
   users.users.jenga = {
