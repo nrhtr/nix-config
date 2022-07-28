@@ -1,6 +1,8 @@
-{ config, pkgs, ... }:
-
 {
+  config,
+  pkgs,
+  ...
+}: {
   home-manager.users.jenga = rec {
     home.sessionVariables = {
       BORG_PASSCOMMAND = "cat /home/jenga/.secrets/borg-phrase";

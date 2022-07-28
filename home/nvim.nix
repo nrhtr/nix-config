@@ -1,6 +1,8 @@
-{ config, pkgs, ... }:
-
-let
+{
+  config,
+  pkgs,
+  ...
+}: let
   nix-colors = import <nix-colors> {};
   executeThatThing = pkgs.vimUtils.buildVimPlugin {
     pname = "ExecuteThatThing.vim";
@@ -21,9 +23,9 @@ let
       rev = "d6e3c5161ef2e3fbc4a4b68a785d958d97e25b7e";
     };
   };
-  inherit (nix-colors.lib-contrib { inherit pkgs; }) vimThemeFromScheme;
+  inherit (nix-colors.lib-contrib {inherit pkgs;}) vimThemeFromScheme;
 in rec {
-  imports = [ ./colours.nix ];
+  imports = [./colours.nix];
   home-manager.users.jenga = rec {
     programs.neovim = {
       enable = true;
@@ -39,7 +41,8 @@ in rec {
         nerdcommenter
         vim-clap
         #vim-nixhash
-        { config = ''
+        {
+          config = ''
             nmap X  <Plug>(ExecThatThingNormal)
             vmap X  <Plug>(ExecThatThingVisual)
             omap il <Plug>(InnerLineMotion)
@@ -49,7 +52,7 @@ in rec {
           plugin = executeThatThing;
         }
         {
-          plugin = vimThemeFromScheme { scheme = config.colorscheme; };
+          plugin = vimThemeFromScheme {scheme = config.colorscheme;};
           config = "colorscheme nix-${config.colorscheme.slug}";
         }
       ];

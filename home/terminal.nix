@@ -1,7 +1,9 @@
-{ config, pkgs, ... }:
-
 {
-  imports = [ ./colours.nix ];
+  config,
+  pkgs,
+  ...
+}: {
+  imports = [./colours.nix];
   home-manager.users.jenga = rec {
     programs.direnv = {
       enable = true;

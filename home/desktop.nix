@@ -1,8 +1,10 @@
-{ config, pkgs, lib, ... }:
-
-with lib;
-
-let
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+with lib; let
   base00 = "${config.colorscheme.colors.base00}";
   base01 = "${config.colorscheme.colors.base01}";
   base02 = "${config.colorscheme.colors.base02}";
@@ -20,7 +22,7 @@ let
   base0E = "${config.colorscheme.colors.base0E}";
   base0F = "${config.colorscheme.colors.base0F}";
 in {
-  imports = [ ./colours.nix ];
+  imports = [./colours.nix];
 
   options.displayOutput = mkOption {
     type = types.str;
@@ -50,12 +52,12 @@ in {
     sound.enable = true;
     hardware.bluetooth.enable = true;
     hardware.pulseaudio.enable = true;
-    users.extraUsers.jenga.extraGroups = [ "audio" "docker" ];
+    users.extraUsers.jenga.extraGroups = ["audio" "docker"];
 
     services.gpm.enable = true;
 
     home-manager.users.jenga = {
-      imports = [ ../modules/sonata/default.nix ];
+      imports = [../modules/sonata/default.nix];
       home.packages = with pkgs; [
         wl-clipboard
         mako # notification daemon
@@ -172,9 +174,9 @@ in {
         enable = true;
         bars = {
           default = {
-        settings = {
-          theme = "solarized-light";
-        };
+            settings = {
+              theme = "solarized-light";
+            };
             blocks = [
               {
                 block = "disk_space";
@@ -201,7 +203,7 @@ in {
                 interval = 1;
                 format = "{1m}";
               }
-              { block = "sound"; }
+              {block = "sound";}
               {
                 block = "time";
                 interval = 60;
@@ -214,77 +216,79 @@ in {
 
       programs.waybar = {
         enable = true;
-        settings = [{
-          layer = "top";
-          position = "top";
+        settings = [
+          {
+            layer = "top";
+            position = "top";
 
-          output = [ "${config.displayOutput}" ];
+            output = ["${config.displayOutput}"];
 
-          modules-left = [ "custom/power" "custom/grab" "sway/workspaces" "sway/mode" ];
-          modules-center = [ "sway/window" ];
-          modules-right = [ "pulseaudio" "mpd" "battery" "network" "custom/wg" "clock" "tray" ];
+            modules-left = ["custom/power" "custom/grab" "sway/workspaces" "sway/mode"];
+            modules-center = ["sway/window"];
+            modules-right = ["pulseaudio" "mpd" "battery" "network" "custom/wg" "clock" "tray"];
 
-          modules = {
-            "network" = {
-              "format-wifi" = " {signalStrength}%";
-              "format-ethernet" = "{ifname} ";
-              "tooltip-format-wifi" = "{essid}";
-            };
-            "sway/workspaces" = {
-              disable-scroll = true;
-              all-outputs = true;
-              #current-only = true;
-            };
-            "custom/grab" = {
-              format = "";
-              on-click = "sh -c '(sleep 1; ${pkgs.sway-contrib.grimshot}/bin/grimshot copy area)' & disown";
-            };
-            "custom/power" = {
-              format = "";
-              #on-click = "${pkgs.sway}/bin/swaynag --background=${base00} -t warning -m 'Power Menu Options' -b '⏻︁ Power off'  'shutdown -P now' -b '↻︁ Restart' 'shutdown -r now' -b '🛌︁ Hibernate' 'systemctl hibernate' -b '🛌︁ Hybrid-sleep' 'systemctl hybrid-sleep' -b '🛌︁ Suspend' 'systemctl suspend' -b '︁ Logout' 'swaymsg exit' -b ' Lock' 'swaylock-fancy'";
-              on-click = "${pkgs.sway}/bin/swaynag --background=${base01} -t warning -m 'Power Menu Options' -b '⏻︁ Power off'  'shutdown -P now' -b '↻︁ Restart' 'shutdown -r now' -b '🛌︁ Hibernate' 'systemctl hibernate' -b '🛌︁ Hybrid-sleep' 'systemctl hybrid-sleep' -b '🛌︁ Suspend' 'systemctl suspend' -b '  Logout' 'swaymsg exit' -b ' Lock' 'swaylock-fancy'";
-            };
-            "custom/wg" = {
-              format = "🔒";
-              #exec = "sudo ${pkgs.wireguard}/bin/wg show#";
-            };
-            "mpd" = {
-              max-length = 30;
-              on-click = "${pkgs.mpc_cli}/bin/mpc toggle";
-              format = "{stateIcon} ~ {consumeIcon}{randomIcon}{repeatIcon}{singleIcon}{artist} - {album} - {title}";
-              format-disconnected = "Disconnected ";
-              format-stopped = "{consumeIcon}{randomIcon}{repeatIcon}{singleIcon}Stopped ";
-              interval = 2;
-              consume-icons = {
-                on = " ";
+            modules = {
+              "network" = {
+                "format-wifi" = " {signalStrength}%";
+                "format-ethernet" = "{ifname} ";
+                "tooltip-format-wifi" = "{essid}";
               };
-              random-icons = {
-                on = " ";
+              "sway/workspaces" = {
+                disable-scroll = true;
+                all-outputs = true;
+                #current-only = true;
               };
-              repeat-icons = {
-                on = " ";
+              "custom/grab" = {
+                format = "";
+                on-click = "sh -c '(sleep 1; ${pkgs.sway-contrib.grimshot}/bin/grimshot copy area)' & disown";
               };
-              single-icons = {
-                on = "1 ";
+              "custom/power" = {
+                format = "";
+                #on-click = "${pkgs.sway}/bin/swaynag --background=${base00} -t warning -m 'Power Menu Options' -b '⏻︁ Power off'  'shutdown -P now' -b '↻︁ Restart' 'shutdown -r now' -b '🛌︁ Hibernate' 'systemctl hibernate' -b '🛌︁ Hybrid-sleep' 'systemctl hybrid-sleep' -b '🛌︁ Suspend' 'systemctl suspend' -b '︁ Logout' 'swaymsg exit' -b ' Lock' 'swaylock-fancy'";
+                on-click = "${pkgs.sway}/bin/swaynag --background=${base01} -t warning -m 'Power Menu Options' -b '⏻︁ Power off'  'shutdown -P now' -b '↻︁ Restart' 'shutdown -r now' -b '🛌︁ Hibernate' 'systemctl hibernate' -b '🛌︁ Hybrid-sleep' 'systemctl hybrid-sleep' -b '🛌︁ Suspend' 'systemctl suspend' -b '  Logout' 'swaymsg exit' -b ' Lock' 'swaylock-fancy'";
               };
-              state-icons = {
-                paused =  "";
-                playing =  "";
+              "custom/wg" = {
+                format = "🔒";
+                #exec = "sudo ${pkgs.wireguard}/bin/wg show#";
+              };
+              "mpd" = {
+                max-length = 30;
+                on-click = "${pkgs.mpc_cli}/bin/mpc toggle";
+                format = "{stateIcon} ~ {consumeIcon}{randomIcon}{repeatIcon}{singleIcon}{artist} - {album} - {title}";
+                format-disconnected = "Disconnected ";
+                format-stopped = "{consumeIcon}{randomIcon}{repeatIcon}{singleIcon}Stopped ";
+                interval = 2;
+                consume-icons = {
+                  on = " ";
+                };
+                random-icons = {
+                  on = " ";
+                };
+                repeat-icons = {
+                  on = " ";
+                };
+                single-icons = {
+                  on = "1 ";
+                };
+                state-icons = {
+                  paused = "";
+                  playing = "";
+                };
+              };
+              "pulseaudio" = {
+                format = "{icon} {volume}%";
+                format-icons = {
+                  "headphones" = "";
+                  "default" = ["" ""];
+                };
+              };
+              "battery" = {
+                format = "{icon} {capacity}%";
+                format-icons = ["" "" "" "" ""];
               };
             };
-            "pulseaudio" = {
-              format = "{icon} {volume}%";
-              format-icons = {
-                "headphones" = "";
-                "default" = [ "" "" ];
-              };
-            };
-            "battery" = {
-              format = "{icon} {capacity}%";
-              format-icons = [ "" "" "" "" "" ];
-            };
-          };
-        }];
+          }
+        ];
         style = ''
           * {
               /* `otf-font-awesome` is required to be installed for icons */
@@ -563,7 +567,7 @@ in {
             bright6 = "${base0F}";
             bright7 = "${base07}";
           };
-          mouse = { hide-when-typing = "yes"; };
+          mouse = {hide-when-typing = "yes";};
         };
       };
 
@@ -571,9 +575,12 @@ in {
         enable = true;
         wrapperFeatures.gtk = true; # so that gtk works properly
         config = rec {
-          menu = "${pkgs.dmenu-wayland}/bin/dmenu-wl_run"
-            + " -nb \"#${base01}\"" + " -nf \"#${base05}\""
-            + " -sb \"#${base02}\"" + " -sf \"#${base04}\"";
+          menu =
+            "${pkgs.dmenu-wayland}/bin/dmenu-wl_run"
+            + " -nb \"#${base01}\""
+            + " -nf \"#${base05}\""
+            + " -sb \"#${base02}\""
+            + " -sf \"#${base04}\"";
 
           gaps = {
             inner = 5;
@@ -582,77 +589,76 @@ in {
           };
 
           fonts = {
-            names = [ "DejaVu Sans Mono" ];
+            names = ["DejaVu Sans Mono"];
             size = 11.0;
           };
 
-          bars = [{ command = "waybar"; }];
+          bars = [{command = "waybar";}];
           #bars = [
           #{
           #statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs ~/.config/i3status-rust/config-default.toml";
           #}
           #];
 
-          output =
-            let
-              "mkbg" = pkgs.writeShellApplication {
-                name = "mkbg";
-                runtimeInputs = [ pkgs.imagemagick pkgs.getopt pkgs.jq ];
-                text = builtins.readFile ./mkbg.sh;
-              };
-              imagecolorizer = pkgs.python3Packages.buildPythonApplication {
-                name = "ImageColorizer";
-
-                src = pkgs.fetchFromGitHub {
-                  owner = "kiddae";
-                  repo = "ImageColorizer";
-                  rev = "48623031e3106261093723cd536a4dae74309c5d";
-                  sha256 = "sha256-ucwo5DOMUON9HgQzXmh39RLQH4sWtSfYH7+UWfGIJCo=";
-                };
-
-                propagatedBuildInputs = with pkgs.python3Packages; [ pillow ];
-              };
-              recolorWallpaper = input: scheme:
-                pkgs.stdenv.mkDerivation {
-                  name = "recoloured-wallpaper-${scheme.slug}.png";
-                  buildInputs = [ imagecolorizer ];
-                  unpackPhase = "true";
-                  #ImageColorizer ${input} wallpaper.png -p "#${base01}" "#${base05}" "#${base06}" "#${base07}"
-                  #ImageColorizer ${input} wallpaper.png -p "#${base01}" "#${base05}" "#${base06}" "#${base0B}"
-                  buildPhase = ''
-                    ImageColorizer ${input} wallpaper.png -p "#${base01}" "#${base05}" "#${base06}"
-                  '';
-                  installPhase = "install -Dm0644 wallpaper.png $out";
-                };
-              mkWallpaper = scheme:
-                pkgs.stdenv.mkDerivation {
-                  name = "generated-nix-wallpaper-${scheme.slug}.png";
-                  buildInputs = [ mkbg ];
-                  unpackPhase = "true";
-                  buildPhase = ''
-                    mkbg -c "${base00}:${base07}:${base02}:${base01}"
-                  '';
-                  installPhase = "install -Dm0644 wallpaper.png $out";
-                };
-            in
-            {
-              "LVDS-1" = {
-                bg = "/home/jenga/jenga/wallpaper/active/gjGGKe9.png fill";
-                #bg = "${mkWallpaper config.colorscheme} fill";
-                #bg = "${
-                #recolorWallpaper
-                #/home/jenga/jenga/wallpaper/active/gjGGKe9.png
-                #config.colorscheme
-                #} fill";
-              };
+          output = let
+            "mkbg" = pkgs.writeShellApplication {
+              name = "mkbg";
+              runtimeInputs = [pkgs.imagemagick pkgs.getopt pkgs.jq];
+              text = builtins.readFile ./mkbg.sh;
             };
+            imagecolorizer = pkgs.python3Packages.buildPythonApplication {
+              name = "ImageColorizer";
+
+              src = pkgs.fetchFromGitHub {
+                owner = "kiddae";
+                repo = "ImageColorizer";
+                rev = "48623031e3106261093723cd536a4dae74309c5d";
+                sha256 = "sha256-ucwo5DOMUON9HgQzXmh39RLQH4sWtSfYH7+UWfGIJCo=";
+              };
+
+              propagatedBuildInputs = with pkgs.python3Packages; [pillow];
+            };
+            recolorWallpaper = input: scheme:
+              pkgs.stdenv.mkDerivation {
+                name = "recoloured-wallpaper-${scheme.slug}.png";
+                buildInputs = [imagecolorizer];
+                unpackPhase = "true";
+                #ImageColorizer ${input} wallpaper.png -p "#${base01}" "#${base05}" "#${base06}" "#${base07}"
+                #ImageColorizer ${input} wallpaper.png -p "#${base01}" "#${base05}" "#${base06}" "#${base0B}"
+                buildPhase = ''
+                  ImageColorizer ${input} wallpaper.png -p "#${base01}" "#${base05}" "#${base06}"
+                '';
+                installPhase = "install -Dm0644 wallpaper.png $out";
+              };
+            mkWallpaper = scheme:
+              pkgs.stdenv.mkDerivation {
+                name = "generated-nix-wallpaper-${scheme.slug}.png";
+                buildInputs = [mkbg];
+                unpackPhase = "true";
+                buildPhase = ''
+                  mkbg -c "${base00}:${base07}:${base02}:${base01}"
+                '';
+                installPhase = "install -Dm0644 wallpaper.png $out";
+              };
+          in {
+            "LVDS-1" = {
+              bg = "/home/jenga/jenga/wallpaper/active/gjGGKe9.png fill";
+              #bg = "${mkWallpaper config.colorscheme} fill";
+              #bg = "${
+              #recolorWallpaper
+              #/home/jenga/jenga/wallpaper/active/gjGGKe9.png
+              #config.colorscheme
+              #} fill";
+            };
+          };
 
           modifier = "Mod4";
-          startup = [ ];
+          startup = [];
           terminal = "${pkgs.foot}/bin/foot";
           keybindings = lib.mkOptionDefault {
             "${modifier}+Shift+c" = "reload";
-            "${modifier}+p" = "exec ${pkgs.pass}/bin/passmenu"
+            "${modifier}+p" =
+              "exec ${pkgs.pass}/bin/passmenu"
               + " -nb \"#${config.colorscheme.colors.base01}\""
               + " -nf \"#${config.colorscheme.colors.base05}\""
               + " -sb \"#${config.colorscheme.colors.base02}\""

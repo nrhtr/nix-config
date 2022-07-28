@@ -63,7 +63,7 @@ in {
 
   services.openssh.enable = lib.mkDefault true;
   services.openssh.permitRootLogin = "prohibit-password";
-  services.openssh.ports = [ 18061 ];
+  services.openssh.ports = [18061];
 
   security.sudo.wheelNeedsPassword = false;
 
@@ -88,12 +88,10 @@ in {
     home = "/home/jenga";
     description = "Jeremy Parker";
     shell = pkgs.fish;
-    extraGroups = [ "wheel" "networkmanager" ];
+    extraGroups = ["wheel" "networkmanager"];
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB+0iNkzHDqAOYFVLpFq9vLM2lcD2J+vqucukiMNK9qY jenga@thinkpad"
       "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBMETRRIYWUGbdmmSU/b3+hDf15gCqTVxQrpJrY2PKbEndHOW4PZHt61NYReYXOBWgO/z8x40uQ7ZdxwwKKrDQS4= enclave@iPhone"
     ];
-
   };
 }
-

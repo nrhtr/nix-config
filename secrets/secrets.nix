@@ -9,8 +9,7 @@ let
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMUMFErQ3qihKCuOM/3cWLSGOuGZD3sC07p559XZor/g root@nix02" # nix02
   ];
   all = users ++ systems;
-in
-{
+in {
   "wifi.age".publicKeys = all;
   "borg-key.age".publicKeys = all;
   "borg-phrase.age".publicKeys = all;

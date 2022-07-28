@@ -1,8 +1,11 @@
-{ pkgs, lib, ... }:
-
-let nix-colors = import <nix-colors> {};
+{
+  pkgs,
+  lib,
+  ...
+}: let
+  nix-colors = import <nix-colors> {};
 in {
-  imports = [ nix-colors.homeManagerModule ];
+  imports = [nix-colors.homeManagerModule];
   config = {
     colorscheme = nix-colors.colorSchemes.dracula;
     #colorscheme = nix-colors.colorSchemes.solarized-dark;
@@ -12,4 +15,3 @@ in {
     #colorscheme = nix-colors.colorSchemes.tender;
   };
 }
-
