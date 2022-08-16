@@ -11,6 +11,10 @@ in {
 
   nixpkgs.config.allowUnfree = true;
 
+  nixpkgs.config.permittedInsecurePackages = [
+    "python3.9-poetry-1.1.12"
+  ];
+
   environment.systemPackages = with pkgs; [
     vim
     git
