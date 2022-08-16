@@ -1,8 +1,9 @@
 let
-  pkgs = import <nixpkgs> { };
+  pkgs = import <nixpkgs> {};
   gitleaks = pkgs.callPackage ./packages/gitleaks/default.nix {};
-  nix-pre-commit-hooks = import (builtins.fetchTarball
-    "https://github.com/cachix/pre-commit-hooks.nix/tarball/master");
+  nix-pre-commit-hooks =
+    import (builtins.fetchTarball
+      "https://github.com/cachix/pre-commit-hooks.nix/tarball/master");
   nix-gitleaks = import ./modules/gitleaks/default.nix;
 in rec {
   inherit gitleaks;
@@ -22,7 +23,7 @@ in rec {
     # default_stages = ["manual" "push"];
     hooks = {
       shellcheck.enable = true;
-      statix.enable = true;
+      #statix.enable = true;
       alejandra.enable = true;
 
       # Custom hooks

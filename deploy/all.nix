@@ -17,7 +17,20 @@ in {
 
   #"nix02" = { config, pkgs, ... }: {
   #}
-  "nix02.deploy" = {
+  "nix01.wireguard" = {
+    config,
+    pkgs,
+    ...
+  }: {
+    imports = [
+      ../machines/nix01.jenga.xyz/configuration.nix
+    ];
+
+    deployment.targetUser = "jenga";
+    deployment.substituteOnDestination = true;
+  };
+
+  "nix02.jenga.xyz" = {
     config,
     pkgs,
     ...

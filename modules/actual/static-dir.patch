@@ -1,0 +1,26 @@
+diff --git a/app.js b/app.js
+index a44d6fe..5ced332 100644
+--- a/app.js
++++ b/app.js
+@@ -1,4 +1,5 @@
+ const fs = require('fs');
++const path = require('path');
+ const express = require('express');
+ const actuator = require('express-actuator');
+ const bodyParser = require('body-parser');
+@@ -35,12 +36,13 @@ app.use((req, res, next) => {
+   next();
+ });
+ app.use(
+-  express.static(__dirname + '/node_modules/@actual-app/web/build', {
++  express.static(path.resolve(__dirname + '/../../node_modules/@actual-app/web/build'), {
+     index: false
+   })
+ );
+ app.get('/*', (req, res) => {
+-  res.sendFile(__dirname + '/node_modules/@actual-app/web/build/index.html');
++  const f = path.resolve(__dirname + '/../../node_modules/@actual-app/web/build/index.html');
++  res.sendFile(f);
+ });
+ 
+ async function run() {

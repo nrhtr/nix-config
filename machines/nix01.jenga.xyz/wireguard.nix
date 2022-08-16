@@ -1,43 +1,46 @@
-{ config, lib, pkgs, ... }:
-
 {
-  # enable NAT
+  config,
+  lib,
+  pkgs,
+  ...
+}: {
   networking.nat.enable = true;
   networking.nat.externalInterface = "ens3";
-  networking.nat.internalInterfaces = [ "wg0" ];
+  networking.nat.internalInterfaces = ["wg0"];
 
   networking.firewall.allowedUDPPortRanges = [
-    { from = 51820; to = 51820; }
+    {
+      from = 51820;
+      to = 51820;
+    }
   ];
 
   networking.wireguard.interfaces = {
-    # "wg0" is the network interface name. You can name the interface arbitrarily.
     wg0 = {
-      # Determines the IP address and subnet of the server's end of the tunnel interface.
-      ips = [ "10.100.0.1/16" ];
-
-      # The port that Wireguard listens to. Must be accessible by the client.
+      ips = ["10.100.0.1/16"];
       listenPort = 51820;
-
-      # Path to the private key file.
-      #
-      # Note: The private key can also be included inline via the privateKey option,
-      # but this makes the private key world-readable; thus, using privateKeyFile is
-      # recommended.
       privateKeyFile = "/etc/wireguard.privkey";
 
       peers = [
-        { # iPhone
+        {
+          # iPhone
           publicKey = "vaD8ITVvM5mNJW4Z+iXZvsN6WJIgi7ZjVxDWIh42XV4=";
-          allowedIPs = [ "10.100.0.3/32" ];
+          allowedIPs = ["10.100.0.3/32"];
         }
-        { # Thinkpad
+        {
+          # Thinkpad
           publicKey = "dIJ1EYTiyRbT5TJQ+5wi04uyFOjvoti09wrNYmwmBUI=";
-          allowedIPs = [ "10.100.0.4/32" ];
+          allowedIPs = ["10.100.0.4/32"];
         }
-        { # PC-Engines APU2
+        {
+          # PC-Engines APU2
           publicKey = "3Px0oJgiRegKzctSdhzfuuUAy62PyN5z65WWVmiyDyM=";
-          allowedIPs = [ "10.100.0.5/32" ];
+          allowedIPs = ["10.100.0.5/32"];
+        }
+        {
+          # nix02.jenga.xyz
+          publicKey = "WbvPXoAJtKFr9A2uiCj+Y++tA8Iyh2Yp5HI7/NTzIxA=";
+          allowedIPs = ["10.100.0.6/32"];
         }
       ];
     };

@@ -1,6 +1,11 @@
-{ config, pkgs, fetchFromGitHub, lib, ... }:
-
-let nix-colors = import <nix-colors>;
+{
+  config,
+  pkgs,
+  fetchFromGitHub,
+  lib,
+  ...
+}: let
+  nix-colors = import <nix-colors>;
 in {
   imports = [
     ./hardware-configuration.nix
@@ -25,8 +30,8 @@ in {
   nixpkgs.overlays = [
     (self: super: rec {
       discord = super.discord.overrideAttrs (
-         _: { src = builtins.fetchTarball "https://discord.com/api/download?platform=linux&format=tar.gz"; }
-       );
+        _: {src = builtins.fetchTarball "https://discord.com/api/download?platform=linux&format=tar.gz";}
+      );
       luakit = super.luakit.overrideAttrs (old: rec {
         version = "2.1";
         src = super.fetchFromGitHub {
@@ -36,15 +41,15 @@ in {
           sha256 = "11wd8r8n9y3qd1da52hzhyzxvif3129p2ka7gannkdm7bkjxd4df";
         };
       });
-      silk-guardian = self.callPackage ../../packages/silk-guardian/default.nix { };
-      jsonfui = self.callPackage ./../../packages/jsonfui/default.nix { };
-      darktable = self.callPackage ./../../packages/darktable/default.nix { };
-      wine = super.wine.override { wineBuild = "wine64"; };
+      silk-guardian = self.callPackage ../../packages/silk-guardian/default.nix {};
+      jsonfui = self.callPackage ./../../packages/jsonfui/default.nix {};
+      darktable = self.callPackage ./../../packages/darktable/default.nix {};
+      wine = super.wine.override {wineBuild = "wine64";};
     })
     #(import "${
-        #builtins.fetchTarball
-        #"https://github.com/vlaci/openconnect-sso/archive/master.tar.gz"
-      #}/overlay.nix")
+    #builtins.fetchTarball
+    #"https://github.com/vlaci/openconnect-sso/archive/master.tar.gz"
+    #}/overlay.nix")
   ];
 
   services.blueman.enable = true;
@@ -59,7 +64,7 @@ in {
   system.autoUpgrade.enable = true;
 
   # Distribute builds to nix02 (consider nix01?)
-  nix.distributedBuilds = true;
+  #nix.distributedBuilds = true;
   nix.extraOptions = ''
     builders-use-substitutes = true
   '';
@@ -86,32 +91,34 @@ in {
   boot.loader.efi.canTouchEfiVariables = true;
   boot.tmpOnTmpfs = true;
 
-  boot.extraModulePackages = [ pkgs.silk-guardian ];
-  boot.kernelModules = [ "silk" ];
+  boot.extraModulePackages = [pkgs.silk-guardian];
+  boot.kernelModules = ["silk"];
 
   age.secrets.wifi.file = ../../secrets/wifi.age;
-  age.identityPaths = [ /etc/ssh/ssh_host_ed25519_key ];
+  age.identityPaths = [/etc/ssh/ssh_host_ed25519_key];
   networking = {
     hostName = "thinkpad";
     wireless = {
       enable = true;
-      interfaces = [ "wlp3s0" ];
+      interfaces = ["wlp3s0"];
       extraConfig = ''
         ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=wheel
       '';
 
       environmentFile = "${config.age.secrets.wifi.path}";
-      networks = { "Richard Gere 5G Rona".psk = "@PSK_HOME@"; };
+      networks = {"Richard Gere 5G Rona".psk = "@PSK_HOME@";};
     };
 
-    firewall = { enable = true; };
+    firewall = {enable = true;};
   };
 
   # Use a swapfile, because we don't want to bother with another LUKS partition
-  swapDevices = [{
-    device = "/swapfile";
-    size = 10000;
-  }];
+  swapDevices = [
+    {
+      device = "/swapfile";
+      size = 10000;
+    }
+  ];
 
   services.mpd = {
     enable = true;
@@ -126,8 +133,7 @@ in {
     user = "jenga";
   };
 
-  hardware.pulseaudio.extraConfig =
-    "load-module module-native-protocol-tcp auth-ip-acl=127.0.0.1";
+  hardware.pulseaudio.extraConfig = "load-module module-native-protocol-tcp auth-ip-acl=127.0.0.1";
 
   services.tlp = {
     enable = true;
@@ -160,7 +166,8 @@ in {
   system.stateVersion = "22.05";
 
   environment.systemPackages = with pkgs; [
-    libimobiledevice ifuse # iphone
+    libimobiledevice
+    ifuse # iphone
     darktable # photo shit
     cargo # vim-clap
     texlive.combined.scheme-full
@@ -168,7 +175,8 @@ in {
     docker-compose
     pinentry-curses # for pass/gpg
     neofetch # full unixporn redditeur
-    luakit firefox
+    luakit
+    firefox
     obsidian # note taking
     python3Packages.yt-dlp
     pavucontrol
@@ -182,7 +190,7 @@ in {
     ffmpeg
     #vlc
     (vlc.overrideAttrs (old: {
-      buildInputs = lib.lists.remove (samba) (old.buildInputs);
+      buildInputs = lib.lists.remove samba old.buildInputs;
     }))
     mpv
 

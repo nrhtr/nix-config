@@ -73,14 +73,14 @@ in {
   networking.firewall.logRefusedConnections = false;
 
   networking.extraHosts = ''
-    10.100.0.1 nix01
-    95.217.114.169 nix02 nix02.deploy
+    10.100.0.1 nix01.wireguard
+    95.217.114.169 nix02 nix02.jenga.xyz
   '';
 
   # LetsEncrypt
   security.acme = {
     acceptTerms = true;
-    defaults.email = "jeremy@jenga.xyz";
+    email = "jeremy@jenga.xyz";
   };
 
   users.users.jenga = {

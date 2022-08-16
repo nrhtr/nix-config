@@ -6,7 +6,7 @@
 }: {
   networking.wireguard.interfaces = {
     wg0 = {
-      ips = ["10.100.0.4/16"];
+      ips = ["10.100.0.6/16"];
       privateKeyFile = "/etc/wireguard.privkey";
 
       peers = [

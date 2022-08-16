@@ -1,8 +1,10 @@
 # Full NixOS configuration for a ZFS server with full disk encryption hosted on Hetzner.
 # See <https://mazzo.li/posts/hetzner-zfs.html> for more information.
-
-{ config, pkgs, ... }:
-let
+{
+  config,
+  pkgs,
+  ...
+}: let
   hostName = "nix02";
 
   rootKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINvB0TRd3YN3/aQUCC+lNivZ6pRe8iWfX0+SZdRfKDhO root@thinkpad";
@@ -52,27 +54,29 @@ let
   };
 
   # Sends an email with some heading and the zpool status
-  sendEmailEvent = { event }: ''
+  sendEmailEvent = {event}: ''
     printf "Subject: ${hostName} ${event} ''$(${pkgs.coreutils}/bin/date --iso-8601=seconds)\n\nzpool status:\n\n''$(${pkgs.zfs}/bin/zpool status)" | ${pkgs.msmtp}/bin/msmtp -a default ${emailTo}
   '';
 
   # Enables emails for ZFS
-  customizeZfs = zfs:
-    (zfs.override { enableMail = true; });
+  customizeZfs = zfs: (zfs.override {enableMail = true;});
 in {
   imports = [
     ./hardware-configuration.nix
+    ./wireguard.nix
+
     ../../common/shared.nix
   ];
 
   age.secrets = {
     fastmail-nix02.file = ../../secrets/fastmail-nix02.age;
-    twilio-env.file     = ../../secrets/twilio-env.age;
+    twilio-env.file = ../../secrets/twilio-env.age;
+    gandi.file = ../../secrets/gandi.age;
   };
 
   # We want to still be able to boot without one of these
-  fileSystems."/boot-1".options = [ "nofail" ];
-  fileSystems."/boot-2".options = [ "nofail" ];
+  fileSystems."/boot-1".options = ["nofail"];
+  fileSystems."/boot-2".options = ["nofail"];
 
   # Use GRUB2 as the boot loader.
   # We don't use systemd-boot because Hetzner uses BIOS legacy boot.
@@ -85,8 +89,14 @@ in {
   # This will mirror all UEFI files, kernels, grub menus and
   # things needed to boot to the other drive.
   boot.loader.grub.mirroredBoots = [
-    { path = "/boot-1"; devices = [ "/dev/disk/by-id/${sda}" ]; }
-    { path = "/boot-2"; devices = [ "/dev/disk/by-id/${sdb}" ]; }
+    {
+      path = "/boot-1";
+      devices = ["/dev/disk/by-id/${sda}"];
+    }
+    {
+      path = "/boot-2";
+      devices = ["/dev/disk/by-id/${sdb}"];
+    }
   ];
 
   # We need email support in ZFS for ZED. If you're using ZFS unstable, you need
@@ -102,21 +112,24 @@ in {
   # ZFS options from <https://nixos.wiki/wiki/NixOS_on_ZFS>
   networking.hostId = hostId;
   boot.loader.grub.copyKernels = true;
-  boot.supportedFilesystems = [ "zfs" ];
+  boot.supportedFilesystems = ["zfs"];
 
   # Network configuration (Hetzner uses static IP assignments, and we don't use DHCP here)
   networking.useDHCP = false;
   networking.interfaces."${networkInterface}" = {
-    ipv4.addresses = [{ inherit (ipv4) address prefixLength; }];
-    ipv6.addresses = [{ inherit (ipv4) address prefixLength; }];
+    ipv4.addresses = [{inherit (ipv4) address prefixLength;}];
+    ipv6.addresses = [{inherit (ipv4) address prefixLength;}];
   };
   networking.defaultGateway = ipv4.gateway;
-  networking.defaultGateway6 = { address = ipv6.gateway; interface = networkInterface; };
-  networking.nameservers = [ "8.8.8.8" ];
+  networking.defaultGateway6 = {
+    address = ipv6.gateway;
+    interface = networkInterface;
+  };
+  networking.nameservers = ["8.8.8.8"];
 
   # Remote unlocking, see <https://nixos.wiki/wiki/NixOS_on_ZFS>,
   # section "Unlock encrypted zfs via ssh on boot"
-  boot.initrd.availableKernelModules = [ networkInterfaceModule ];
+  boot.initrd.availableKernelModules = [networkInterfaceModule];
   boot.kernelParams = [
     # See <https://www.kernel.org/doc/Documentation/filesystems/nfs/nfsroot.txt> for docs on this
     # ip=<client-ip>:<server-ip>:<gw-ip>:<netmask>:<hostname>:<device>:<autoconf>:<dns0-ip>:<dns1-ip>:<ntp0-ip>
@@ -126,24 +139,24 @@ in {
   boot.initrd.network = {
     enable = true;
     ssh = {
-       enable = true;
+      enable = true;
 
-       # To prevent ssh clients from freaking out because a different host key is used,
-       # a different port for ssh is useful (assuming the same host has also a regular sshd running)
-       port = 2222;
+      # To prevent ssh clients from freaking out because a different host key is used,
+      # a different port for ssh is useful (assuming the same host has also a regular sshd running)
+      port = 2222;
 
-       # hostKeys paths must be unquoted strings, otherwise you'll run into issues
-       # with boot.initrd.secrets the keys are copied to initrd from the path specified;
-       # multiple keys can be set you can generate any number of host keys using
-       # `ssh-keygen -t ed25519 -N "" -f /boot-1/initrd-ssh-key`
-       hostKeys = [
-         /boot-1/initrd-ssh-key
-         /boot-2/initrd-ssh-key
-       ];
+      # hostKeys paths must be unquoted strings, otherwise you'll run into issues
+      # with boot.initrd.secrets the keys are copied to initrd from the path specified;
+      # multiple keys can be set you can generate any number of host keys using
+      # `ssh-keygen -t ed25519 -N "" -f /boot-1/initrd-ssh-key`
+      hostKeys = [
+        /boot-1/initrd-ssh-key
+        /boot-2/initrd-ssh-key
+      ];
 
-       authorizedKeys = [
-         publicKey
-       ];
+      authorizedKeys = [
+        publicKey
+      ];
     };
 
     # this will automatically load the zfs password prompt on login
@@ -162,7 +175,7 @@ in {
   };
 
   # SSH
-  users.users.root.openssh.authorizedKeys.keys = [ publicKey rootKey ];
+  users.users.root.openssh.authorizedKeys.keys = [publicKey rootKey];
   services.openssh.enable = true;
 
   # This value determines the NixOS release from which the default
@@ -190,7 +203,7 @@ in {
   # options.
   services.zfs.zed.enableMail = true;
   services.zfs.zed.settings = {
-    ZED_EMAIL_ADDR = [ emailTo ];
+    ZED_EMAIL_ADDR = [emailTo];
     ZED_EMAIL_OPTS = "-a 'FROM:${emailFrom}' -s '@SUBJECT@' @ADDRESS@";
     ZED_NOTIFY_VERBOSE = true;
   };
@@ -219,31 +232,31 @@ in {
   # restart the service every time we change the configuration
   # (unless the service has changed).
   systemd.services."boot-mail-alert" = {
-    wantedBy = [ "multi-user.target" ];
-    after = [ "network.target" ];
+    wantedBy = ["multi-user.target"];
+    after = ["network.target"];
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;
     };
-    script = sendEmailEvent { event = "just booted"; };
+    script = sendEmailEvent {event = "just booted";};
   };
   systemd.services."shutdown-mail-alert" = {
-    wantedBy = [ "multi-user.target" ];
-    after = [ "network.target" ];
+    wantedBy = ["multi-user.target"];
+    after = ["network.target"];
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;
     };
     script = "true";
-    preStop = sendEmailEvent { event = "is shutting down"; };
+    preStop = sendEmailEvent {event = "is shutting down";};
   };
   systemd.services."weekly-mail-alert" = {
     serviceConfig.Type = "oneshot";
-    script = sendEmailEvent { event = "is still alive"; };
+    script = sendEmailEvent {event = "is still alive";};
   };
   systemd.timers."weekly-mail-alert" = {
-    wantedBy = [ "timers.target" ];
-    partOf = [ "weekly-mail-alert.service" ];
+    wantedBy = ["timers.target"];
+    partOf = ["weekly-mail-alert.service"];
     timerConfig.OnCalendar = "weekly";
   };
 
@@ -252,10 +265,65 @@ in {
     serviceConfig = {
       Type = "oneshot";
       EnvironmentFile = "${config.age.secrets.twilio-env.path}";
-      ExecStart = "${pkgs.writers.writePython3 "call.py" { libraries = [ pkgs.python39Packages.twilio ]; } ./call.py}";
+      ExecStart = "${pkgs.writers.writePython3 "call.py" {libraries = [pkgs.python39Packages.twilio];} ./call.py}";
       Restart = "on-failure";
     };
     startAt = "*-*-* 06:35:00 Australia/Melbourne";
+  };
+
+  virtualisation.podman.enable = true;
+  virtualisation.podman.dockerCompat = true;
+  virtualisation.podman.extraPackages = [pkgs.zfs];
+  virtualisation.oci-containers.backend = "podman";
+  virtualisation.containers.storage.settings = {
+    storage = {
+      driver = "zfs";
+      graphroot = "/var/lib/containers/storage";
+      runroot = "/run/containers/storage";
+    };
+  };
+
+  virtualisation.oci-containers = {
+    containers = let
+      docker = import ../../modules/actual/docker.nix;
+    in {
+      actual-server = {
+        autoStart = true;
+        imageFile = docker.image;
+        image = docker.name;
+        ports = ["5006:5006"];
+        volumes = ["/data/actual:/data"];
+      };
+    };
+  };
+
+  # Use DNS ACME challenge because I want to serve this only
+  # over Wireguard but still have the conveniece of a public CA
+  security.acme.certs."actual.jenga.xyz".dnsProvider = "gandiv5";
+  security.acme.certs."actual.jenga.xyz".credentialsFile = "${config.age.secrets.gandi.path}";
+  #services.nginx.defaultListenAddresses= [ "
+
+  services.nginx = {
+    enable = true;
+
+    # Use recommended settings
+    recommendedProxySettings = true;
+    recommendedTlsSettings = true;
+    recommendedGzipSettings = true;
+    recommendedOptimisation = true;
+
+    # Only allow PFS-enabled ciphers with AES256
+    sslCiphers = "AES256+EECDH:AES256+EDH:!aNULL";
+
+    virtualHosts = {
+      "actual.jenga.xyz" = {
+        forceSSL = true;
+        enableACME = true;
+        locations."/" = {
+          proxyPass = "http://127.0.0.1:5006/";
+        };
+      };
+    };
   };
 
   programs.neovim = {
