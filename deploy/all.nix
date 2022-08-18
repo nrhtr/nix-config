@@ -2,8 +2,8 @@ let
   pkgs =
     import (builtins.fetchTarball {
       name = "nixos-21.11-2022-04-05";
-      url = "https://github.com/nixos/nixpkgs/archive/ccb90fb9e11459aeaf83cc28d5f8910816d90dd0.tar.gz";
-      sha256 = "sha256:1jlyhw5nf7pcxg22k1bwkv13vm02p86d7jf6znihl3hczz1yfgi0";
+      url = "https://github.com/nixos/nixpkgs/archive/ce6aa13369b667ac2542593170993504932eb836.tar.gz";
+      sha256 = "sha256:0d643wp3l77hv2pmg2fi7vyxn4rwy0iyr8djcw1h5x72315ck9ik";
     })
     {};
 in {
@@ -27,6 +27,8 @@ in {
     ];
 
     deployment.targetUser = "jenga";
+    deployment.targetPort = 18061;
+
     deployment.substituteOnDestination = true;
   };
 

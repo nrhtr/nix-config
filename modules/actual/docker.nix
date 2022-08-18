@@ -26,10 +26,6 @@ in
       config = {
         Cmd = ["${start-actual}/bin/actual-server"];
         ExposedPorts."5006" = {};
-        Env = ["ACTUAL_USER_FILES=/data/user"];
-        Volumes = {
-          "/data" = {};
-        };
       };
     };
   }

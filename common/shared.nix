@@ -78,13 +78,14 @@ in {
 
   networking.extraHosts = ''
     10.100.0.1 nix01.wireguard
+    10.100.0.6 nix02.wireguard actual.jenga.xyz
     95.217.114.169 nix02 nix02.jenga.xyz
   '';
 
   # LetsEncrypt
   security.acme = {
     acceptTerms = true;
-    email = "jeremy@jenga.xyz";
+    defaults.email = "jeremy@jenga.xyz";
   };
 
   users.users.jenga = {

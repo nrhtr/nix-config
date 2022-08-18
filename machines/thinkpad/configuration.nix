@@ -168,7 +168,7 @@ in {
   environment.systemPackages = with pkgs; [
     libimobiledevice
     ifuse # iphone
-    darktable # photo shit
+    #darktable # photo shit
     cargo # vim-clap
     texlive.combined.scheme-full
     #texlive-combined-full
@@ -176,7 +176,7 @@ in {
     pinentry-curses # for pass/gpg
     neofetch # full unixporn redditeur
     luakit
-    firefox
+    #firefox
     obsidian # note taking
     python3Packages.yt-dlp
     pavucontrol

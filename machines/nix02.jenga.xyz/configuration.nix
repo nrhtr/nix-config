@@ -292,16 +292,20 @@ in {
         imageFile = docker.image;
         image = docker.name;
         ports = ["5006:5006"];
-        volumes = ["/data/actual:/data"];
+        volumes = [
+          "/data/actual:/data"
+        ];
       };
     };
   };
 
   # Use DNS ACME challenge because I want to serve this only
   # over Wireguard but still have the conveniece of a public CA
+  security.acme.certs."actual.jenga.xyz".group = "nginx";
   security.acme.certs."actual.jenga.xyz".dnsProvider = "gandiv5";
   security.acme.certs."actual.jenga.xyz".credentialsFile = "${config.age.secrets.gandi.path}";
-  #services.nginx.defaultListenAddresses= [ "
+
+  networking.firewall.interfaces.wg0.allowedTCPPorts = [80 443];
 
   services.nginx = {
     enable = true;
@@ -317,8 +321,10 @@ in {
 
     virtualHosts = {
       "actual.jenga.xyz" = {
+        listenAddresses = ["10.100.0.6"];
         forceSSL = true;
-        enableACME = true;
+        #enableACME = true;
+        useACMEHost = "actual.jenga.xyz";
         locations."/" = {
           proxyPass = "http://127.0.0.1:5006/";
         };
