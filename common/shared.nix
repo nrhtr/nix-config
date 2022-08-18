@@ -69,6 +69,9 @@ in {
   services.openssh.permitRootLogin = "prohibit-password";
   services.openssh.ports = [18061];
 
+  users.users.root.openssh.authorizedKeys.keys =
+    lib.mkDefault ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB+0iNkzHDqAOYFVLpFq9vLM2lcD2J+vqucukiMNK9qY jenga@thinkpad"];
+
   security.sudo.wheelNeedsPassword = false;
 
   #system.autoUpgrade.enable = true;
