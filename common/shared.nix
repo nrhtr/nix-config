@@ -20,7 +20,6 @@ in {
     git
     htop
     mtr
-    mosh
     pass
     tmux
     gnupg
@@ -56,6 +55,7 @@ in {
     };
   };
 
+  programs.mosh.enable = true;
   programs.fish.enable = true;
   programs.neovim = {
     enable = true;
@@ -81,7 +81,7 @@ in {
 
   networking.extraHosts = ''
     10.100.0.1 nix01.wireguard
-    10.100.0.6 nix02.wireguard actual.jenga.xyz
+    10.100.0.6 nix02.wireguard actual.jenga.xyz sorpex.jenga.xyz tallur.jenga.xyz
     95.217.114.169 nix02 nix02.jenga.xyz
   '';
 

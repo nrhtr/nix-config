@@ -60,10 +60,14 @@
 
   # Enables emails for ZFS
   customizeZfs = zfs: (zfs.override {enableMail = true;});
+
+  dns = import (builtins.fetchTarball "https://github.com/kirelagin/dns.nix/archive/master.zip");
 in {
   imports = [
     ./hardware-configuration.nix
     ./wireguard.nix
+
+    #../../home/terminal.nix
 
     ../../common/shared.nix
   ];
@@ -299,14 +303,47 @@ in {
     };
   };
 
+  #hardware.opengl.enable = true;
+  #hardware.opengl.extraPackages = [ pkgs.cudatoolkit ];
+  services.owncast = {
+    enable = true;
+    listen = "10.100.0.6";
+    openFirewall = true;
+  };
+
   # Use DNS ACME challenge because I want to serve this only
   # over Wireguard but still have the conveniece of a public CA
-  security.acme.certs."actual.jenga.xyz".group = "nginx";
-  security.acme.certs."actual.jenga.xyz".dnsProvider = "gandiv5";
-  security.acme.certs."actual.jenga.xyz".credentialsFile = "${config.age.secrets.gandi.path}";
+  security.acme.certs = {
+    "actual.jenga.xyz" = {
+      group = "nginx";
+      dnsProvider = "gandiv5";
+      credentialsFile = "${config.age.secrets.gandi.path}";
+    };
+    "sorpex.jenga.xyz" = {
+      group = "nginx";
+      dnsProvider = "gandiv5";
+      credentialsFile = "${config.age.secrets.gandi.path}";
+    };
+    "tallur.jenga.xyz" = {
+      group = "nginx";
+      dnsProvider = "gandiv5";
+      credentialsFile = "${config.age.secrets.gandi.path}";
+    };
+  };
 
-  networking.firewall.interfaces.wg0.allowedTCPPorts = [80 443];
-
+  networking.firewall.interfaces.wg0.allowedTCPPorts = [80 443 53];
+  networking.firewall.interfaces.wg0.allowedUDPPorts = [53];
+  services.nsd = {
+    enable = true;
+    interfaces = ["10.100.0.6"];
+    zones = {
+      "jenga.internal" = {
+        # provideXFR = [ ... ];
+        # notify = [ ... ];
+        data = dns.lib.toString "jenga.internal" (import ../../common/jenga.internal.nix {inherit dns;});
+      };
+    };
+  };
   services.nginx = {
     enable = true;
 
@@ -323,10 +360,25 @@ in {
       "actual.jenga.xyz" = {
         listenAddresses = ["10.100.0.6"];
         forceSSL = true;
-        #enableACME = true;
         useACMEHost = "actual.jenga.xyz";
         locations."/" = {
           proxyPass = "http://127.0.0.1:5006/";
+        };
+      };
+      "sorpex.jenga.xyz" = {
+        listenAddresses = ["10.100.0.6"];
+        forceSSL = true;
+        useACMEHost = "sorpex.jenga.xyz";
+        locations."/" = {
+          proxyPass = "http://127.0.0.1:7080/";
+        };
+      };
+      "tallur.jenga.xyz" = {
+        listenAddresses = ["10.100.0.6"];
+        forceSSL = true;
+        useACMEHost = "tallur.jenga.xyz";
+        locations."/" = {
+          proxyPass = "http://127.0.0.1:7081/";
         };
       };
     };

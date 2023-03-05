@@ -27,6 +27,10 @@ in {
 
   displayOutput = "LVDS-1";
 
+  nixpkgs.config.permittedInsecurePackages = [
+    "python3.9-poetry-1.1.14"
+  ];
+
   nixpkgs.overlays = [
     (self: super: rec {
       discord = super.discord.overrideAttrs (
@@ -106,7 +110,11 @@ in {
       '';
 
       environmentFile = "${config.age.secrets.wifi.path}";
-      networks = {"Richard Gere 5G Rona".psk = "@PSK_HOME@";};
+      networks = {
+        "Richard Gere 5G Rona".psk = "@PSK_HOME@";
+        "Belong0F70DA-5G".psk = "@PSK_A@";
+        "Jeremy's iPhone".psk = "@PSK_MOB@";
+      };
     };
 
     firewall = {enable = true;};
@@ -200,6 +208,8 @@ in {
     # pimutils/khal
 
     # games
-    #dwarf-fortress-packages.dwarf-fortress-full
+    #dwarf-fortress-packages.dwarf-therapist
+    #dwarf-fortress-packages.dwarf-fortress
+    dwarf-fortress-packages.dwarf-fortress-full
   ];
 }

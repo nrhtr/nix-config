@@ -23,6 +23,10 @@
       version = "16.16.0";
       hash = "sha256-iTc9IOOBt/Hd13P36cW9N5WHbA6rCWlvf8IzxdjbLoU=";
     };
+    "16.17.1" = fetchNodeHeaders {
+      version = "16.17.1";
+      hash = "sha256-Ncy5XK8CzaO9aA2kNQqK5dZmp6nq46/lwqGz7ymu8Qg=";
+    };
   };
   yarnModulesConfig = {
     better-sqlite3 = {
