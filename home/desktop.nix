@@ -66,7 +66,7 @@ in {
 
       programs.rtorrent = {
         enable = true;
-        settings = ''
+        extraConfig = ''
           # Instance layout (base paths)
           method.insert = cfg.basedir,  private|const|string, (cat,"/home/jenga/rtorrent/")
           method.insert = cfg.download, private|const|string, (cat,(cfg.basedir),"download/")
@@ -174,9 +174,7 @@ in {
         enable = true;
         bars = {
           default = {
-            settings = {
-              theme = "solarized-light";
-            };
+            settings = {theme = "solarized-light";};
             blocks = [
               {
                 block = "disk_space";
@@ -225,67 +223,65 @@ in {
 
             modules-left = ["custom/power" "custom/grab" "sway/workspaces" "sway/mode"];
             modules-center = ["sway/window"];
-            modules-right = ["pulseaudio" "mpd" "battery" "network" "custom/wg" "clock" "tray"];
+            modules-right = [
+              "pulseaudio"
+              "mpd"
+              "battery"
+              "network"
+              "custom/wg"
+              "clock"
+              "tray"
+            ];
 
-            modules = {
-              "network" = {
-                "format-wifi" = " {signalStrength}%";
-                "format-ethernet" = "{ifname} ";
-                "tooltip-format-wifi" = "{essid}";
+            "network" = {
+              "format-wifi" = " {signalStrength}%";
+              "format-ethernet" = "{ifname} ";
+              "tooltip-format-wifi" = "{essid}";
+            };
+            "sway/workspaces" = {
+              disable-scroll = true;
+              all-outputs = true;
+              #current-only = true;
+            };
+            "custom/grab" = {
+              format = "";
+              on-click = "sh -c '(sleep 1; ${pkgs.sway-contrib.grimshot}/bin/grimshot copy area)' & disown";
+            };
+            "custom/power" = {
+              format = "";
+              #on-click = "${pkgs.sway}/bin/swaynag --background=${base00} -t warning -m 'Power Menu Options' -b '⏻︁ Power off'  'shutdown -P now' -b '↻︁ Restart' 'shutdown -r now' -b '🛌︁ Hibernate' 'systemctl hibernate' -b '🛌︁ Hybrid-sleep' 'systemctl hybrid-sleep' -b '🛌︁ Suspend' 'systemctl suspend' -b '︁ Logout' 'swaymsg exit' -b ' Lock' 'swaylock-fancy'";
+              on-click = "${pkgs.sway}/bin/swaynag --background=${base01} -t warning -m 'Power Menu Options' -b '⏻︁ Power off'  'shutdown -P now' -b '↻︁ Restart' 'shutdown -r now' -b '🛌︁ Hibernate' 'systemctl hibernate' -b '🛌︁ Hybrid-sleep' 'systemctl hybrid-sleep' -b '🛌︁ Suspend' 'systemctl suspend' -b '  Logout' 'swaymsg exit' -b ' Lock' 'swaylock-fancy'";
+            };
+            "custom/wg" = {
+              format = "🔒";
+              #exec = "sudo ${pkgs.wireguard}/bin/wg show#";
+            };
+            "mpd" = {
+              max-length = 30;
+              on-click = "${pkgs.mpc_cli}/bin/mpc toggle";
+              format = "{stateIcon} ~ {consumeIcon}{randomIcon}{repeatIcon}{singleIcon}{artist} - {album} - {title}";
+              format-disconnected = "Disconnected ";
+              format-stopped = "{consumeIcon}{randomIcon}{repeatIcon}{singleIcon}Stopped ";
+              interval = 2;
+              consume-icons = {on = " ";};
+              random-icons = {on = " ";};
+              repeat-icons = {on = " ";};
+              single-icons = {on = "1 ";};
+              state-icons = {
+                paused = "";
+                playing = "";
               };
-              "sway/workspaces" = {
-                disable-scroll = true;
-                all-outputs = true;
-                #current-only = true;
+            };
+            "pulseaudio" = {
+              format = "{icon} {volume}%";
+              format-icons = {
+                "headphones" = "";
+                "default" = ["" ""];
               };
-              "custom/grab" = {
-                format = "";
-                on-click = "sh -c '(sleep 1; ${pkgs.sway-contrib.grimshot}/bin/grimshot copy area)' & disown";
-              };
-              "custom/power" = {
-                format = "";
-                #on-click = "${pkgs.sway}/bin/swaynag --background=${base00} -t warning -m 'Power Menu Options' -b '⏻︁ Power off'  'shutdown -P now' -b '↻︁ Restart' 'shutdown -r now' -b '🛌︁ Hibernate' 'systemctl hibernate' -b '🛌︁ Hybrid-sleep' 'systemctl hybrid-sleep' -b '🛌︁ Suspend' 'systemctl suspend' -b '︁ Logout' 'swaymsg exit' -b ' Lock' 'swaylock-fancy'";
-                on-click = "${pkgs.sway}/bin/swaynag --background=${base01} -t warning -m 'Power Menu Options' -b '⏻︁ Power off'  'shutdown -P now' -b '↻︁ Restart' 'shutdown -r now' -b '🛌︁ Hibernate' 'systemctl hibernate' -b '🛌︁ Hybrid-sleep' 'systemctl hybrid-sleep' -b '🛌︁ Suspend' 'systemctl suspend' -b '  Logout' 'swaymsg exit' -b ' Lock' 'swaylock-fancy'";
-              };
-              "custom/wg" = {
-                format = "🔒";
-                #exec = "sudo ${pkgs.wireguard}/bin/wg show#";
-              };
-              "mpd" = {
-                max-length = 30;
-                on-click = "${pkgs.mpc_cli}/bin/mpc toggle";
-                format = "{stateIcon} ~ {consumeIcon}{randomIcon}{repeatIcon}{singleIcon}{artist} - {album} - {title}";
-                format-disconnected = "Disconnected ";
-                format-stopped = "{consumeIcon}{randomIcon}{repeatIcon}{singleIcon}Stopped ";
-                interval = 2;
-                consume-icons = {
-                  on = " ";
-                };
-                random-icons = {
-                  on = " ";
-                };
-                repeat-icons = {
-                  on = " ";
-                };
-                single-icons = {
-                  on = "1 ";
-                };
-                state-icons = {
-                  paused = "";
-                  playing = "";
-                };
-              };
-              "pulseaudio" = {
-                format = "{icon} {volume}%";
-                format-icons = {
-                  "headphones" = "";
-                  "default" = ["" ""];
-                };
-              };
-              "battery" = {
-                format = "{icon} {capacity}%";
-                format-icons = ["" "" "" "" ""];
-              };
+            };
+            "battery" = {
+              format = "{icon} {capacity}%";
+              format-icons = ["" "" "" "" ""];
             };
           }
         ];

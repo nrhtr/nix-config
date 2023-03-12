@@ -4,6 +4,7 @@
   ...
 }: {
   imports = [
+    ./common.nix
     ./terminal.nix
     ./borg.nix
     ./colours.nix

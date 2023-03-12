@@ -6,9 +6,7 @@ with dns.lib.combinators; {
     serial = 2023030500;
   };
 
-  NS = [
-    "nix02.jenga.internal."
-  ];
+  NS = ["nix02.jenga.internal."];
 
   subdomains = rec {
     nix01.A = ["10.100.0.1"];
