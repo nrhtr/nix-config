@@ -329,6 +329,11 @@ in {
       dnsProvider = "gandiv5";
       credentialsFile = "${config.age.secrets.gandi.path}";
     };
+    "fonpub.jenga.xyz" = {
+      group = "nginx";
+      dnsProvider = "gandiv5";
+      credentialsFile = "${config.age.secrets.gandi.path}";
+    };
   };
 
   networking.firewall.interfaces.wg0.allowedTCPPorts = [80 443 53];
@@ -379,6 +384,14 @@ in {
         useACMEHost = "tallur.jenga.xyz";
         locations."/" = {
           proxyPass = "http://127.0.0.1:7081/";
+        };
+      };
+      "fonpub.jenga.xyz" = {
+        listenAddresses = ["10.100.0.6"];
+        forceSSL = true;
+        useACMEHost = "fonpub.jenga.xyz";
+        locations."/" = {
+          proxyPass = "http://127.0.0.1:7082/";
         };
       };
     };
