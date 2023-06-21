@@ -36,7 +36,7 @@ in {
     fonts.fonts = with pkgs; [
       dejavu_fonts
       font-awesome_4
-      nerdfonts
+      #nerdfonts
       terminus_font
       inconsolata
     ];
@@ -64,9 +64,11 @@ in {
         dmenu-wayland
       ];
 
+      services.blueman-applet.enable = true;
+
       programs.rtorrent = {
         enable = true;
-        extraConfig = ''
+        settings = ''
           # Instance layout (base paths)
           method.insert = cfg.basedir,  private|const|string, (cat,"/home/jenga/rtorrent/")
           method.insert = cfg.download, private|const|string, (cat,(cfg.basedir),"download/")

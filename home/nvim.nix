@@ -40,6 +40,7 @@ in rec {
         zig-vim
         nerdcommenter
         vim-clap
+        vim-autoformat
         #vim-nixhash
         {
           config = ''
@@ -65,6 +66,10 @@ in rec {
         if has('syntax')
         syntax on
         endif
+
+        au BufWrite * :Autoformat
+        let g:formatdef_alejandra = '"nix run nixpkgs#alejandra"'
+        let g:formatters_nix = ['alejandra']
 
         set autoindent
         set expandtab

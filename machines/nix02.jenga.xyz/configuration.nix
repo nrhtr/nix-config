@@ -188,7 +188,7 @@ in {
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "21.11"; # Did you read the comment?
+  system.stateVersion = "22.05"; # Did you read the comment?
 
   # mstp setup
   programs.msmtp = {
@@ -289,7 +289,7 @@ in {
 
   virtualisation.oci-containers = {
     containers = let
-      docker = import ../../modules/actual/docker.nix;
+      docker = import ../../modules/actual/docker.nix {inherit pkgs;};
     in {
       actual-server = {
         autoStart = true;

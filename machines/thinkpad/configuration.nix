@@ -45,7 +45,9 @@ in {
           sha256 = "11wd8r8n9y3qd1da52hzhyzxvif3129p2ka7gannkdm7bkjxd4df";
         };
       });
-      silk-guardian = self.callPackage ../../packages/silk-guardian/default.nix {};
+      silk-guardian = self.callPackage ../../packages/silk-guardian/default.nix {
+        linuxPackages = config.boot.kernelPackages;
+      };
       jsonfui = self.callPackage ./../../packages/jsonfui/default.nix {};
       darktable = self.callPackage ./../../packages/darktable/default.nix {};
       wine = super.wine.override {wineBuild = "wine64";};
@@ -65,19 +67,19 @@ in {
   services.smartd.defaults.monitored = "-a -o on -s (S/../.././02|L/../../7/04)";
 
   # Auto-update laptop since we don't deploy with morph
-  system.autoUpgrade.enable = true;
+  #system.autoUpgrade.enable = true;
 
   # Distribute builds to nix02 (consider nix01?)
-  #nix.distributedBuilds = true;
+  nix.distributedBuilds = true;
   nix.extraOptions = ''
     builders-use-substitutes = true
   '';
   nix.buildMachines = [
-    {
-      hostName = "local";
-      system = "x86_64-linux";
-      speedFactor = 1;
-    }
+    #{
+    #hostName = "local";
+    #system = "x86_64-linux";
+    #speedFactor = 1;
+    #}
     {
       #hostName = "95.217.114.169";
       hostName = "nix02";
@@ -85,6 +87,7 @@ in {
       sshUser = "root";
       sshKey = "/root/.ssh/id_ed25519";
       speedFactor = 4;
+      supportedFeatures = ["big-parallel"];
     }
   ];
 
@@ -97,6 +100,20 @@ in {
 
   boot.extraModulePackages = [pkgs.silk-guardian];
   boot.kernelModules = ["silk"];
+
+  # https://github.com/NixOS/nixpkgs/issues/220914
+  /*
+  boot.kernelPackages = pkgs.linuxPackagesFor (pkgs.linux_5_15.override {
+    argsOverride = rec {
+      src = pkgs.fetchurl {
+        url = "mirror://kernel/linux/kernel/v5.x/linux-${version}.tar.xz";
+        sha256 = "sha256-uTkgZrCrZxWFoaTLdL0QcmTvpGI5WlbcCBfMwPHQwC0=";
+      };
+      version = "5.15.101";
+      modDirVersion = "5.15.101";
+    };
+  });
+  */
 
   age.secrets.wifi.file = ../../secrets/wifi.age;
   age.identityPaths = [/etc/ssh/ssh_host_ed25519_key];
