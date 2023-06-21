@@ -101,20 +101,6 @@ in {
   boot.extraModulePackages = [pkgs.silk-guardian];
   boot.kernelModules = ["silk"];
 
-  # https://github.com/NixOS/nixpkgs/issues/220914
-  /*
-  boot.kernelPackages = pkgs.linuxPackagesFor (pkgs.linux_5_15.override {
-    argsOverride = rec {
-      src = pkgs.fetchurl {
-        url = "mirror://kernel/linux/kernel/v5.x/linux-${version}.tar.xz";
-        sha256 = "sha256-uTkgZrCrZxWFoaTLdL0QcmTvpGI5WlbcCBfMwPHQwC0=";
-      };
-      version = "5.15.101";
-      modDirVersion = "5.15.101";
-    };
-  });
-  */
-
   age.secrets.wifi.file = ../../secrets/wifi.age;
   age.identityPaths = [/etc/ssh/ssh_host_ed25519_key];
   networking = {
