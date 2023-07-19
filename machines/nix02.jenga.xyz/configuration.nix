@@ -70,6 +70,7 @@ in {
     #../../home/terminal.nix
 
     ../../common/shared.nix
+    ../../modules/genesis.nix
   ];
 
   age.secrets = {

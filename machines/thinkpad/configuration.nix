@@ -36,15 +36,6 @@ in {
       discord = super.discord.overrideAttrs (
         _: {src = builtins.fetchTarball "https://discord.com/api/download?platform=linux&format=tar.gz";}
       );
-      luakit = super.luakit.overrideAttrs (old: rec {
-        version = "2.1";
-        src = super.fetchFromGitHub {
-          owner = "luakit";
-          repo = "luakit";
-          rev = version;
-          sha256 = "11wd8r8n9y3qd1da52hzhyzxvif3129p2ka7gannkdm7bkjxd4df";
-        };
-      });
       silk-guardian = self.callPackage ../../packages/silk-guardian/default.nix {
         linuxPackages = config.boot.kernelPackages;
       };
@@ -52,10 +43,6 @@ in {
       darktable = self.callPackage ./../../packages/darktable/default.nix {};
       wine = super.wine.override {wineBuild = "wine64";};
     })
-    #(import "${
-    #builtins.fetchTarball
-    #"https://github.com/vlaci/openconnect-sso/archive/master.tar.gz"
-    #}/overlay.nix")
   ];
 
   services.blueman.enable = true;
