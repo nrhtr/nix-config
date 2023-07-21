@@ -191,6 +191,7 @@ in {
       buildInputs = lib.lists.remove samba old.buildInputs;
     }))
     mpv
+    blightmud
 
     # ???
     linuxPackages.acpi_call

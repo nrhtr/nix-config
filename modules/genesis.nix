@@ -6,7 +6,6 @@
 }:
 with lib; let
   cfg = config.services.genesis;
-
   package = pkgs.genesis;
 in {
   options = {
@@ -33,6 +32,12 @@ in {
         description = "Group under which Genesis runs.";
       };
 
+      hostname = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        description = "Hostname to pass to Genesis server. By default it will use the host's DNS name.";
+      };
+
       dataDir = mkOption {
         type = types.path;
         default = "/var/lib/genesis";
@@ -49,6 +54,8 @@ in {
     users.users = mkIf (cfg.user == "genesis") {
       genesis = {
         group = cfg.group;
+        home = cfg.dataDir;
+        createHome = true;
         isSystemUser = true;
       };
     };
@@ -63,8 +70,14 @@ in {
       wantedBy = ["multi-user.target"];
 
       serviceConfig = {
-        ExecStart = "${cfg.package}/bin/genesis -ld stdout -lg stdout";
-        Restart = "always";
+        Type = "forking";
+        ExecStart =
+          "${cfg.package}/bin/genesis -ld stdout -lg stdout "
+          + lib.optionalString (cfg.hostname != null) " -n ${cfg.hostname}";
+        Restart = "on-failure";
+        RestartSec = 5;
+        User = cfg.user;
+        Group = cfg.group;
 
         WorkingDirectory = cfg.dataDir;
       };

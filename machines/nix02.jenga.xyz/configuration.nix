@@ -109,6 +109,7 @@ in {
   nixpkgs.overlays = [
     (self: super: {
       zfsStable = customizeZfs super.zfsStable;
+      genesis = self.callPackage ./../../packages/genesis/default.nix {};
     })
   ];
 
@@ -335,10 +336,24 @@ in {
       dnsProvider = "gandiv5";
       credentialsFile = "${config.age.secrets.gandi.path}";
     };
+    "tlon.jenga.xyz" = {
+      group = "nginx";
+      dnsProvider = "gandiv5";
+      credentialsFile = "${config.age.secrets.gandi.path}";
+    };
   };
 
   networking.firewall.interfaces.wg0.allowedTCPPorts = [80 443 53];
   networking.firewall.interfaces.wg0.allowedUDPPorts = [53];
+
+  networking.firewall = {
+    # genesis terminal / HTTP UI
+    allowedTCPPorts = [1138 1180];
+  };
+
+  services.genesis.enable = true;
+  services.genesis.hostname = "tlon.jenga.xyz";
+
   services.nsd = {
     enable = true;
     interfaces = ["10.100.0.6"];
@@ -350,6 +365,7 @@ in {
       };
     };
   };
+
   services.nginx = {
     enable = true;
 
@@ -393,6 +409,13 @@ in {
         useACMEHost = "fonpub.jenga.xyz";
         locations."/" = {
           proxyPass = "http://127.0.0.1:7082/";
+        };
+      };
+      "tlon.jenga.xyz" = {
+        forceSSL = true;
+        useACMEHost = "tlon.jenga.xyz";
+        locations."/" = {
+          proxyPass = "http://127.0.0.1:1180/";
         };
       };
     };
