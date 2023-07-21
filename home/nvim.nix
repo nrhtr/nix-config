@@ -41,6 +41,7 @@ in rec {
         nerdcommenter
         vim-clap
         vim-autoformat
+        editorconfig-nvim
         #vim-nixhash
         {
           config = ''
