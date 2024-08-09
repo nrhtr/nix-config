@@ -33,7 +33,7 @@ in {
     time.timeZone = "Australia/Melbourne";
     programs.sway.enable = true;
 
-    fonts.fonts = with pkgs; [
+    fonts.packages = with pkgs; [
       dejavu_fonts
       font-awesome_4
       #nerdfonts
@@ -69,7 +69,7 @@ in {
 
       programs.rtorrent = {
         enable = true;
-        settings = ''
+        extraConfig = ''
           # Instance layout (base paths)
           method.insert = cfg.basedir,  private|const|string, (cat,"/home/jenga/rtorrent/")
           method.insert = cfg.download, private|const|string, (cat,(cfg.basedir),"download/")

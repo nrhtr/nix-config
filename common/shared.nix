@@ -66,7 +66,7 @@ in {
   };
 
   services.openssh.enable = lib.mkDefault true;
-  services.openssh.permitRootLogin = "prohibit-password";
+  services.openssh.settings.permitRootLogin = "prohibit-password";
   services.openssh.ports = [18061];
 
   users.users.root.openssh.authorizedKeys.keys =
