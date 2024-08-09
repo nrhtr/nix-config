@@ -15,8 +15,8 @@ stdenv.mkDerivation rec {
   src = fetchFromGitHub {
     owner = "the-cold-dark";
     repo = pname;
-    rev = "f85ca991893a25d1e06a30b97b36e3c9ce7887b8";
-    hash = "sha256-xUDuVxEUEtcTYZWtNeutLMXsuIgWBFF0N3GEpLmXrd0";
+    rev = "8f32d36dcfb77cbb84f0306b3b2780feb25ecaf2";
+    hash = "sha256-wx9iYpE3F7PBop8oym/YTmV3uDylImfspE9ZQEWSmhU=";
   };
 
   nativeBuildInputs = [

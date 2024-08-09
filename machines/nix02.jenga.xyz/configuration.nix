@@ -71,6 +71,8 @@ in {
 
     ../../common/shared.nix
     ../../modules/genesis.nix
+    # override module using python 2 package
+    ../../modules/websockify.nix
   ];
 
   age.secrets = {
@@ -348,7 +350,7 @@ in {
 
   networking.firewall = {
     # genesis terminal / HTTP UI
-    allowedTCPPorts = [1138 1180];
+    allowedTCPPorts = [443 1138];
   };
 
   services.genesis.enable = true;
@@ -414,10 +416,31 @@ in {
       "tlon.jenga.xyz" = {
         forceSSL = true;
         useACMEHost = "tlon.jenga.xyz";
-        locations."/" = {
-          proxyPass = "http://127.0.0.1:1180/";
+        root = "/var/www/tlon.jenga.xyz";
+
+        locations = {
+          "^~ /file/" = {
+            alias = "/var/www/tlon.jenga.xyz/file/";
+          };
+          "^~ /client/" = {
+            alias = "/var/www/tlon.jenga.xyz/client/";
+          };
+          "/connect" = {
+            proxyPass = "http://127.0.0.1:8138";
+            proxyWebsockets = true;
+          };
+          "/" = {
+            proxyPass = "http://127.0.0.1:1180/";
+          };
         };
       };
+    };
+  };
+
+  services.networking.my_websockify = {
+    enable = true;
+    portMap = {
+      "8138" = 1138;
     };
   };
 

@@ -45,6 +45,7 @@ in {
     })
   ];
 
+  services.locate.enable = true;
   services.blueman.enable = true;
 
   # iphone
@@ -192,6 +193,8 @@ in {
     }))
     mpv
     blightmud
+
+    waynergy
 
     # ???
     linuxPackages.acpi_call
