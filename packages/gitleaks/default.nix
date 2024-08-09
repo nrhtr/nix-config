@@ -1,8 +1,8 @@
-{ lib
-, buildGoModule
-, fetchFromGitHub
+{
+  lib,
+  buildGoModule,
+  fetchFromGitHub,
 }:
-
 buildGoModule rec {
   pname = "gitleaks";
   version = "8.8.12";
@@ -14,7 +14,7 @@ buildGoModule rec {
     sha256 = "sha256-rrTZuDMKZqDWFHbnqDbPd5L6g7ff1lZpSpwTgYFd0Uw=";
   };
 
-  vendorSha256 = "sha256-X8z9iKRR3PptNHwy1clZG8QsClsjbW45nZb2fHGfSYk=";
+  vendorHash = "sha256-X8z9iKRR3PptNHwy1clZG8QsClsjbW45nZb2fHGfSYk=";
 
   ldflags = [
     "-s"
@@ -32,7 +32,7 @@ buildGoModule rec {
       API keys and tokens in git repos.
     '';
     homepage = "https://github.com/zricethezav/gitleaks";
-    license = with licenses; [ mit ];
-    maintainers = with maintainers; [ fab ];
+    license = with licenses; [mit];
+    maintainers = with maintainers; [fab];
   };
 }

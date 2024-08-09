@@ -36,7 +36,7 @@ in {
     tmux
     file
     docker
-    nixfmt
+    nixfmt-classic
     niv
     (pkgs.callPackage <agenix/pkgs/agenix.nix> {})
   ];
