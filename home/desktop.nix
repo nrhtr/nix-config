@@ -641,12 +641,12 @@ in {
               };
           in {
             "LVDS-1" = {
-              #bg = "/home/jenga/jenga/wallpaper/active/gjGGKe9.png fill";
+              bg = "/home/jenga/jenga/wallpaper/active/Tc5Pp6v.jpg fill";
               #bg = "${mkWallpaper config.colorscheme} fill";
               #bg = "${
-              #recolorWallpaper
-              #/home/jenga/jenga/wallpaper/active/gjGGKe9.png
-              #config.colorscheme
+              #  recolorWallpaper
+              #  /home/jenga/jenga/wallpaper/active/gjGGKe9.png
+              #  config.colorscheme
               #} fill";
             };
           };
