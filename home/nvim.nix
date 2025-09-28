@@ -34,25 +34,25 @@ in rec {
       vimAlias = true;
 
       plugins = with pkgs.vimPlugins; [
-        vim-nix
+        #vim-nix
         vim-fugitive
         vim-terraform
         zig-vim
         nerdcommenter
         vim-clap
-        vim-autoformat
+        #vim-autoformat
         editorconfig-nvim
         #vim-nixhash
-        {
-          config = ''
-            nmap X  <Plug>(ExecThatThingNormal)
-            vmap X  <Plug>(ExecThatThingVisual)
-            omap il <Plug>(InnerLineMotion)
-            omap ic <Plug>(InnerCommandMotion)
-            nmap <Return> Xic
-          '';
-          plugin = executeThatThing;
-        }
+        #{
+        #config = ''
+        #nmap X  <Plug>(ExecThatThingNormal)
+        #vmap X  <Plug>(ExecThatThingVisual)
+        #omap il <Plug>(InnerLineMotion)
+        #omap ic <Plug>(InnerCommandMotion)
+        #nmap <Return> Xic
+        #'';
+        #plugin = executeThatThing;
+        #}
         {
           plugin = vimThemeFromScheme {scheme = config.colorscheme;};
           config = "colorscheme nix-${config.colorscheme.slug}";

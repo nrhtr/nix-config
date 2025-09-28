@@ -100,11 +100,12 @@ in {
         ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=wheel
       '';
 
-      environmentFile = "${config.age.secrets.wifi.path}";
+      secretsFile = "${config.age.secrets.wifi.path}";
       networks = {
-        "Richard Gere 5G Rona".psk = "@PSK_HOME@";
-        "Belong0F70DA-5G".psk = "@PSK_A@";
-        "Jeremy's iPhone".psk = "@PSK_MOB@";
+        "TelstraD3CE90".pskRaw = "ext:PSK_TSM";
+        #"Richard Gere 5G Rona".psk = "ext:PSK_HOME";
+        #"Belong0F70DA-5G".psk = "ext:PSK_A";
+        #"Jeremy's iPhone".psk = "ext:PSK_MOB";
       };
     };
 

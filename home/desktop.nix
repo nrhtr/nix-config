@@ -49,9 +49,9 @@ in {
     # Auto-login TTY
     services.getty.autologinUser = "jenga";
 
-    sound.enable = true;
+    #sound.enable = true;
     hardware.bluetooth.enable = true;
-    hardware.pulseaudio.enable = true;
+    #hardware.pulseaudio.enable = true;
     users.extraUsers.jenga.extraGroups = ["audio" "docker"];
 
     services.gpm.enable = true;
@@ -641,8 +641,8 @@ in {
               };
           in {
             "LVDS-1" = {
-              bg = "/home/jenga/jenga/wallpaper/active/Tc5Pp6v.jpg fill";
-              #bg = "${mkWallpaper config.colorscheme} fill";
+              #bg = "/home/jenga/jenga/wallpaper/active/Tc5Pp6v.jpg fill";
+              bg = "${mkWallpaper config.colorscheme} fill";
               #bg = "${
               #  recolorWallpaper
               #  /home/jenga/jenga/wallpaper/active/gjGGKe9.png
