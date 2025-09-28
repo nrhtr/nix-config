@@ -39,7 +39,7 @@
         }
         {
           # nix02.jenga.xyz
-          publicKey = "WbvPXoAJtKFr9A2uiCj+Y++tA8Iyh2Yp5HI7/NTzIxA=";
+          publicKey = "NPR39BYbGOVnDljmP0w0dvAVbeWv6Ggp197pMBrJxgM=";
           allowedIPs = ["10.100.0.6/32"];
         }
       ];

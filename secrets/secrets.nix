@@ -6,7 +6,7 @@ let
   # Host keys
   systems = [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPmei4NEQszZh4UAZwDz3V17+Nfyxzfgx/VRi/LMebtI root@thinkpad" # lappy
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMUMFErQ3qihKCuOM/3cWLSGOuGZD3sC07p559XZor/g root@nix02" # nix02
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJoXruu0pxDUA5A29eUsVGVKADiNNBRzB/ZU3pQdlnh8 root@nix02"
   ];
   all = users ++ systems;
 in {

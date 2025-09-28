@@ -5,7 +5,14 @@ let
       url = "https://github.com/NixOS/nixpkgs/archive/nixos-25.05.tar.gz";
       sha256 = "1zb1hzpzs0i2cx62jv4ck0s5gcfj27fxpvdsqzicj7k8049sdi8p";
     })
-    {};
+    {
+      config = {
+        allowUnfree = true;
+        permittedInsecurePackages = [
+          "python3.9-poetry-1.1.12"
+        ];
+      };
+    };
 in {
   network = {
     inherit pkgs;
@@ -41,7 +48,7 @@ in {
 
     deployment.targetHost = "51.222.109.62";
     deployment.targetUser = "root";
-    #deployment.targetPort = 18061;
+    deployment.targetPort = 18061;
 
     deployment.substituteOnDestination = true;
   };

@@ -49,7 +49,7 @@
     host = "smtp.fastmail.com";
     port = "465";
     user = "jeremy@jenga.xyz";
-    #passwordeval = "cat ${config.age.secrets.fastmail-nix02.path}";
+    passwordeval = "cat ${config.age.secrets.fastmail-nix02.path}";
     from = emailFrom;
   };
 
@@ -67,7 +67,7 @@ in {
     ./hardware-configuration.nix
     ./wireguard.nix
 
-    ../../home/terminal.nix
+    #../../home/terminal.nix
 
     ../../common/shared.nix
     ../../modules/genesis.nix
@@ -115,7 +115,7 @@ in {
   nixpkgs.overlays = [
     (self: super: {
       zfsStable = customizeZfs super.zfsStable;
-      #genesis = self.callPackage ./../../packages/genesis/default.nix {};
+      genesis = self.callPackage ./../../packages/genesis/default.nix {};
     })
   ];
 
@@ -357,20 +357,20 @@ in {
     allowedTCPPorts = [443 1138];
   };
 
-  #services.genesis.enable = true;
-  #services.genesis.hostname = "tlon.jenga.xyz";
+  services.genesis.enable = true;
+  services.genesis.hostname = "tlon.jenga.xyz";
 
-  #services.nsd = {
-  #enable = true;
-  #interfaces = ["10.100.0.6"];
-  #zones = {
-  #"jenga.internal" = {
-  # provideXFR = [ ... ];
-  # notify = [ ... ];
-  #data = dns.lib.toString "jenga.internal" (import ../../common/jenga.internal.nix {inherit dns;});
-  #};
-  #};
-  #};
+  services.nsd = {
+    enable = true;
+    interfaces = ["10.100.0.6"];
+    zones = {
+      "jenga.internal" = {
+        #provideXFR = [ ... ];
+        #notify = [ ... ];
+        data = dns.lib.toString "jenga.internal" (import ../../common/jenga.internal.nix {inherit dns;});
+      };
+    };
+  };
 
   services.nginx = {
     enable = true;
@@ -387,16 +387,16 @@ in {
     virtualHosts = {
       "actual.jenga.xyz" = {
         listenAddresses = ["10.100.0.6"];
-        #forceSSL = true;
-        #useACMEHost = "actual.jenga.xyz";
+        forceSSL = true;
+        useACMEHost = "actual.jenga.xyz";
         locations."/" = {
           proxyPass = "http://127.0.0.1:5006/";
         };
       };
       "sorpex.jenga.xyz" = {
         listenAddresses = ["10.100.0.6"];
-        #forceSSL = true;
-        #useACMEHost = "sorpex.jenga.xyz";
+        forceSSL = true;
+        useACMEHost = "sorpex.jenga.xyz";
         locations."/" = {
           proxyPass = "http://127.0.0.1:7080/";
         };

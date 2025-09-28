@@ -9,12 +9,6 @@
 in {
   imports = [<agenix/modules/age.nix>];
 
-  nixpkgs.config.allowUnfree = true;
-
-  nixpkgs.config.permittedInsecurePackages = [
-    "python3.9-poetry-1.1.12"
-  ];
-
   programs.gnupg.agent = {
     enable = true;
     enableSSHSupport = true;
@@ -71,7 +65,7 @@ in {
   };
 
   services.openssh.enable = lib.mkDefault true;
-  services.openssh.settings.permitRootLogin = "prohibit-password";
+  services.openssh.settings.PermitRootLogin = "prohibit-password";
   services.openssh.ports = [18061];
 
   users.users.root.openssh.authorizedKeys.keys =
