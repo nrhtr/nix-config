@@ -65,21 +65,21 @@
 in {
   imports = [
     ./hardware-configuration.nix
-    #./wireguard.nix
+    ./wireguard.nix
 
-    #../../home/terminal.nix
+    ../../home/terminal.nix
 
-    #../../common/shared.nix
-    #../../modules/genesis.nix
+    ../../common/shared.nix
+    ../../modules/genesis.nix
     # override module using python 2 package
-    #../../modules/websockify.nix
+    ../../modules/websockify.nix
   ];
 
-  #age.secrets = {
-  #fastmail-nix02.file = ../../secrets/fastmail-nix02.age;
-  #twilio-env.file = ../../secrets/twilio-env.age;
-  #gandi.file = ../../secrets/gandi.age;
-  #};
+  age.secrets = {
+    fastmail-nix02.file = ../../secrets/fastmail-nix02.age;
+    twilio-env.file = ../../secrets/twilio-env.age;
+    gandi.file = ../../secrets/gandi.age;
+  };
 
   # We want to still be able to boot without one of these
   fileSystems."/boot-1".options = ["nofail"];
@@ -311,43 +311,43 @@ in {
 
   #hardware.opengl.enable = true;
   #hardware.opengl.extraPackages = [ pkgs.cudatoolkit ];
-  services.owncast = {
-    enable = true;
-    listen = "10.100.0.6";
-    openFirewall = true;
-  };
+  #services.owncast = {
+  #enable = true;
+  #listen = "10.100.0.6";
+  #openFirewall = true;
+  #};
 
   # Use DNS ACME challenge because I want to serve this only
   # over Wireguard but still have the conveniece of a public CA
   security.acme.defaults.email = "jeremy@jenga.xyz";
   security.acme.acceptTerms = true;
-  #security.acme.certs = {
-  #"actual.jenga.xyz" = {
-  #group = "nginx";
-  #dnsProvider = "gandiv5";
-  #credentialsFile = "${config.age.secrets.gandi.path}";
-  #};
-  #"sorpex.jenga.xyz" = {
-  #group = "nginx";
-  #dnsProvider = "gandiv5";
-  #credentialsFile = "${config.age.secrets.gandi.path}";
-  #};
-  #"tallur.jenga.xyz" = {
-  #group = "nginx";
-  #dnsProvider = "gandiv5";
-  #credentialsFile = "${config.age.secrets.gandi.path}";
-  #};
-  #"fonpub.jenga.xyz" = {
-  #group = "nginx";
-  #dnsProvider = "gandiv5";
-  #credentialsFile = "${config.age.secrets.gandi.path}";
-  #};
-  #"tlon.jenga.xyz" = {
-  #group = "nginx";
-  #dnsProvider = "gandiv5";
-  #credentialsFile = "${config.age.secrets.gandi.path}";
-  #};
-  #};
+  security.acme.certs = {
+    "actual.jenga.xyz" = {
+      group = "nginx";
+      dnsProvider = "gandiv5";
+      credentialsFile = "${config.age.secrets.gandi.path}";
+    };
+    "sorpex.jenga.xyz" = {
+      group = "nginx";
+      dnsProvider = "gandiv5";
+      credentialsFile = "${config.age.secrets.gandi.path}";
+    };
+    "tallur.jenga.xyz" = {
+      group = "nginx";
+      dnsProvider = "gandiv5";
+      credentialsFile = "${config.age.secrets.gandi.path}";
+    };
+    "fonpub.jenga.xyz" = {
+      group = "nginx";
+      dnsProvider = "gandiv5";
+      credentialsFile = "${config.age.secrets.gandi.path}";
+    };
+    "tlon.jenga.xyz" = {
+      group = "nginx";
+      dnsProvider = "gandiv5";
+      credentialsFile = "${config.age.secrets.gandi.path}";
+    };
+  };
 
   networking.firewall.interfaces.wg0.allowedTCPPorts = [80 443 53];
   networking.firewall.interfaces.wg0.allowedUDPPorts = [53];
@@ -403,23 +403,23 @@ in {
       };
       "tallur.jenga.xyz" = {
         listenAddresses = ["10.100.0.6"];
-        #forceSSL = true;
-        #useACMEHost = "tallur.jenga.xyz";
+        forceSSL = true;
+        useACMEHost = "tallur.jenga.xyz";
         locations."/" = {
           proxyPass = "http://127.0.0.1:7081/";
         };
       };
       "fonpub.jenga.xyz" = {
         listenAddresses = ["10.100.0.6"];
-        #forceSSL = true;
-        #useACMEHost = "fonpub.jenga.xyz";
+        forceSSL = true;
+        useACMEHost = "fonpub.jenga.xyz";
         locations."/" = {
           proxyPass = "http://127.0.0.1:7082/";
         };
       };
       "tlon.jenga.xyz" = {
-        #forceSSL = true;
-        #useACMEHost = "tlon.jenga.xyz";
+        forceSSL = true;
+        useACMEHost = "tlon.jenga.xyz";
         root = "/var/www/tlon.jenga.xyz";
 
         locations = {
@@ -441,12 +441,12 @@ in {
     };
   };
 
-  #services.networking.my_websockify = {
-  #enable = true;
-  #portMap = {
-  #"8138" = 1138;
-  #};
-  #};
+  services.networking.my_websockify = {
+    enable = true;
+    portMap = {
+      "8138" = 1138;
+    };
+  };
 
   programs.neovim = {
     enable = true;
