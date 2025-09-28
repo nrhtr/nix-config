@@ -7,36 +7,36 @@
 }: let
   hostName = "nix02";
 
-  rootKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINvB0TRd3YN3/aQUCC+lNivZ6pRe8iWfX0+SZdRfKDhO root@thinkpad";
-  publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB+0iNkzHDqAOYFVLpFq9vLM2lcD2J+vqucukiMNK9qY jenga@thinkpad";
-
-  # From `ls -lh /dev/disk/by-id`
-  sda = "nvme-SAMSUNG_MZVLB512HAJQ-00000_S3W8NA0N181217";
-  sdb = "nvme-SAMSUNG_MZVLB512HAJQ-00000_S3W8NA0N181248";
+  # For both initrd SSH server and root on booted system
+  authKeys = [
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINvB0TRd3YN3/aQUCC+lNivZ6pRe8iWfX0+SZdRfKDhO root@thinkpad"
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB+0iNkzHDqAOYFVLpFq9vLM2lcD2J+vqucukiMNK9qY jenga@thinkpad"
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIJBLHeD2QmiFu75rRXYKuhLLY1SpI3LCyUH5TO7iVHr jenga@minnie"
+  ];
 
   # See <https://major.io/2015/08/21/understanding-systemds-predictable-network-device-names/#picking-the-final-name>
   # for a description on how to find out the network card name reliably.
-  networkInterface = "enp34s0";
+  networkInterface = "enp5s0f0";
 
   # Needed to load the right driver before boot for the initrd SSH session.
-  networkInterfaceModule = "r8169";
+  networkInterfaceModule = "ixgbe";
 
   # From the Hetzner control panel
   ipv4 = {
-    address = "95.217.114.169"; # the ip address
-    gateway = "95.217.114.129"; # the gateway ip address
-    netmask = "255.255.255.192"; # the netmask -- might not be the same for you!
-    prefixLength = 26; # must match the netmask, see <https://www.pawprint.net/designresources/netmask-converter.php>
+    address = "51.222.109.62";
+    gateway = "51.222.109.254";
+    netmask = "255.255.255.0";
+    prefixLength = 24; # must match the netmask!
   };
   ipv6 = {
-    address = "2a01:4f9:4a:3020::1"; # the ipv6 addres
-    gateway = "fe80::1"; # the ipv6 gateway
-    prefixLength = 64; # shown in the control panel
+    address = "2607:5300:203:883e::1";
+    gateway = "2607:5300:0203:88ff:00ff:00ff:00ff:00ff";
+    prefixLength = 128;
   };
 
-  # See <https://nixos.wiki/wiki/NixOS_on_ZFS> for why we need the
-  # hostId and how to generate it
-  hostId = "7d3f6bd3";
+  # Required for ZFS, even with only local disks
+  # cat /etc/machine-id  | head -c8
+  hostId = "cd33d586";
 
   # Mail sender / recepient
   emailTo = "jeremy@jenga.xyz"; # where to send the notifications
@@ -49,7 +49,7 @@
     host = "smtp.fastmail.com";
     port = "465";
     user = "jeremy@jenga.xyz";
-    passwordeval = "cat ${config.age.secrets.fastmail-nix02.path}";
+    #passwordeval = "cat ${config.age.secrets.fastmail-nix02.path}";
     from = emailFrom;
   };
 
@@ -65,44 +65,48 @@
 in {
   imports = [
     ./hardware-configuration.nix
-    ./wireguard.nix
+    #./wireguard.nix
 
     #../../home/terminal.nix
 
-    ../../common/shared.nix
-    ../../modules/genesis.nix
+    #../../common/shared.nix
+    #../../modules/genesis.nix
     # override module using python 2 package
-    ../../modules/websockify.nix
+    #../../modules/websockify.nix
   ];
 
-  age.secrets = {
-    fastmail-nix02.file = ../../secrets/fastmail-nix02.age;
-    twilio-env.file = ../../secrets/twilio-env.age;
-    gandi.file = ../../secrets/gandi.age;
-  };
+  #age.secrets = {
+  #fastmail-nix02.file = ../../secrets/fastmail-nix02.age;
+  #twilio-env.file = ../../secrets/twilio-env.age;
+  #gandi.file = ../../secrets/gandi.age;
+  #};
 
   # We want to still be able to boot without one of these
   fileSystems."/boot-1".options = ["nofail"];
   fileSystems."/boot-2".options = ["nofail"];
 
   # Use GRUB2 as the boot loader.
-  # We don't use systemd-boot because Hetzner uses BIOS legacy boot.
+  # We don't use systemd-boot because I haven't looked into support for mirrored boot
   boot.loader.systemd-boot.enable = false;
+  boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.grub = {
     enable = true;
-    efiSupport = false;
+    efiSupport = true;
   };
 
   # This will mirror all UEFI files, kernels, grub menus and
   # things needed to boot to the other drive.
+  # We set 'nodev' and specify EFI paths since we're booting with UEFI
   boot.loader.grub.mirroredBoots = [
     {
       path = "/boot-1";
-      devices = ["/dev/disk/by-id/${sda}"];
+      efiSysMountPoint = "/boot-1";
+      devices = ["nodev"];
     }
     {
       path = "/boot-2";
-      devices = ["/dev/disk/by-id/${sdb}"];
+      efiSysMountPoint = "/boot-2";
+      devices = ["nodev"];
     }
   ];
 
@@ -111,7 +115,7 @@ in {
   nixpkgs.overlays = [
     (self: super: {
       zfsStable = customizeZfs super.zfsStable;
-      genesis = self.callPackage ./../../packages/genesis/default.nix {};
+      #genesis = self.callPackage ./../../packages/genesis/default.nix {};
     })
   ];
 
@@ -162,9 +166,7 @@ in {
         /boot-2/initrd-ssh-key
       ];
 
-      authorizedKeys = [
-        publicKey
-      ];
+      authorizedKeys = authKeys;
     };
 
     # this will automatically load the zfs password prompt on login
@@ -183,7 +185,7 @@ in {
   };
 
   # SSH
-  users.users.root.openssh.authorizedKeys.keys = [publicKey rootKey];
+  users.users.root.openssh.authorizedKeys.keys = authKeys;
   services.openssh.enable = true;
 
   # This value determines the NixOS release from which the default
@@ -268,16 +270,16 @@ in {
     timerConfig.OnCalendar = "weekly";
   };
 
-  systemd.services."wakeup" = {
-    description = "Morning wake up call";
-    serviceConfig = {
-      Type = "oneshot";
-      EnvironmentFile = "${config.age.secrets.twilio-env.path}";
-      ExecStart = "${pkgs.writers.writePython3 "call.py" {libraries = [pkgs.python39Packages.twilio];} ./call.py}";
-      Restart = "on-failure";
-    };
-    startAt = "*-*-* 06:35:00 Australia/Melbourne";
-  };
+  #systemd.services."wakeup" = {
+  #description = "Morning wake up call";
+  #serviceConfig = {
+  #Type = "oneshot";
+  #EnvironmentFile = "${config.age.secrets.twilio-env.path}";
+  #ExecStart = "${pkgs.writers.writePython3 "call.py" {libraries = [pkgs.python39Packages.twilio];} ./call.py}";
+  #Restart = "on-failure";
+  #};
+  #startAt = "*-*-* 06:35:00 Australia/Melbourne";
+  #};
 
   virtualisation.podman.enable = true;
   virtualisation.podman.dockerCompat = true;
@@ -291,21 +293,21 @@ in {
     };
   };
 
-  virtualisation.oci-containers = {
-    containers = let
-      docker = import ../../modules/actual/docker.nix {inherit pkgs;};
-    in {
-      actual-server = {
-        autoStart = true;
-        imageFile = docker.image;
-        image = docker.name;
-        ports = ["5006:5006"];
-        volumes = [
-          "/data/actual:/data"
-        ];
-      };
-    };
-  };
+  #virtualisation.oci-containers = {
+  #containers = let
+  #docker = import ../../modules/actual/docker.nix {inherit pkgs;};
+  #in {
+  #actual-server = {
+  #autoStart = true;
+  #imageFile = docker.image;
+  #image = docker.name;
+  #ports = ["5006:5006"];
+  #volumes = [
+  #"/data/actual:/data"
+  #];
+  #};
+  #};
+  #};
 
   #hardware.opengl.enable = true;
   #hardware.opengl.extraPackages = [ pkgs.cudatoolkit ];
@@ -317,33 +319,35 @@ in {
 
   # Use DNS ACME challenge because I want to serve this only
   # over Wireguard but still have the conveniece of a public CA
-  security.acme.certs = {
-    "actual.jenga.xyz" = {
-      group = "nginx";
-      dnsProvider = "gandiv5";
-      credentialsFile = "${config.age.secrets.gandi.path}";
-    };
-    "sorpex.jenga.xyz" = {
-      group = "nginx";
-      dnsProvider = "gandiv5";
-      credentialsFile = "${config.age.secrets.gandi.path}";
-    };
-    "tallur.jenga.xyz" = {
-      group = "nginx";
-      dnsProvider = "gandiv5";
-      credentialsFile = "${config.age.secrets.gandi.path}";
-    };
-    "fonpub.jenga.xyz" = {
-      group = "nginx";
-      dnsProvider = "gandiv5";
-      credentialsFile = "${config.age.secrets.gandi.path}";
-    };
-    "tlon.jenga.xyz" = {
-      group = "nginx";
-      dnsProvider = "gandiv5";
-      credentialsFile = "${config.age.secrets.gandi.path}";
-    };
-  };
+  security.acme.defaults.email = "jeremy@jenga.xyz";
+  security.acme.acceptTerms = true;
+  #security.acme.certs = {
+  #"actual.jenga.xyz" = {
+  #group = "nginx";
+  #dnsProvider = "gandiv5";
+  #credentialsFile = "${config.age.secrets.gandi.path}";
+  #};
+  #"sorpex.jenga.xyz" = {
+  #group = "nginx";
+  #dnsProvider = "gandiv5";
+  #credentialsFile = "${config.age.secrets.gandi.path}";
+  #};
+  #"tallur.jenga.xyz" = {
+  #group = "nginx";
+  #dnsProvider = "gandiv5";
+  #credentialsFile = "${config.age.secrets.gandi.path}";
+  #};
+  #"fonpub.jenga.xyz" = {
+  #group = "nginx";
+  #dnsProvider = "gandiv5";
+  #credentialsFile = "${config.age.secrets.gandi.path}";
+  #};
+  #"tlon.jenga.xyz" = {
+  #group = "nginx";
+  #dnsProvider = "gandiv5";
+  #credentialsFile = "${config.age.secrets.gandi.path}";
+  #};
+  #};
 
   networking.firewall.interfaces.wg0.allowedTCPPorts = [80 443 53];
   networking.firewall.interfaces.wg0.allowedUDPPorts = [53];
@@ -353,20 +357,20 @@ in {
     allowedTCPPorts = [443 1138];
   };
 
-  services.genesis.enable = true;
-  services.genesis.hostname = "tlon.jenga.xyz";
+  #services.genesis.enable = true;
+  #services.genesis.hostname = "tlon.jenga.xyz";
 
-  services.nsd = {
-    enable = true;
-    interfaces = ["10.100.0.6"];
-    zones = {
-      "jenga.internal" = {
-        # provideXFR = [ ... ];
-        # notify = [ ... ];
-        data = dns.lib.toString "jenga.internal" (import ../../common/jenga.internal.nix {inherit dns;});
-      };
-    };
-  };
+  #services.nsd = {
+  #enable = true;
+  #interfaces = ["10.100.0.6"];
+  #zones = {
+  #"jenga.internal" = {
+  # provideXFR = [ ... ];
+  # notify = [ ... ];
+  #data = dns.lib.toString "jenga.internal" (import ../../common/jenga.internal.nix {inherit dns;});
+  #};
+  #};
+  #};
 
   services.nginx = {
     enable = true;
@@ -383,39 +387,39 @@ in {
     virtualHosts = {
       "actual.jenga.xyz" = {
         listenAddresses = ["10.100.0.6"];
-        forceSSL = true;
-        useACMEHost = "actual.jenga.xyz";
+        #forceSSL = true;
+        #useACMEHost = "actual.jenga.xyz";
         locations."/" = {
           proxyPass = "http://127.0.0.1:5006/";
         };
       };
       "sorpex.jenga.xyz" = {
         listenAddresses = ["10.100.0.6"];
-        forceSSL = true;
-        useACMEHost = "sorpex.jenga.xyz";
+        #forceSSL = true;
+        #useACMEHost = "sorpex.jenga.xyz";
         locations."/" = {
           proxyPass = "http://127.0.0.1:7080/";
         };
       };
       "tallur.jenga.xyz" = {
         listenAddresses = ["10.100.0.6"];
-        forceSSL = true;
-        useACMEHost = "tallur.jenga.xyz";
+        #forceSSL = true;
+        #useACMEHost = "tallur.jenga.xyz";
         locations."/" = {
           proxyPass = "http://127.0.0.1:7081/";
         };
       };
       "fonpub.jenga.xyz" = {
         listenAddresses = ["10.100.0.6"];
-        forceSSL = true;
-        useACMEHost = "fonpub.jenga.xyz";
+        #forceSSL = true;
+        #useACMEHost = "fonpub.jenga.xyz";
         locations."/" = {
           proxyPass = "http://127.0.0.1:7082/";
         };
       };
       "tlon.jenga.xyz" = {
-        forceSSL = true;
-        useACMEHost = "tlon.jenga.xyz";
+        #forceSSL = true;
+        #useACMEHost = "tlon.jenga.xyz";
         root = "/var/www/tlon.jenga.xyz";
 
         locations = {
@@ -437,12 +441,12 @@ in {
     };
   };
 
-  services.networking.my_websockify = {
-    enable = true;
-    portMap = {
-      "8138" = 1138;
-    };
-  };
+  #services.networking.my_websockify = {
+  #enable = true;
+  #portMap = {
+  #"8138" = 1138;
+  #};
+  #};
 
   programs.neovim = {
     enable = true;

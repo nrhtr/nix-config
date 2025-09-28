@@ -15,8 +15,6 @@ in {
     };
   };
 
-  #"nix02" = { config, pkgs, ... }: {
-  #}
   "nix01.wireguard" = {
     config,
     pkgs,
@@ -28,6 +26,21 @@ in {
 
     deployment.targetUser = "root";
     deployment.targetPort = 18061;
+
+    deployment.substituteOnDestination = true;
+  };
+
+  "nix02" = {
+    config,
+    pkgs,
+    ...
+  }: {
+    imports = [
+      ../machines/nix02.jenga.xyz/configuration.nix
+    ];
+
+    deployment.targetUser = "root";
+    #deployment.targetPort = 18061;
 
     deployment.substituteOnDestination = true;
   };

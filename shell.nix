@@ -3,8 +3,9 @@ let
 in
   pkgs.mkShell {
     preferLocalBuild = true;
-    buildInputs = [
+    buildInputs = with pkgs; [
       (import ./default.nix).gitleaks
+      morph
     ];
     shellHook = ''
       ${(import ./default.nix).pre-commit-check.shellHook}
