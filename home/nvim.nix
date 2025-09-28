@@ -68,7 +68,6 @@ in rec {
         syntax on
         endif
 
-        au BufWrite * :Autoformat
         let g:formatdef_alejandra = '"nix run nixpkgs#alejandra"'
         let g:formatters_nix = ['alejandra']
 
