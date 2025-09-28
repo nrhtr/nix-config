@@ -1,9 +1,9 @@
 let
   pkgs =
     import (builtins.fetchTarball {
-      name = "nixos-23.05";
-      url = "https://github.com/NixOS/nixpkgs/archive/53657afe29748b3e462f1f892287b7e254c26d77.tar.gz";
-      sha256 = "sha256:1l9pwclmx7kw7kd5p3dxf67w3arh413pbasfgs1ckmjm9zdajsmv";
+      name = "nixos-25.05";
+      url = "https://github.com/NixOS/nixpkgs/archive/nixos-25.05.tar.gz";
+      sha256 = "1zb1hzpzs0i2cx62jv4ck0s5gcfj27fxpvdsqzicj7k8049sdi8p";
     })
     {};
 in {
@@ -39,6 +39,7 @@ in {
       ../machines/nix02.jenga.xyz/configuration.nix
     ];
 
+    deployment.targetHost = "51.222.109.62";
     deployment.targetUser = "root";
     #deployment.targetPort = 18061;
 

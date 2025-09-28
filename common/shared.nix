@@ -15,6 +15,11 @@ in {
     "python3.9-poetry-1.1.12"
   ];
 
+  programs.gnupg.agent = {
+    enable = true;
+    enableSSHSupport = true;
+  };
+
   environment.systemPackages = with pkgs; [
     vim
     git

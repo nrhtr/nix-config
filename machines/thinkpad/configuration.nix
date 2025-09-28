@@ -69,12 +69,12 @@ in {
     #speedFactor = 1;
     #}
     {
-      #hostName = "95.217.114.169";
-      hostName = "nix02";
+      hostName = "51.222.109.62";
+      #hostName = "nix02";
       system = "x86_64-linux";
       sshUser = "root";
       sshKey = "/root/.ssh/id_ed25519";
-      speedFactor = 4;
+      speedFactor = 12;
       supportedFeatures = ["big-parallel"];
     }
   ];
@@ -173,7 +173,6 @@ in {
     texlive.combined.scheme-full
     #texlive-combined-full
     docker-compose
-    pinentry-curses # for pass/gpg
     neofetch # full unixporn redditeur
     luakit
     #firefox
