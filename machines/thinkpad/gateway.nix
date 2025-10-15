@@ -1,27 +1,32 @@
-{ config, pkgs, lib, ... }:
-
 {
+  config,
+  pkgs,
+  lib,
+  ...
+}: {
   networking = {
     # Act as gateway for T7500
     nat = {
       enable = true;
-      internalIPs = [ "172.16.10.0/24" ];
-      internalInterfaces = [ "enp0s25" ];
+      internalIPs = ["172.16.10.0/24"];
+      internalInterfaces = ["enp0s25"];
       externalInterface = "wlp3s0";
     };
 
-    interfaces.enp0s25.ipv4.addresses = [{
-      address = "172.16.10.254";
-      prefixLength = 24;
-    }];
+    interfaces.enp0s25.ipv4.addresses = [
+      {
+        address = "172.16.10.254";
+        prefixLength = 24;
+      }
+    ];
 
     firewall = {
       enable = true;
       allowPing = true;
-      trustedInterfaces = [ "enp0s25" ];
+      trustedInterfaces = ["enp0s25"];
     };
 
-    bridges.br0.interfaces = [ "wlp3s0" "enp0s25" ];
+    bridges.br0.interfaces = ["wlp3s0" "enp0s25"];
   };
 
   services.dhcpd4 = let
@@ -33,7 +38,7 @@
     commaSepDNSServers = "1.1.1.1";
   in {
     enable = true;
-    interfaces = [ "enp0s25" ];
+    interfaces = ["enp0s25"];
     extraConfig = ''
       ddns-update-style none;
       one-lease-per-client true;

@@ -1,33 +1,81 @@
-{ buildPythonApplication, pillow, numpy, pkgconfig, fetchurl, lib }:
+{
+  buildPythonApplication,
+  pillow,
+  libimagequant,
+  openjpeg,
+  numpy,
+  pkgconfig,
+  fetchFromGitHub,
+  fetchurl,
+  lib,
+  setuptools,
+  tree,
+}: let
+  _pillow = pillow.overrideAttrs (oldAttrs: {
+    version = "9.5.0";
+    src = fetchFromGitHub {
+      owner = "python-pillow";
+      repo = "pillow";
+      tag = "9.5.0";
+      hash = "sha256-EaDWjpCf3vGm7xRlaUaTn4L0f+OM/yDosE2RNaqZfj4=";
+    };
+    doCheck = false;
 
-buildPythonApplication rec {
-  pname = "minecraft-overviewer";
-  version = "0.14.61";
+    preConfigure = let
+      getLibAndInclude = pkg: ''"${pkg.out}/lib", "${lib.getDev pkg}/include"'';
+    in ''
+      substituteInPlace setup.py \
+          --replace-fail 'IMAGEQUANT_ROOT = None' 'IMAGEQUANT_ROOT = ${getLibAndInclude libimagequant}' \
+          --replace-fail 'JPEG2K_ROOT = None' 'JPEG2K_ROOT = ${getLibAndInclude openjpeg}'
+    '';
 
-  propagatedBuildInputs = [ pillow numpy ];
+    disabledTests =
+      oldAttrs.disabledTests
+      ++ [
+        "test_levels_rgba"
+        "test_levels_la"
+        "test_line_h_s1_w2"
+        "test_background_from_gif"
+        "test_close"
+      ];
+  });
+in
+  buildPythonApplication rec {
+    pname = "minecraft-overviewer";
+    version = "0.19.10";
 
-  nativeBuildInputs = [ pkgconfig ];
+    propagatedBuildInputs = [_pillow numpy];
 
-  src = fetchurl {
-    url = "https://overviewer.org/builds/src/${
-        lib.versions.patch version
-      }/overviewer-${version}.tar.gz";
-    sha256 = "0xb81b2zhn2jrvmns9dq9ny27w7mzaj5lzw2j1x1q8xi01s5k54a";
-  };
+    nativeBuildInputs = [pkgconfig];
 
-  patches = [ ./no-chmod.patch ];
+    src = let
+      commit = "013efcfd21";
+    in
+      fetchurl {
+        url = "https://overviewer.org/~pillow/up/${commit}/overviewer-${version}.tar.gz";
+        hash = "sha256-6rTBrFBke7bYA4XX7UsCKTquc/zJ3wK7Bq8HhNvCCSU=";
+      };
 
-  preBuild = ''
-    unpackFile ${pillow.src}
-    ln -s Pillow*/src/libImaging/Im*.h .
-    python setup.py build
-  '';
+    pyproject = true;
+    build-system = [setuptools];
 
-  meta = with lib; {
-    description =
-      "A command-line tool for rendering high-resolution maps of Minecraft worlds";
-    homepage = "https://overviewer.org/";
-    maintainers = with maintainers; [ lheckemann ];
-    license = licenses.gpl3;
-  };
-}
+    patches = [./no-chmod.patch];
+
+    preBuild = ''
+      unpackFile ${_pillow.src}
+      #ls -al
+      #jfind ./ -name 'Im*.h'
+      cp source/src/libImaging/Imaging.h .
+      cp source/src/libImaging/ImagingUtils.h .
+      cp source/src/libImaging/ImPlatform.h .
+      #cp source/src/libImaging/Arrow.h .
+      python setup.py build
+    '';
+
+    meta = with lib; {
+      description = "A command-line tool for rendering high-resolution maps of Minecraft worlds";
+      homepage = "https://overviewer.org/";
+      maintainers = with maintainers; [lheckemann];
+      license = licenses.gpl3;
+    };
+  }

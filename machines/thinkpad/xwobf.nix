@@ -1,5 +1,10 @@
-{ stdenv, fetchFromGitHub, libxcb, imagemagick7, pkg-config }:
-
+{
+  stdenv,
+  fetchFromGitHub,
+  libxcb,
+  imagemagick7,
+  pkg-config,
+}:
 stdenv.mkDerivation rec {
   name = "xwobf";
   version = "1.0";
@@ -11,8 +16,8 @@ stdenv.mkDerivation rec {
     sha256 = "1ym287q18dbflifzp0an6an036adr4jn9p51c998wqdbb8r1y2xp";
   };
 
-  buildInputs = [ libxcb imagemagick7 ];
-  nativeBuildInputs = [ pkg-config ];
+  buildInputs = [libxcb imagemagick7];
+  nativeBuildInputs = [pkg-config];
 
-  makeFlags = [ "PREFIX=$(out)" ];
+  makeFlags = ["PREFIX=$(out)"];
 }

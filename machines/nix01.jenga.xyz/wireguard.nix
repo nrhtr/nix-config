@@ -22,6 +22,11 @@
       privateKeyFile = "/etc/wireguard.privkey";
 
       peers = [
+        # minnie
+        {
+          publicKey = "sEmPJty4lq17TUyvCPBxEsnLaI0hy0SeO/5xryFA9UE=";
+          allowedIPs = ["10.100.0.2/32"];
+        }
         {
           # iPhone
           publicKey = "vaD8ITVvM5mNJW4Z+iXZvsN6WJIgi7ZjVxDWIh42XV4=";

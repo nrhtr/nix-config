@@ -61,11 +61,17 @@
   # Enables emails for ZFS
   customizeZfs = zfs: (zfs.override {enableMail = true;});
 
-  dns = import (builtins.fetchTarball "https://github.com/kirelagin/dns.nix/archive/master.zip");
+  dns = import (
+    builtins.fetchTarball {
+      name = "dns.nix-1.1.2";
+      url = "https://github.com/kirelagin/dns.nix/archive/refs/tags/v1.1.2.tar.gz";
+    }
+  );
 in {
   imports = [
     ./hardware-configuration.nix
     ./wireguard.nix
+    ./borg.nix
 
     #../../home/terminal.nix
 
@@ -116,6 +122,7 @@ in {
     (self: super: {
       zfsStable = customizeZfs super.zfsStable;
       genesis = self.callPackage ./../../packages/genesis/default.nix {};
+      minecraft-overviewer = self.python311Packages.callPackage ./../../packages/minecraft-overviewer/default.nix {};
     })
   ];
 
@@ -293,22 +300,6 @@ in {
     };
   };
 
-  #virtualisation.oci-containers = {
-  #containers = let
-  #docker = import ../../modules/actual/docker.nix {inherit pkgs;};
-  #in {
-  #actual-server = {
-  #autoStart = true;
-  #imageFile = docker.image;
-  #image = docker.name;
-  #ports = ["5006:5006"];
-  #volumes = [
-  #"/data/actual:/data"
-  #];
-  #};
-  #};
-  #};
-
   #hardware.opengl.enable = true;
   #hardware.opengl.extraPackages = [ pkgs.cudatoolkit ];
   #services.owncast = {
@@ -322,6 +313,11 @@ in {
   security.acme.defaults.email = "jeremy@jenga.xyz";
   security.acme.acceptTerms = true;
   security.acme.certs = {
+    "minecraft.jenga.xyz" = {
+      group = "nginx";
+      dnsProvider = "gandiv5";
+      credentialsFile = "${config.age.secrets.gandi.path}";
+    };
     "actual.jenga.xyz" = {
       group = "nginx";
       dnsProvider = "gandiv5";
@@ -349,16 +345,55 @@ in {
     };
   };
 
+  services.actual = {
+    enable = true;
+    settings.hostname = "127.0.0.1";
+    settings.port = 5006;
+  };
+
   networking.firewall.interfaces.wg0.allowedTCPPorts = [80 443 53];
   networking.firewall.interfaces.wg0.allowedUDPPorts = [53];
 
   networking.firewall = {
     # genesis terminal / HTTP UI
-    allowedTCPPorts = [443 1138];
+    allowedTCPPorts =
+      [443 1138]
+      ++ [25565]; # minecraft
+    allowedUDPPorts = [25565]; # minecraft
   };
 
   services.genesis.enable = true;
   services.genesis.hostname = "tlon.jenga.xyz";
+
+  systemd.services.overviewer = rec {
+    description = "Update minecraft world map on minecraft.jenga.xyz";
+    startAt = "hourly";
+
+    serviceConfig = {
+      User = "minecraft";
+      ExecStart = "${pkgs.minecraft-overviewer}/bin/overviewer.py /var/lib/minecraft/world /var/www/minecraft-overviewer/";
+    };
+  };
+
+  services.minecraft-server = {
+    enable = true;
+    declarative = true;
+    eula = true;
+    openFirewall = false; # manage this ourselves
+    whitelist = {
+      jenga = "de7e40bc-9fa7-486f-9e7e-cbd337e2ef74";
+      balfourine = "3a35d9cf-e22c-4137-bc17-12c89689d8a7";
+      the_sikness = "5324eaec-1fc7-4fc7-8123-0f077e700cd5";
+    };
+    serverProperties = {
+      difficulty = 4;
+      gamemode = 0;
+      max-players = 4;
+      motd = "NixOS Minecraft server!";
+      white-list = true;
+    };
+    jvmOpts = "-Xmx2560M -Xms1024M -Dfml.readTimeout=60";
+  };
 
   services.nsd = {
     enable = true;
@@ -385,6 +420,11 @@ in {
     sslCiphers = "AES256+EECDH:AES256+EDH:!aNULL";
 
     virtualHosts = {
+      "minecraft.jenga.xyz" = {
+        forceSSL = true;
+        useACMEHost = "minecraft.jenga.xyz";
+        root = "/var/www/minecraft-overviewer";
+      };
       "actual.jenga.xyz" = {
         listenAddresses = ["10.100.0.6"];
         forceSSL = true;

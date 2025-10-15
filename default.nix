@@ -1,5 +1,6 @@
 let
-  pkgs = import <nixpkgs> {};
+  sources = import ./npins;
+  pkgs = import sources.nixpkgs {};
   gitleaks = pkgs.callPackage ./packages/gitleaks/default.nix {};
   nix-pre-commit-hooks =
     import (builtins.fetchTarball
@@ -24,7 +25,10 @@ in rec {
     hooks = {
       shellcheck.enable = true;
       #statix.enable = true;
-      alejandra.enable = true;
+      alejandra = {
+        enable = true;
+        settings.exclude = ["./npins"];
+      };
 
       # Custom hooks
       gitleaks = {

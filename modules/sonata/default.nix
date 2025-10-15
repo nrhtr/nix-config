@@ -1,11 +1,13 @@
-{ config, lib, pkgs, ... }:
-
-with lib;
-
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+with lib; let
   cfg = config.programs.sonata;
   cfgFile = "sonata/sonatarc";
-  iniFormat = pkgs.formats.ini { };
+  iniFormat = pkgs.formats.ini {};
 
   runWithPassword = secretPath:
     pkgs.writeShellScript "sonata-pre-start" ''
@@ -13,8 +15,9 @@ let
       echo "$SONATA_SCROBBLER_PASSWORD"
     '';
 
-  patchSonata = pkg: pkg.overrideAttrs
-    (old: { patches = [ ./audioscrobbler-password-env.patch ]; });
+  patchSonata = pkg:
+    pkg.overrideAttrs
+    (old: {patches = [./audioscrobbler-password-env.patch];});
 in {
   options.programs.sonata = {
     enable = mkEnableOption "Sonata";
@@ -28,7 +31,7 @@ in {
 
     settings = mkOption {
       inherit (iniFormat) type;
-      default = { };
+      default = {};
       example = literalExpression ''
         {
           audioscrobbler = {
@@ -46,9 +49,9 @@ in {
   };
 
   config = mkIf cfg.enable {
-    home.packages = [ (patchSonata cfg.package) ];
+    home.packages = [(patchSonata cfg.package)];
 
-    xdg.configFile."${cfgFile}" = mkIf (cfg.settings != { }) {
+    xdg.configFile."${cfgFile}" = mkIf (cfg.settings != {}) {
       source = iniFormat.generate "sonatarc" cfg.settings;
     };
   };

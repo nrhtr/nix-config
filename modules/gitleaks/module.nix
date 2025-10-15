@@ -1,5 +1,9 @@
-{ config, lib, pkgs, ... }:
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   cfg = config;
   defaultSettings = builtins.fromTOML (builtins.readFile ./gitleaks.default.toml);
   tomlFormat = pkgs.formats.toml {};
@@ -24,29 +28,25 @@ in {
       '';
     };
 
-    installationScript =
-        mkOption {
-          type = types.str;
-          description =
-            ''
-              A bash snippet that configures .gitleaks.toml in the current directory
-            '';
-          readOnly = true;
-        };
+    installationScript = mkOption {
+      type = types.str;
+      description = ''
+        A bash snippet that configures .gitleaks.toml in the current directory
+      '';
+      readOnly = true;
+    };
 
-    rawConfig =
-        mkOption {
-          type = types.attrs;
-          description =
-            ''
-              The raw configuration before writing to file.
-            '';
-          internal = true;
-        };
+    rawConfig = mkOption {
+      type = types.attrs;
+      description = ''
+        The raw configuration before writing to file.
+      '';
+      internal = true;
+    };
   };
 
   config = {
-    rawConfig = lib.mkMerge [ defaultSettings cfg.settings];
+    rawConfig = lib.mkMerge [defaultSettings cfg.settings];
     installationScript = ''
       if readlink .gitleaks.toml >/dev/null \
         && [[ $(readlink .gitleaks.toml) == ${configFile} ]]; then

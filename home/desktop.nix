@@ -62,7 +62,22 @@ in {
         wl-clipboard
         mako # notification daemon
         dmenu-wayland
-        mudlet
+        (mudlet.overrideAttrs (oldAttrs: rec {
+          version = "4.19.1";
+          src = fetchFromGitHub {
+            owner = "Mudlet";
+            repo = "Mudlet";
+            rev = "Mudlet-${version}";
+            fetchSubmodules = true;
+            hash = "sha256-I4RRIfHw9kZwxMlc9pvdtwPpq9EvNJU69WpGgZ+0uiw=";
+          };
+          patches = [];
+          cmakeFlags =
+            oldAttrs.cmakeFlags
+            ++ [
+              "-DCMAKE_POLICY_VERSION_MINIMUM=3.5"
+            ];
+        }))
       ];
 
       services.blueman-applet.enable = true;

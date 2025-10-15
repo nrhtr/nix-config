@@ -1,4 +1,8 @@
-{ config, pkgs, ... }: {
+{
+  config,
+  pkgs,
+  ...
+}: {
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
@@ -13,12 +17,24 @@
   networking.hostName = "minecraft.jenga.xyz";
 
   networking.firewall.allowedTCPPortRanges = [
-    { from = 25565;  to = 25565;  } # Minecraft
-    { from = 80;  to = 80;  } # HTTP
-    { from = 443; to = 443; } # HTTPS
+    {
+      from = 25565;
+      to = 25565;
+    } # Minecraft
+    {
+      from = 80;
+      to = 80;
+    } # HTTP
+    {
+      from = 443;
+      to = 443;
+    } # HTTPS
   ];
   networking.firewall.allowedUDPPortRanges = [
-    { from = 25565;  to = 25565;  } # Minecraft
+    {
+      from = 25565;
+      to = 25565;
+    } # Minecraft
   ];
 
   services.nginx.enable = true;
@@ -36,8 +52,7 @@
 
     serviceConfig = {
       User = "minecraft";
-      ExecStart =
-        "${pkgs.minecraft-overviewer}/bin/overviewer.py /var/lib/minecraft/world /var/www/minecraft-overviewer/";
+      ExecStart = "${pkgs.minecraft-overviewer}/bin/overviewer.py /var/lib/minecraft/world /var/www/minecraft-overviewer/";
     };
   };
 

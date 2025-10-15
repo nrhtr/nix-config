@@ -10,7 +10,7 @@ in {
   imports = [
     ./hardware-configuration.nix
 
-    <home-manager/nixos>
+    #<home-manager/nixos>
 
     ./wireguard.nix
     ./borg.nix
@@ -26,6 +26,8 @@ in {
   ];
 
   displayOutput = "LVDS-1";
+
+  nixpkgs.config.allowUnfree = true;
 
   nixpkgs.config.permittedInsecurePackages = [
     "python3.9-poetry-1.1.14"
@@ -63,14 +65,8 @@ in {
     builders-use-substitutes = true
   '';
   nix.buildMachines = [
-    #{
-    #hostName = "local";
-    #system = "x86_64-linux";
-    #speedFactor = 1;
-    #}
     {
-      hostName = "51.222.109.62";
-      #hostName = "nix02";
+      hostName = "nix02.wireguard";
       system = "x86_64-linux";
       sshUser = "root";
       sshKey = "/root/.ssh/id_ed25519";
@@ -159,7 +155,7 @@ in {
 
   # Make sure we do remote builds on the right port
   programs.ssh.extraConfig = ''
-    Host nix02
+    Host nix02.wireguard
     Port 18061
   '';
 

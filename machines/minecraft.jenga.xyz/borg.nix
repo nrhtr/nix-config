@@ -1,6 +1,9 @@
-{ config, lib, pkgs, ... }:
-
 {
+  config,
+  lib,
+  pkgs,
+  ...
+}: {
   services.borgbackup.jobs = {
     main = {
       paths = "/var/lib/minecraft/world";

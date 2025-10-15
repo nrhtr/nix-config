@@ -1,6 +1,15 @@
-{ config, lib, pkgs, ... }:
-
-with lib; {
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+with lib; let
+  BORG_REPO = "hk1090@hk1090.rsync.net:thinkpad";
+  BORG_RSH = "ssh -i ${config.age.secrets.borg-key.path}";
+  BORG_REMOTE_PATH = "borg14"; # Use borg 1.4.x
+  BORG_PASSCOMMAND = "cat ${config.age.secrets.borg-phrase.path}";
+in {
   age.secrets = {
     borg-phrase = {
       owner = "jenga";
@@ -26,14 +35,14 @@ with lib; {
         "/home/jenga/rtorrent/download"
         "/home/jenga/Desktop"
       ];
-      repo = "20379@hk-s020.rsync.net:backup";
+      repo = BORG_REPO;
       user = "jenga";
 
       dateFormat = "+%Y-%m-%dT%H.%M.%S";
 
       encryption = {
         mode = "repokey";
-        passCommand = "cat ${config.age.secrets.borg-phrase.path}";
+        passCommand = BORG_PASSCOMMAND;
       };
 
       compression = "auto,lzma";
@@ -48,16 +57,25 @@ with lib; {
       };
 
       environment = {
-        BORG_RSH = "ssh -i ${config.age.secrets.borg-key.path}";
-        BORG_REMOTE_PATH = "borg1"; # Use borg 1.x
+        inherit BORG_RSH;
+        inherit BORG_REMOTE_PATH;
       };
+    };
+  };
+
+  home-manager.users.jenga = {
+    home.sessionVariables = {
+      inherit BORG_PASSCOMMAND;
+      inherit BORG_REMOTE_PATH;
+      inherit BORG_REPO;
+      inherit BORG_RSH;
     };
   };
 
   # FIXME: https://github.com/NixOS/nixpkgs/commit/697198834c6a861d30b8fbfe4162525c87155e00
   #systemd.timers = flip mapAttrs' config.services.borgbackup.jobs
-    #(name: value:
-      #nameValuePair "borgbackup-job-${name}" {
-        #timerConfig.Persistent = true;
-      #});
+  #(name: value:
+  #nameValuePair "borgbackup-job-${name}" {
+  #timerConfig.Persistent = true;
+  #});
 }

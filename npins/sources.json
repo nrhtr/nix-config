@@ -1,0 +1,23 @@
+{
+  "pins": {
+    "home-manager": {
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "nix-community",
+        "repo": "home-manager"
+      },
+      "branch": "release-25.05",
+      "revision": "3b955f5f0a942f9f60cdc9cacb7844335d0f21c3",
+      "url": "https://github.com/nix-community/home-manager/archive/3b955f5f0a942f9f60cdc9cacb7844335d0f21c3.tar.gz",
+      "hash": "0q3lv288xlzxczh6lc5lcw0zj9qskvjw3pzsrgvdh8rl8ibyq75s"
+    },
+    "nixpkgs": {
+      "type": "Channel",
+      "name": "nixpkgs-unstable",
+      "url": "https://releases.nixos.org/nixpkgs/nixpkgs-25.11pre877610.2ea123939c5c/nixexprs.tar.xz",
+      "hash": "1895mm7ixnm47zc43p19l4b36j59g3ipdd2an3n2qa6xvqz557s2"
+    }
+  },
+  "version": 3
+}

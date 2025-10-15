@@ -1,21 +1,25 @@
-{ stdenv, lib, fetchurl, libstdcxx5, autoPatchelfHook }:
-
+{
+  stdenv,
+  lib,
+  fetchurl,
+  libstdcxx5,
+  autoPatchelfHook,
+}:
 stdenv.mkDerivation rec {
   name = "jsonfui-${version}";
 
   version = "1.2.6";
 
   src = fetchurl {
-    url =
-      "https://github.com/AdrianSchneider/jsonfui/releases/download/${version}/jsonfui-linux-${version}";
+    url = "https://github.com/AdrianSchneider/jsonfui/releases/download/${version}/jsonfui-linux-${version}";
     sha256 = "04811iady4ivr4p4sba432b6xsk3qabgxhqsbwf3bi8gq4gfly9w";
   };
 
   dontUnpack = true;
 
-  nativeBuildInputs = [ autoPatchelfHook ];
+  nativeBuildInputs = [autoPatchelfHook];
 
-  buildInputs = [ stdenv.cc.cc.lib ];
+  buildInputs = [stdenv.cc.cc.lib];
 
   sourceRoot = ".";
 

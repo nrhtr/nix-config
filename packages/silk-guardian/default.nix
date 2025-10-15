@@ -1,5 +1,9 @@
-{ stdenv, fetchFromGitHub, linuxPackages, kmod }:
-
+{
+  stdenv,
+  fetchFromGitHub,
+  linuxPackages,
+  kmod,
+}:
 stdenv.mkDerivation rec {
   name = "silk-guardian-${linuxPackages.kernel.version}";
   version = "1.1";
@@ -19,12 +23,12 @@ stdenv.mkDerivation rec {
     sed -i 's|/sbin/depmod|#/sbin/depmod|' Makefile
   '';
 
-  nativeBuildInputs = [ linuxPackages.kernel.moduleBuildDependencies kmod ];
+  nativeBuildInputs = [linuxPackages.kernel.moduleBuildDependencies kmod];
 
   makeFlags = [
     "KERNELDIR=${linuxPackages.kernel.dev}/lib/modules/${linuxPackages.kernel.modDirVersion}/build"
     "INSTALL_MOD_PATH=$(out)"
   ];
 
-  installTargets = [ "install" ];
+  installTargets = ["install"];
 }
