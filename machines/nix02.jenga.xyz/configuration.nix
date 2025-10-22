@@ -72,6 +72,7 @@ in {
     ./hardware-configuration.nix
     ./wireguard.nix
     ./borg.nix
+    ./containers/default.nix
 
     #../../home/terminal.nix
 
@@ -122,7 +123,9 @@ in {
     (self: super: {
       zfsStable = customizeZfs super.zfsStable;
       genesis = self.callPackage ./../../packages/genesis/default.nix {};
-      minecraft-overviewer = self.python311Packages.callPackage ./../../packages/minecraft-overviewer/default.nix {};
+      minecraft-overviewer =
+        self.python311Packages.callPackage ./../../packages/minecraft-overviewer/default.nix
+        {};
     })
   ];
 
@@ -313,6 +316,11 @@ in {
   security.acme.defaults.email = "jeremy@jenga.xyz";
   security.acme.acceptTerms = true;
   security.acme.certs = {
+    "live.jenga.xyz" = {
+      group = "nginx";
+      dnsProvider = "gandiv5";
+      credentialsFile = "${config.age.secrets.gandi.path}";
+    };
     "minecraft.jenga.xyz" = {
       group = "nginx";
       dnsProvider = "gandiv5";
@@ -351,13 +359,20 @@ in {
     settings.port = 5006;
   };
 
-  networking.firewall.interfaces.wg0.allowedTCPPorts = [80 443 53];
+  networking.firewall.interfaces.wg0.allowedTCPPorts = [
+    80
+    443
+    53
+  ];
   networking.firewall.interfaces.wg0.allowedUDPPorts = [53];
 
   networking.firewall = {
     # genesis terminal / HTTP UI
     allowedTCPPorts =
-      [443 1138]
+      [
+        443
+        1138
+      ]
       ++ [25565]; # minecraft
     allowedUDPPorts = [25565]; # minecraft
   };
@@ -419,6 +434,12 @@ in {
     # Only allow PFS-enabled ciphers with AES256
     sslCiphers = "AES256+EECDH:AES256+EDH:!aNULL";
 
+    #appendHttpConfig = ''
+    #log_format special '<$host> - $remote_addr - $remote_user [$time_local] '
+    #'"$request" $status $body_bytes_sent '
+    #'"$http_referer" "$http_user_agent"';
+    #'';
+
     virtualHosts = {
       "minecraft.jenga.xyz" = {
         forceSSL = true;
@@ -432,6 +453,18 @@ in {
         locations."/" = {
           proxyPass = "http://127.0.0.1:5006/";
         };
+      };
+      "live.jenga.xyz" = {
+        useACMEHost = "live.jenga.xyz";
+        forceSSL = true;
+        locations."/" = {
+          # proxy to ingress-a
+          proxyPass = "http://192.168.0.4:80/";
+        };
+
+        #extraConfig = ''
+        #access_log /var/log/nginx/access.log special;
+        #'';
       };
       "sorpex.jenga.xyz" = {
         listenAddresses = ["10.100.0.6"];

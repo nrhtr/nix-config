@@ -11,5 +11,6 @@
     ./gpg.nix
     ./ssh.nix
     ./nvim.nix
+    ./helix.nix
   ];
 }
