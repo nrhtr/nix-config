@@ -7,16 +7,52 @@
   rtmpPort = 1935;
   stripCidr = ip: builtins.elemAt (lib.strings.split "/" ip) 0;
   machine = rec {
+    systemd.services = {
+      "container@encoder-a" = {
+        serviceConfig = {
+          CPUQuota = "800%";
+        };
+      };
+      "container@encoder-b" = {
+        serviceConfig = {
+          CPUQuota = "800%";
+        };
+      };
+      "container@encoder-c" = {
+        serviceConfig = {
+          CPUQuota = "200%";
+        };
+      };
+      "container@encoder-d" = {
+        serviceConfig = {
+          CPUQuota = "200%";
+        };
+      };
+    };
+
+    # proxy RTMP to ingress-a
     systemd.services.rtmp-socat = {
       after = [
         "network.target"
       ];
       serviceConfig = {
-        ExecStart = "${pkgs.socat}/bin/socat TCP4-LISTEN:${toString rtmpPort},fork TCP4:192.168.0.4:${toString rtmpPort}";
+        ExecStart = "${pkgs.socat}/bin/socat TCP4-LISTEN:${toString rtmpPort},fork TCP4:192.168.10.1:${toString rtmpPort}";
         Restart = "on-failure";
         Type = "simple";
       };
       wantedBy = ["multi-user.target"];
+    };
+
+    # proxy HTTPS to ingress-a (simpler TLS setup)
+    services.nginx.virtualHosts = {
+      "live.jenga.xyz" = {
+        useACMEHost = "live.jenga.xyz";
+        forceSSL = true;
+        locations."/" = {
+          # proxy to ingress-a
+          proxyPass = "http://192.168.10.1:80/";
+        };
+      };
     };
 
     networking = {
@@ -28,57 +64,39 @@
       interfaces."br0".ipv4.addresses = [
         {
           address = "192.168.0.1";
-          prefixLength = 24;
+          prefixLength = 16;
         }
       ];
-
-      nat = let
-        ingressIP = "${stripCidr containers.ingress-a.localAddress}";
-      in {
-        #enable = true;
-        #internalInterfaces = [ "br0" ];
-        #internalIPs = [ ingressIP ];
-        #externalInterface = "enp5s0f0";
-
-        #forwardPorts = [
-        #{
-        #destination = "${ingressIP}:${toString rtmpPort}";
-        #proto = "tcp";
-        #sourcePort = rtmpPort;
-        #}
-        #   {
-        #     destination = stripCidr containers.encoder-a.localAddress;
-        #     proto = "tcp";
-        #     sourcePort = 8443;
-        #   }
-        #];
-
-        #bridges.br0.interfaces = [ "enp5s0f0" ];
-        #interfaces."br0".ipv4.addresses = [
-        #{
-        #address = "192.168.100.1";
-        #prefixLength = 24;
-        #}
-        #];
-      };
     };
 
     containers = {
       encoder-a = mkEncoder {
-        name = "foo";
-        localAddress = "192.168.0.2/24";
+        name = "enc-A";
+        localAddress = "192.168.50.1/16";
+        cpuPercent = 200;
       };
       encoder-b = mkEncoder {
-        name = "bar";
-        localAddress = "192.168.0.3/24";
+        name = "enc-B";
+        localAddress = "192.168.50.2/16";
+        cpuPercent = 200;
+      };
+      encoder-c = mkEncoder {
+        name = "enc-C";
+        localAddress = "192.168.50.3/16";
+        cpuPercent = 800;
+      };
+      encoder-d = mkEncoder {
+        name = "enc-D";
+        localAddress = "192.168.50.4/16";
+        cpuPercent = 800;
       };
       ingress-a = mkIngress {
         name = "baz";
-        localAddress = "192.168.0.4/24";
+        localAddress = "192.168.10.1/16";
       };
       ingress-b = mkIngress {
         name = "qux";
-        localAddress = "192.168.0.5/24";
+        localAddress = "192.168.10.2/16";
       };
     };
   };
@@ -88,7 +106,7 @@
   mkEncoder = {
     name,
     localAddress,
-    ...
+    cpuPercent ? 0,
   }: {
     autoStart = true;
     privateNetwork = true;
@@ -110,9 +128,31 @@
         80
       ];
 
-      systemd.services.nginx.serviceConfig.ReadWritePaths = [
-        "/var/www"
+      environment.systemPackages = with pkgs; [
+        ffmpeg
+        vim
+        htop
       ];
+
+      systemd.services = let
+        stats-pkg = pkgs.writeShellApplication {
+          name = "stream-stats";
+          runtimeInputs = with pkgs; [gawk];
+          text = builtins.readFile ./stats.sh;
+        };
+      in {
+        stream-stats = {
+          serviceConfig.Type = "simple";
+          script = ''
+            while true; do ${pkgs.bash}/bin/bash ${stats-pkg}/bin/stream-stats; sleep 5; done
+          '';
+          wantedBy = ["multi-user.target"];
+        };
+        nginx.serviceConfig = {
+          ReadWritePaths = ["/var/www"];
+          #StateDirectory
+        };
+      };
 
       services.nginx = {
         enable = true;
@@ -147,8 +187,25 @@
                   #
                   # If you need to transcode live stream use 'exec' feature.
                   #
+                  application unique {
+                    live on;
+
+                    # TODO: atm we can't (?) notify all ingresses, just ingress-a for now
+                    on_publish http://192.168.10.1:80/hook_publish;
+
+                    exec ffmpeg -re -i rtmp://localhost:1935/$app/$name -vcodec libx264 -vprofile baseline -acodec copy
+                                -vf "drawtext=text='enc=${name}(${localAddress}) stream=$$name':fontcolor=white:fontsize=24:box=1:boxcolor=black"
+                                -f flv rtmp://localhost:1935/hls/$${name};
+                  }
+
                   application hls {
                       live on;
+
+                      # TODO: atm we can't (?) notify all ingresses, just ingress-a for now
+                      # disabled.. if we push from another app then remote_addr will be local :()
+                      # only include on user ingest app
+                      # on_publish http://192.168.10.1:80/hook_publish;
+
                       hls on;
                       hls_path /var/www/hls;
                   }
@@ -175,6 +232,10 @@
                       # Use this stylesheet to view XML as web page
                       # in browser
                       #rtmp_stat_stylesheet stat.xsl;
+                  }
+
+                  location = /status {
+                    alias /var/www/status.json;
                   }
 
                   location /hls {
@@ -209,25 +270,6 @@
     inherit localAddress;
     hostBridge = "br0";
 
-    # bind mount in some secrets
-    #bindMounts = {
-    #"/tmp/gandi.secret" = {
-    #hostPath = "${config.age.secrets.gandi.path}";
-    #isReadOnly = true;
-    #};
-    #};
-
-    #forwardPorts = [
-    #{
-    #containerPort = rtmpPort;
-    #hostPort = rtmpPort;
-    #}
-    #{
-    #containerPort = 443;
-    #hostPort = 8443;
-    #}
-    #];
-
     config = {
       config,
       pkgs,
@@ -241,37 +283,236 @@
         80
       ];
 
-      # security.acme.defaults.email = "jeremy@jenga.xyz";
-      # security.acme.acceptTerms = true;
-      # security.acme.certs = {
-      #   "live.jenga.xyz" = {
-      #     group = "nginx";
-      #     dnsProvider = "gandiv5";
-      #     credentialsFile = "/tmp/gandi.secret";
-      #   };
-      # };
+      environment.systemPackages = with pkgs; [
+        vim
+        htop
+      ];
 
-      services.nginx = {
+      services.nginx = let
+        lua-resty-balancer = pkgs.stdenv.mkDerivation {
+          name = "lua-resty-balancer";
+          src = pkgs.fetchFromGitHub {
+            name = "lua-resty-balancer";
+            owner = "openresty";
+            repo = "lua-resty-balancer";
+            rev = "1cd4363";
+            hash = "sha256-e/kMERZ25e/tWFQVnQjyB15IV6BOLUO6vs+27sQ8Cjc=";
+          };
+          installPhase = ''
+            mkdir -p $out/lib/resty/balancer
+            cp lib/resty/*.lua $out/lib/resty
+            cp lib/resty/balancer/*.lua $out/lib/resty/balancer
+            cp librestychash.so $out/lib
+          '';
+        };
+        lua-resty-http = pkgs.fetchFromGitHub {
+          owner = "ledgetech";
+          repo = "lua-resty-http";
+
+          rev = "v0.17.2";
+          hash = "sha256-Ph3PpzQYKYMvPvjYwx4TeZ9RYoryMsO6mLpkAq/qlHY=";
+        };
+      in {
         enable = true;
         # luajit, TCP streams, etc.
         package = pkgs.openresty;
+        logError = "/var/log/nginx/error.log debug";
+        config = ''
+          events {
+          }
 
-        virtualHosts = {
-          # proxy vhost for serving HLS/DASH
-          # TODO: figure out a solution for SSL
-          # maybe bind-mount ACME cert from host?
-          "live.jenga.xyz" = {
-            default = true;
-            locations."/" = {
-              proxyPass = "http://192.168.0.2:80/";
-            };
-          };
-        };
-        # TODO: Implement smart ingest!
-        streamConfig = ''
-          server {
-            listen ${builtins.toString rtmpPort};
-            proxy_pass 192.168.0.2:${toString rtmpPort}; # encoder-a
+          http {
+            lua_package_path "${lua-resty-http}/lib/?.lua;;";
+            lua_shared_dict view_route_cache 10m;
+
+            include ${pkgs.openresty}/nginx/conf/mime.types;
+
+            upstream backend {
+              server 192.168.50.1:80;
+
+              balancer_by_lua_block {
+                local balancer = require "ngx.balancer"
+
+                local m, err = ngx.re.match(ngx.var.uri, "/hls/([^-/\\.]+).*")
+                local key = m and m[1] or "default"
+
+                local backend = ngx.shared.view_route_cache:get(key)
+
+                if backend then
+                  ngx.log(ngx.NOTICE, "Selected backend: " .. backend)
+
+                  local ok, err = balancer.set_current_peer(backend, 80)
+                  if not ok then
+                    ngx.log(ngx.ERR, "no backend for stream key: ", key, ", err: ", err)
+                    return ngx.exit(500)
+                  end
+                else
+                  ngx.log(ngx.ERR, "no backend cached for stream key: ", key)
+                  return ngx.exit(500)
+                end
+              }
+            }
+
+            server {
+                listen 80;
+
+                location /hook_publish {
+                  content_by_lua_block {
+                    local cjson = require "cjson.safe"
+
+                    ngx.req.read_body()
+                    local args = ngx.req.get_post_args()
+
+                    ngx.log(ngx.INFO, "/hook_publish: got args: ", cjson.encode(args))
+                    -- we take remote_addr to be the proper encoder for this stream
+                    -- TODO: fanout/enrich webhooks for each ingest? include proper encoder arg
+                    local backend = ngx.var.remote_addr
+                    ngx.shared.view_route_cache:set(args.name, backend)
+                    ngx.say("ok")
+                  }
+                }
+
+                location = /demo {
+                  alias ${./demo.html};
+                  # set default type because we use an alias, because... nix things
+                  default_type text/html;
+                }
+
+                location / {
+                  proxy_pass http://backend;
+                }
+            }
+          }
+
+          stream {
+            lua_package_path "${lua-resty-http}/lib/?.lua;;";
+            lua_shared_dict route_cache 10m;
+
+            init_worker_by_lua_block {
+              local http = require "resty.http"
+              local cjson = require "cjson.safe"
+
+              local backends = {
+                "192.168.50.1",
+                "192.168.50.2",
+                "192.168.50.3",
+                "192.168.50.4",
+              }
+              local scores = {}
+
+              package.loaded.backend_scores = scores
+
+              local function update_backend_scores(premature)
+                if premature then
+                  return
+                end
+
+                for _, host in ipairs(backends) do
+                  local h = http.new()
+                  h:set_timeout(500)
+
+                  local res, err = h:request_uri("http://" .. host .. "/status")
+                  if res and res.status == 200 then
+                    ngx.log(ngx.INFO, res.status, " Got body from /status: ", res.body)
+                    local data = cjson.decode(res.body)
+                    if data then
+                      local gpu = tonumber(data.gpu_free) or 0
+                      local cpu = tonumber(data.cpu_free) or 0
+
+                      -- weighted scores
+                      scores[host] = gpu * 0.25 + cpu
+                      ngx.log(ngx.INFO, "Updated score for ", host, ": ", scores[host])
+                    else
+                      ngx.log(ngx.WARN, "Failed to parse score from ", host)
+                    end
+                  else
+                    ngx.log(ngx.ERR, "Failed to fetch /status from ", host, ": ", res and res.status or "no response")
+                    scores[host] = 0
+                  end
+                end
+
+                -- schedule next update in 10 seconds
+                local ok, err = ngx.timer.at(19, update_backend_scores)
+                if not ok then
+                  ngx.log(ngx.ERR, "failed to reschedule score updater: ", err)
+                end
+              end
+
+              -- start the loop (only once per worker)
+              local ok, err = ngx.timer.at(0, update_backend_scores)
+              if not ok then
+                ngx.log(ngx.ERR, "failed to start backend score updater: ", err)
+              end
+            }
+
+            upstream rtmp_backends {
+              server 192.168.50.1:1935;
+
+              balancer_by_lua_block {
+                local balancer = require "ngx.balancer"
+                local scores = package.loaded.backend_scores or {}
+                local backends = {
+                  "192.168.50.1",
+                  "192.168.50.2",
+                  "192.168.50.3",
+                  "192.168.50.4",
+                }
+
+                local src_ip = ngx.var.remote_addr
+                local src_port = ngx.var.remote_port
+                local key = src_ip .. ":" .. src_port
+
+                -- fast path / lookup backend in cache
+                local cached_host = ngx.shared.route_cache:get(key)
+                if cached_host then
+                  local ok, err = balancer.set_current_peer(cached_host, 1935)
+                  if not ok then
+                    ngx.log(ngx.ERR, "unable to set backend ", cached_host, " for key: ", key)
+                    return ngx.exit(500)
+                  end
+
+                  ngx.log(ngx.NOTICE, "Selected backend: " .. cached_host)
+                  return
+                end
+
+                -- slow path / initial publish...
+
+                local total = 0
+                for _, host in ipairs(backends) do
+                  total = total + (scores[host] or 1)
+                end
+
+                -- weighted random selection
+                local r = math.random() * total
+                local pick
+                for _, host in ipairs(backends) do
+                  r = r - (scores[host] or 1)
+                  if r <= 0 then
+                    pick = host
+                    break
+                  end
+                end
+
+                -- fallback
+                pick = pick or backends[1]
+
+                ngx.log(ngx.INFO, "Assigning stream ", key, " to backend ", pick)
+                ngx.shared.route_cache:set(key, pick, 3600)
+                local ok, err = balancer.set_current_peer(pick, 1935)
+                if not ok then
+                  ngx.log(ngx.ERR, "unable to set backend ", backend, " for src: ", key)
+                  return ngx.exit(500)
+                end
+              }
+            }
+
+            server {
+              # lua_socket_log_errors off;
+
+              listen 1935;
+
+              proxy_pass rtmp_backends;
+            }
           }
         '';
       };

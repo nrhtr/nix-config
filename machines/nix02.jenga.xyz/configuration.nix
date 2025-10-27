@@ -434,12 +434,6 @@ in {
     # Only allow PFS-enabled ciphers with AES256
     sslCiphers = "AES256+EECDH:AES256+EDH:!aNULL";
 
-    #appendHttpConfig = ''
-    #log_format special '<$host> - $remote_addr - $remote_user [$time_local] '
-    #'"$request" $status $body_bytes_sent '
-    #'"$http_referer" "$http_user_agent"';
-    #'';
-
     virtualHosts = {
       "minecraft.jenga.xyz" = {
         forceSSL = true;
@@ -453,18 +447,6 @@ in {
         locations."/" = {
           proxyPass = "http://127.0.0.1:5006/";
         };
-      };
-      "live.jenga.xyz" = {
-        useACMEHost = "live.jenga.xyz";
-        forceSSL = true;
-        locations."/" = {
-          # proxy to ingress-a
-          proxyPass = "http://192.168.0.4:80/";
-        };
-
-        #extraConfig = ''
-        #access_log /var/log/nginx/access.log special;
-        #'';
       };
       "sorpex.jenga.xyz" = {
         listenAddresses = ["10.100.0.6"];
