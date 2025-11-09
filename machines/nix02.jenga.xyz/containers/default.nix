@@ -10,22 +10,22 @@
     systemd.services = {
       "container@encoder-a" = {
         serviceConfig = {
-          CPUQuota = "800%";
+          CPUAffinity = "0-5,24-29";
         };
       };
       "container@encoder-b" = {
         serviceConfig = {
-          CPUQuota = "800%";
+          CPUAffinity = "6-11,30-35";
         };
       };
       "container@encoder-c" = {
         serviceConfig = {
-          CPUQuota = "200%";
+          CPUAffinity = "12-17,36-41";
         };
       };
       "container@encoder-d" = {
         serviceConfig = {
-          CPUQuota = "200%";
+          CPUAffinity = "18-23,42-47";
         };
       };
     };
@@ -44,13 +44,46 @@
     };
 
     # proxy HTTPS to ingress-a (simpler TLS setup)
-    services.nginx.virtualHosts = {
-      "live.jenga.xyz" = {
-        useACMEHost = "live.jenga.xyz";
-        forceSSL = true;
-        locations."/" = {
-          # proxy to ingress-a
-          proxyPass = "http://192.168.10.1:80/";
+    services.nginx = {
+      upstreams."liveview" = {
+        extraConfig = ''
+          keepalive 8;
+        '';
+        servers = {
+          "192.168.10.1:80" = {};
+        };
+      };
+      virtualHosts = {
+        "live.jenga.xyz" = {
+          useACMEHost = "live.jenga.xyz";
+          forceSSL = true;
+          locations."/pub/" = {
+            root = "/var/www/live";
+            extraConfig = ''
+              autoindex on;
+            '';
+          };
+          locations."/upload" = {
+            extraConfig = ''
+              limit_except POST {
+                deny all;
+              }
+
+              if ($arg_secret != fooFIGHTERS) {
+                return 401 'no';
+              }
+
+              return 200 'ok';
+            '';
+          };
+          locations."/" = {
+            # proxy to ingress-a
+            proxyPass = "http://liveview";
+            extraConfig = ''
+              proxy_http_version 1.1;
+              proxy_set_header   "Connection" "";
+            '';
+          };
         };
       };
     };
@@ -194,6 +227,7 @@
                     on_publish http://192.168.10.1:80/hook_publish;
 
                     exec ffmpeg -re -i rtmp://localhost:1935/$app/$name -vcodec libx264 -vprofile baseline -acodec copy
+                                -preset superfast -tune zerolatency -threads 4
                                 -vf "drawtext=text='enc=${name}(${localAddress}) stream=$$name':fontcolor=white:fontsize=24:box=1:boxcolor=black"
                                 -f flv rtmp://localhost:1935/hls/$${name};
                   }
@@ -244,6 +278,11 @@
                           application/vnd.apple.mpegurl m3u8;
                           video/mp2t ts;
                       }
+
+                      sendfile on;
+                      tcp_nopush on;
+                      tcp_nodelay on;
+
                       root /var/www;
                       add_header Cache-Control no-cache;
                   }
@@ -286,7 +325,10 @@
       environment.systemPackages = with pkgs; [
         vim
         htop
+        ffmpeg
       ];
+
+      systemd.services.nginx.serviceConfig.ReadWritePaths = ["/var/www"];
 
       services.nginx = let
         lua-resty-balancer = pkgs.stdenv.mkDerivation {
@@ -330,6 +372,8 @@
             upstream backend {
               server 192.168.50.1:80;
 
+              keepalive 8;
+
               balancer_by_lua_block {
                 local balancer = require "ngx.balancer"
 
@@ -338,17 +382,28 @@
 
                 local backend = ngx.shared.view_route_cache:get(key)
 
+                local function serve_placeholder()
+                  ngx.log(ngx.WARN, "Backend unavailable, serving placeholder")
+                  local ok, err = balancer.set_current_peer("127.0.0.1", 8080)
+                  if not ok then
+                    ngx.log(ngx.ERR, "failed to set placeholder backend: ", err)
+                    return ngx.exit(502)
+                  end
+                end
+
                 if backend then
                   ngx.log(ngx.NOTICE, "Selected backend: " .. backend)
 
                   local ok, err = balancer.set_current_peer(backend, 80)
                   if not ok then
                     ngx.log(ngx.ERR, "no backend for stream key: ", key, ", err: ", err)
-                    return ngx.exit(500)
+                    serve_placeholder()
+                    return
                   end
                 else
                   ngx.log(ngx.ERR, "no backend cached for stream key: ", key)
-                  return ngx.exit(500)
+                  serve_placeholder()
+                  return
                 end
               }
             }
@@ -379,8 +434,38 @@
                 }
 
                 location / {
+                  proxy_http_version 1.1;
+                  proxy_set_header   "Connection" "";
+
                   proxy_pass http://backend;
                 }
+            }
+
+            server {
+              listen 8080;
+              server_name _;
+
+              access_log /var/log/nginx/placeholder_access.log;
+              error_log /var/log/nginx/placeholder_error.log debug;
+
+              root /var/www/placeholder_hls;
+              index index.m3u8;
+
+              location ~* ^/hls/.*\.m3u8$ {
+                default_type application/vndapple.mpegurl;
+
+                add_header Cache-Control no-cache;
+                sendfile on;
+                tcp_nopush on;
+                tcp_nodelay on;
+
+                try_files /hls/index.m3u8 =404;
+              }
+
+              location ~* ^/hls/.*\.ts$ {
+                default_type video/MP2T;
+                try_files $uri /hls/dummy.ts =404;
+              }
             }
           }
 

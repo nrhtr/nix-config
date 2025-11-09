@@ -11,12 +11,10 @@ in {
     ./hardware-configuration.nix
 
     #<home-manager/nixos>
-
     ./wireguard.nix
     ./borg.nix
     ./borg-notifier.nix
-
-    # ./gateway.nix T7500
+    ./home.nix
 
     ./../../common/shared.nix
 
@@ -28,16 +26,17 @@ in {
   displayOutput = "LVDS-1";
 
   nixpkgs.config.allowUnfree = true;
-
   nixpkgs.config.permittedInsecurePackages = [
     "python3.9-poetry-1.1.14"
   ];
 
+  networking.firewall.interfaces.wg0.allowedTCPPorts = [8080];
+
   nixpkgs.overlays = [
     (self: super: rec {
-      discord = super.discord.overrideAttrs (
-        _: {src = builtins.fetchTarball "https://discord.com/api/download?platform=linux&format=tar.gz";}
-      );
+      discord = super.discord.overrideAttrs (_: {
+        src = builtins.fetchTarball "https://discord.com/api/download?platform=linux&format=tar.gz";
+      });
       silk-guardian = self.callPackage ../../packages/silk-guardian/default.nix {
         linuxPackages = config.boot.kernelPackages;
       };
@@ -49,15 +48,10 @@ in {
 
   services.locate.enable = true;
   services.blueman.enable = true;
-
   # iphone
   services.usbmuxd.enable = true;
-
   services.smartd.enable = true;
   services.smartd.defaults.monitored = "-a -o on -s (S/../.././02|L/../../7/04)";
-
-  # Auto-update laptop since we don't deploy with morph
-  #system.autoUpgrade.enable = true;
 
   # Distribute builds to nix02 (consider nix01?)
   nix.distributedBuilds = true;
@@ -88,7 +82,7 @@ in {
   age.secrets.wifi.file = ../../secrets/wifi.age;
   age.identityPaths = [/etc/ssh/ssh_host_ed25519_key];
   networking = {
-    hostName = "thinkpad";
+    hostName = "lappy";
     wireless = {
       enable = true;
       interfaces = ["wlp3s0"];
@@ -105,7 +99,9 @@ in {
       };
     };
 
-    firewall = {enable = true;};
+    firewall = {
+      enable = true;
+    };
   };
 
   # Use a swapfile, because we don't want to bother with another LUKS partition
