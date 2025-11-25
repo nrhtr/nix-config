@@ -158,6 +158,7 @@ in {
   system.stateVersion = "22.05";
 
   environment.systemPackages = with pkgs; [
+    lan-mouse
     libimobiledevice
     ifuse # iphone
     #darktable # photo shit
