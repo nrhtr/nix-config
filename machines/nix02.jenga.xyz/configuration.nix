@@ -323,6 +323,11 @@ in {
       dnsProvider = "gandiv5";
       credentialsFile = "${config.age.secrets.gandi.path}";
     };
+    "git.jenga.xyz" = {
+      group = "nginx";
+      dnsProvider = "gandiv5";
+      credentialsFile = "${config.age.secrets.gandi.path}";
+    };
     "tlon.jenga.xyz" = {
       group = "nginx";
       dnsProvider = "gandiv5";
@@ -417,6 +422,17 @@ in {
         useACMEHost = "minecraft.jenga.xyz";
         root = "/var/www/minecraft-overviewer";
       };
+      "git.jenga.xyz" = {
+        listenAddresses = ["10.100.0.6"];
+        forceSSL = true;
+        useACMEHost = "git.jenga.xyz";
+        locations."/" = {
+          proxyPass = "http://127.0.0.1:3000/";
+          extraConfig = ''
+            proxy_read_timeout 300;
+          '';
+        };
+      };
       "actual.jenga.xyz" = {
         listenAddresses = ["10.100.0.6"];
         forceSSL = true;
@@ -470,6 +486,15 @@ in {
           };
         };
       };
+    };
+  };
+
+  services.forgejo = {
+    enable = true;
+    settings.server = {
+      DOMAIN = "git.jenga.xyz";
+      ROOT_URL = "https://git.jenga.xyz/";
+      HTTP_ADDR = "127.0.0.1";
     };
   };
 

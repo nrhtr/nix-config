@@ -80,7 +80,7 @@ in {
 
   networking.extraHosts = ''
     10.100.0.1 nix01.wireguard
-    10.100.0.6 nix02.wireguard sorpex.jenga.xyz tallur.jenga.xyz fonpub.jenga.xyz actual.jenga.xyz
+    10.100.0.6 nix02.wireguard sorpex.jenga.xyz tallur.jenga.xyz fonpub.jenga.xyz actual.jenga.xyz git.jenga.xyz
     45.76.124.245 nix01 nix01.jenga.xyz
     51.222.109.62 nix02 nix02.jenga.xyz
     192.168.0.6 minnie
