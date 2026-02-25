@@ -392,17 +392,18 @@ in {
     jvmOpts = "-Xmx2560M -Xms1024M -Dfml.readTimeout=60";
   };
 
-  #services.nsd = {
-  #enable = true;
-  #interfaces = ["10.100.0.6"];
-  #zones = {
-  #"jenga.internal" = {
-  #provideXFR = [ ... ];
-  #notify = [ ... ];
-  #data = dns.lib.toString "jenga.internal" (import ../../common/jenga.internal.nix {inherit dns;});
-  #};
-  #};
-  #};
+  services.nsd = {
+    enable = true;
+    interfaces = ["10.100.0.6"];
+    zones = {
+      "jenga.internal" = {
+        data = dns.lib.toString "jenga.internal" (import ../../common/jenga.internal.nix {inherit dns;});
+      };
+      "jenga.xyz" = {
+        data = dns.lib.toString "jenga.xyz" (import ../../common/jenga.xyz.nix {inherit dns;});
+      };
+    };
+  };
 
   services.nginx = {
     enable = true;
