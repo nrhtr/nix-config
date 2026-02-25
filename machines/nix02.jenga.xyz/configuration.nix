@@ -62,7 +62,7 @@
   customizeZfs = zfs: (zfs.override {enableMail = true;});
 
   sources = import ../../npins;
-  dns = import sources."dns.nix";
+  dns = import sources."dns.nix" {inherit pkgs;};
 in {
   imports = [
     ./hardware-configuration.nix

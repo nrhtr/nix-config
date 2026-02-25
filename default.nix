@@ -39,6 +39,13 @@ in rec {
         entry = "${gitleaks}/bin/gitleaks protect --verbose --redact";
         pass_filenames = false;
       };
+
+      check-nixos-configs = {
+        enable = true;
+        entry = "bash scripts/check-nixos-configs.sh";
+        pass_filenames = false;
+        stages = ["pre-push"];
+      };
     };
   };
 }
