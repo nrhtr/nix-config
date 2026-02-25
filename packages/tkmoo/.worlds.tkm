@@ -1,0 +1,50 @@
+# /home/jenga/nix/packages/tkmoo/.worlds.tkm
+# This file is created automatically by the preferences editor
+# any changes you make by hand to this file will be lost.
+# ----
+World: DEFAULT WORLD
+isdefaultworld: 1
+connectscript: connect %u %p
+# ----
+World: Localhost
+shortlist: On
+port: 7777
+host: 127.0.0.1
+# ----
+World: JHM
+shortlist: On
+port: 1709
+host: jhm.moo.mud.org
+# ----
+World: Diversity University
+shortlist: On
+port: 8888
+host: moo.du.org
+# ----
+World: the Cold Dark
+shortlist: On
+port: 1138
+host: ice.cold.org
+# ----
+World: TecfaMOO
+shortlist: On
+port: 7777
+host: tecfamoo.unige.ch
+# ----
+World: RiverMOO
+shortlist: On
+port: 8888
+host: rivermoo.com
+# ----
+World: Guest@Moo.Awns.Com
+shortlist: On
+login: guest
+port: 8888
+isguestatmoodotawnsdotcom: 1
+host: moo.awns.com
+# ----
+World: tlon.jenga.xyz:1138
+windowgeometry: 104x33+305+31
+shortlist: On
+port: 1138
+host: tlon.jenga.xyz

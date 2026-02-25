@@ -1,0 +1,61 @@
+## An example triggers.tkm file.  Comment lines begin with the '#'
+## character.  This file can contain valid TCL commands and procedure
+## definitions.  Three special procedures are predefined:
+## 
+##	trigger
+##		when a line arrives from the server and matches
+##		this regular expression execute this command
+##
+##	macro
+##		when the user types a line matching this regular
+##		expression execute this command
+##
+##	gag
+##		when a line arrives from the server and matches
+##		this regular expression supress the line, displaying
+##		nothing on the main client window.
+##
+## You can find out more about Triggers, Gags and Macros at
+## tkMOO-light's supporting website:
+## 
+##     http://www.awns.com/tkMOO-light/
+
+## ---------------------------------------------------------------------
+## MOOs send a '*** Connected ***' string when you connect.  Hide this
+## message.
+
+## Remove the single comment character '#' from the next line for
+## this gag to take effect.
+
+## ---------------------------------------------------------------------
+
+## ---------------------------------------------------------------------
+## Do you ever get annoyed because you have to type a '"' character
+## before everything you want to say?  This complicated looking macro
+## will test what you type to see if it starts with a special character
+## or if the first word is a known command.  Anything that isn't
+## recognised is assumed to be something you want to say.
+
+## ---------------------------------------------------------------------
+
+## ---------------------------------------------------------------------
+## Pay special attention to your friends, Janet and John.  If they
+## say anything then display their names in Blue letters.
+
+## ---------------------------------------------------------------------
+
+## ---------------------------------------------------------------------
+## You can close the client window and use this trigger to alert you
+## when someone starts talking.  This trigger rings the bell and
+## makes the client window pop open.
+
+## ---------------------------------------------------------------------
+
+## ---------------------------------------------------------------------
+## MOO Login Watchers display arrivals and departures with messages
+## like the following:
+## 	< Name has disconnected. ... >
+## Display these notification messages in the client's status bar
+## instead of displaying in the client's main window.
+
+## ---------------------------------------------------------------------

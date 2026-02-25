@@ -1,5 +1,6 @@
 let
-  pkgs = import <nixpkgs> {};
+  sources = import ./npins;
+  pkgs = import sources.nixpkgs {};
 in
   pkgs.mkShell {
     preferLocalBuild = true;

@@ -61,12 +61,8 @@
   # Enables emails for ZFS
   customizeZfs = zfs: (zfs.override {enableMail = true;});
 
-  dns = import (
-    builtins.fetchTarball {
-      name = "dns.nix-1.1.2";
-      url = "https://github.com/kirelagin/dns.nix/archive/refs/tags/v1.1.2.tar.gz";
-    }
-  );
+  sources = import ../../npins;
+  dns = import sources."dns.nix";
 in {
   imports = [
     ./hardware-configuration.nix
@@ -280,17 +276,6 @@ in {
     timerConfig.OnCalendar = "weekly";
   };
 
-  #systemd.services."wakeup" = {
-  #description = "Morning wake up call";
-  #serviceConfig = {
-  #Type = "oneshot";
-  #EnvironmentFile = "${config.age.secrets.twilio-env.path}";
-  #ExecStart = "${pkgs.writers.writePython3 "call.py" {libraries = [pkgs.python39Packages.twilio];} ./call.py}";
-  #Restart = "on-failure";
-  #};
-  #startAt = "*-*-* 06:35:00 Australia/Melbourne";
-  #};
-
   virtualisation.podman.enable = true;
   virtualisation.podman.dockerCompat = true;
   virtualisation.podman.extraPackages = [pkgs.zfs];
@@ -302,14 +287,6 @@ in {
       runroot = "/run/containers/storage";
     };
   };
-
-  #hardware.opengl.enable = true;
-  #hardware.opengl.extraPackages = [ pkgs.cudatoolkit ];
-  #services.owncast = {
-  #enable = true;
-  #listen = "10.100.0.6";
-  #openFirewall = true;
-  #};
 
   # Use DNS ACME challenge because I want to serve this only
   # over Wireguard but still have the conveniece of a public CA

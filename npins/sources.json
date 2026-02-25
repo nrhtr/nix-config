@@ -1,5 +1,47 @@
 {
   "pins": {
+    "agenix": {
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "ryantm",
+        "repo": "agenix"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "b027ee29d959fda4b60b57566d64c98a202e0feb",
+      "url": "https://github.com/ryantm/agenix/archive/b027ee29d959fda4b60b57566d64c98a202e0feb.tar.gz",
+      "hash": "1wlpvpj45qfixdzhmk2cgiwlkyaf8a5mjy2jp5lsx2wsxblclngm"
+    },
+    "dns.nix": {
+      "type": "GitRelease",
+      "repository": {
+        "type": "GitHub",
+        "owner": "kirelagin",
+        "repo": "dns.nix"
+      },
+      "pre_releases": false,
+      "version_upper_bound": null,
+      "release_prefix": null,
+      "submodules": false,
+      "version": "v1.2.0",
+      "revision": "a3196708a56dee76186a9415c187473b94e6cbae",
+      "url": "https://api.github.com/repos/kirelagin/dns.nix/tarball/v1.2.0",
+      "hash": "011b6ahj4qcf7jw009qgbf6k5dvjmgls88khwzgjr9kxlgbypb90"
+    },
+    "git-hooks.nix": {
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "cachix",
+        "repo": "git-hooks.nix"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "49bbbfc218bf3856dfa631cead3b052d78248b83",
+      "url": "https://github.com/cachix/git-hooks.nix/archive/49bbbfc218bf3856dfa631cead3b052d78248b83.tar.gz",
+      "hash": "0kqg30mwfdvm5zqj7r53m1rb0fvn285dhiyjwvv7k5qqibsxxnhs"
+    },
     "home-manager": {
       "type": "Git",
       "repository": {
@@ -7,17 +49,25 @@
         "owner": "nix-community",
         "repo": "home-manager"
       },
-      "branch": "release-25.05",
-      "revision": "3b955f5f0a942f9f60cdc9cacb7844335d0f21c3",
-      "url": "https://github.com/nix-community/home-manager/archive/3b955f5f0a942f9f60cdc9cacb7844335d0f21c3.tar.gz",
-      "hash": "0q3lv288xlzxczh6lc5lcw0zj9qskvjw3pzsrgvdh8rl8ibyq75s"
+      "branch": "release-25.11",
+      "submodules": false,
+      "revision": "cb6c151f5c9db4df0b69d06894dc8484de1f16a0",
+      "url": "https://github.com/nix-community/home-manager/archive/cb6c151f5c9db4df0b69d06894dc8484de1f16a0.tar.gz",
+      "hash": "07xxcbm86fp0zxljd9d4n12qdjvihvzdcpp664k4041ch3wy4chh"
     },
     "nixpkgs": {
-      "type": "Channel",
-      "name": "nixpkgs-unstable",
-      "url": "https://releases.nixos.org/nixpkgs/nixpkgs-25.11pre877610.2ea123939c5c/nixexprs.tar.xz",
-      "hash": "1895mm7ixnm47zc43p19l4b36j59g3ipdd2an3n2qa6xvqz557s2"
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "NixOS",
+        "repo": "nixpkgs"
+      },
+      "branch": "nixos-25.11",
+      "submodules": false,
+      "revision": "e764fc9a405871f1f6ca3d1394fb422e0a0c3951",
+      "url": "https://github.com/NixOS/nixpkgs/archive/e764fc9a405871f1f6ca3d1394fb422e0a0c3951.tar.gz",
+      "hash": "0sch128mp1bcvbixx847ykyhsk5mnqfw1wgwi7igs2hhgdvammmi"
     }
   },
-  "version": 3
+  "version": 5
 }

@@ -2,9 +2,12 @@ let
   sources = import ./npins;
   pkgs = import sources.nixpkgs {};
   gitleaks = pkgs.callPackage ./packages/gitleaks/default.nix {};
-  nix-pre-commit-hooks =
-    import (builtins.fetchTarball
-      "https://github.com/cachix/pre-commit-hooks.nix/tarball/master");
+  nix-pre-commit-hooks = import sources."git-hooks.nix";
+  #(pkgs.fetchzip {
+  #url = "https://github.com/cachix/pre-commit-hooks.nix/tarball/master";
+  #hash = "";
+  #}
+  #);
   nix-gitleaks = import ./modules/gitleaks/default.nix;
 in rec {
   inherit gitleaks;

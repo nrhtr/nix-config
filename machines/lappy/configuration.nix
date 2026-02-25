@@ -4,17 +4,13 @@
   fetchFromGitHub,
   lib,
   ...
-}: let
-  nix-colors = import <nix-colors>;
-in {
+}: {
   imports = [
     ./hardware-configuration.nix
 
-    #<home-manager/nixos>
     ./wireguard.nix
     ./borg.nix
     ./borg-notifier.nix
-    ./home.nix
 
     ./../../common/shared.nix
 
@@ -23,7 +19,7 @@ in {
     ./../../home/all.nix
   ];
 
-  displayOutput = "LVDS-1";
+  #displayOutput = "LVDS-1";
 
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.permittedInsecurePackages = [
@@ -43,6 +39,35 @@ in {
       jsonfui = self.callPackage ./../../packages/jsonfui/default.nix {};
       darktable = self.callPackage ./../../packages/darktable/default.nix {};
       wine = super.wine.override {wineBuild = "wine64";};
+      niri = self.callPackage ./../../packages/niri/package.nix {};
+      #niri = let
+      #src = super.fetchFromGitHub {
+      #owner = "axelkar";
+      #repo = "niri";
+      #rev = "fb27849";
+      #hash = "sha256-1oAEmlB5QQay9ljP2YucC1iv5+COK3YzU8zqDH7Md2M=";
+      #};
+      #in
+      #(super.niri.overrideAttrs (oldAttrs: {
+      #doCheck = false;
+      #inherit src;
+      #buildNoDefaultFeature = false;
+      ##buildFeatures = oldAttrs.buildFeatures ++ ["xdp-gnome-remote-desktop" "xdp-gnome-input-capture"];
+      #cargoDeps = self.rustPlatform.fetchCargoVendor  {
+      #inherit src;
+      #hash = "sha256-gv87edvnN/j49Zy7bz7oQoj2xN01zLZ7WwjfjaHoOx4=";
+      #outputHash = "sha256-";
+      #outputHash = "";
+      #outputHashAlgo = "sha256";
+      #};
+      #patches = [
+      #(pkgs.fetchpatch {
+      #url = "https://github.com/YaLTeR/niri/pull/1966.patch";
+      #hash = "sha256-1BV7aSIR1j2CG7Hz5oDA5ZH4zuJkvbyrZlKVrLZytWc=";
+      #})
+      #];
+      #})
+      #);
     })
   ];
 
@@ -55,6 +80,7 @@ in {
 
   # Distribute builds to nix02 (consider nix01?)
   nix.distributedBuilds = true;
+  nix.settings.trusted-users = ["@wheel"];
   nix.extraOptions = ''
     builders-use-substitutes = true
   '';
@@ -112,20 +138,30 @@ in {
     }
   ];
 
+  # PipeWire + MPD setup
   services.mpd = {
     enable = true;
     extraConfig = ''
       audio_output {
-      type "pulse"
-      name "Pulseaudio"
-      server "127.0.0.1"
+        type "pipewire"
+        name "Pipewire output"
       }
     '';
     musicDirectory = "/home/jenga/music";
     user = "jenga";
   };
 
-  hardware.pulseaudio.extraConfig = "load-module module-native-protocol-tcp auth-ip-acl=127.0.0.1";
+  systemd.services.mpd.environment = {
+    XDG_RUNTIME_DIR = "/run/user/1000"; # User-id to look for PipeWire socket
+  };
+
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+    # leaving JACK disabled
+  };
 
   services.tlp = {
     enable = true;

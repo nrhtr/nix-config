@@ -4,10 +4,10 @@
   lib,
   ...
 }: let
-  nix-colors = import <nix-colors>;
-  inherit (nix-colors.lib-contrib {inherit pkgs;}) vimThemeFromScheme;
+  sources = import ../npins;
+  agenix = sources.agenix;
 in {
-  imports = [<agenix/modules/age.nix>];
+  imports = ["${agenix}/modules/age.nix"];
 
   programs.gnupg.agent = {
     enable = true;
@@ -37,7 +37,7 @@ in {
     docker
     nixfmt-classic
     niv
-    (pkgs.callPackage <agenix/pkgs/agenix.nix> {})
+    (pkgs.callPackage "${agenix}/pkgs/agenix.nix" {})
   ];
 
   nix = {
