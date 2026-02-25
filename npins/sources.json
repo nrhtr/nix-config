@@ -55,6 +55,19 @@
       "url": "https://github.com/nix-community/home-manager/archive/cb6c151f5c9db4df0b69d06894dc8484de1f16a0.tar.gz",
       "hash": "07xxcbm86fp0zxljd9d4n12qdjvihvzdcpp664k4041ch3wy4chh"
     },
+    "morph": {
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "DBCDK",
+        "repo": "morph"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "ebe50d0caee61077cabf8a1002066fdfb955ae93",
+      "url": "https://github.com/DBCDK/morph/archive/ebe50d0caee61077cabf8a1002066fdfb955ae93.tar.gz",
+      "hash": "03vkbsw76vhb5wzh58mgf0aygymfa32123j359sk5lmg53cjs6nx"
+    },
     "nixpkgs": {
       "type": "Git",
       "repository": {

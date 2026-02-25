@@ -1,6 +1,7 @@
 let
   sources = import ./npins;
   pkgs = import sources.nixpkgs {};
+  morph = import "${sources.morph}/default.nix" {inherit pkgs;};
 in
   pkgs.mkShell {
     preferLocalBuild = true;
