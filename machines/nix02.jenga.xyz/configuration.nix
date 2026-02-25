@@ -53,6 +53,22 @@
     from = emailFrom;
   };
 
+  cgitrc = pkgs.writeText "cgitrc" ''
+    css=/cgit.css
+    logo=/cgit.png
+    favicon=/favicon.ico
+    root-title=git.jenga.xyz
+    root-desc=Git repositories
+    clone-url=https://git.jenga.xyz/$CGIT_REPO_URL
+    enable-index-owner=0
+    enable-commit-graph=1
+    enable-log-filecount=1
+    enable-log-linecount=1
+    max-stats=quarter
+    snapshots=tar.gz zip
+    scan-path=/var/lib/cgit/repos
+  '';
+
   # Sends an email with some heading and the zpool status
   sendEmailEvent = {event}: ''
     printf "Subject: ${hostName} ${event} ''$(${pkgs.coreutils}/bin/date --iso-8601=seconds)\n\nzpool status:\n\n''$(${pkgs.zfs}/bin/zpool status)" | ${pkgs.msmtp}/bin/msmtp -a default ${emailTo}
@@ -426,11 +442,23 @@ in {
       "git.jenga.xyz" = {
         forceSSL = true;
         useACMEHost = "git.jenga.xyz";
-        locations."/" = {
-          proxyPass = "http://127.0.0.1:3000/";
-          extraConfig = ''
-            proxy_read_timeout 300;
-          '';
+        root = "${pkgs.cgit}/cgit";
+        locations = {
+          "~* ^/cgit/(.*)" = {
+            extraConfig = ''
+              alias ${pkgs.cgit}/cgit/$1;
+            '';
+          };
+          "/" = {
+            extraConfig = ''
+              include ${pkgs.nginx}/conf/fastcgi_params;
+              fastcgi_param SCRIPT_FILENAME ${pkgs.cgit}/cgit/cgit.cgi;
+              fastcgi_param PATH_INFO $uri;
+              fastcgi_param QUERY_STRING $args;
+              fastcgi_param CGIT_CONFIG ${cgitrc};
+              fastcgi_pass unix:${config.services.fcgiwrap.instances.cgit.socket.address};
+            '';
+          };
         };
       };
       "actual.jenga.xyz" = {
@@ -489,12 +517,12 @@ in {
     };
   };
 
-  services.forgejo = {
-    enable = true;
-    settings.server = {
-      DOMAIN = "git.jenga.xyz";
-      ROOT_URL = "https://git.jenga.xyz/";
-      HTTP_ADDR = "127.0.0.1";
+  services.fcgiwrap.instances.cgit = {
+    socket = {
+      inherit (config.services.nginx) user group;
+    };
+    process = {
+      inherit (config.services.nginx) user group;
     };
   };
 
