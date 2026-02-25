@@ -423,7 +423,6 @@ in {
         root = "/var/www/minecraft-overviewer";
       };
       "git.jenga.xyz" = {
-        listenAddresses = ["10.100.0.6"];
         forceSSL = true;
         useACMEHost = "git.jenga.xyz";
         locations."/" = {
