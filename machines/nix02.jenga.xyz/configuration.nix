@@ -505,6 +505,8 @@ in {
     };
   };
 
+  environment.systemPackages = [pkgs.claude-code];
+
   programs.neovim = {
     enable = true;
     defaultEditor = true;
