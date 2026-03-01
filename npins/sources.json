@@ -68,6 +68,19 @@
       "url": "https://github.com/DBCDK/morph/archive/ebe50d0caee61077cabf8a1002066fdfb955ae93.tar.gz",
       "hash": "03vkbsw76vhb5wzh58mgf0aygymfa32123j359sk5lmg53cjs6nx"
     },
+    "nix-darwin": {
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "nix-darwin",
+        "repo": "nix-darwin"
+      },
+      "branch": "nix-darwin-25.11",
+      "submodules": false,
+      "revision": "ebec37af18215214173c98cf6356d0aca24a2585",
+      "url": "https://github.com/nix-darwin/nix-darwin/archive/ebec37af18215214173c98cf6356d0aca24a2585.tar.gz",
+      "hash": "1s554xv08msaqbmkab8xzaj43kixffw6k8zw4hagnk0jvz6k9naj"
+    },
     "nixpkgs": {
       "type": "Git",
       "repository": {
