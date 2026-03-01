@@ -98,6 +98,7 @@ in {
     fastmail-nix02.file = ../../secrets/fastmail-nix02.age;
     twilio-env.file = ../../secrets/twilio-env.age;
     gandi.file = ../../secrets/gandi.age;
+    cloudflare-tunnel.file = ../../secrets/cloudflare-tunnel.age;
   };
 
   # We want to still be able to boot without one of these
@@ -549,6 +550,20 @@ in {
     enable = true;
     portMap = {
       "8138" = 1138;
+    };
+  };
+
+  # Cloudflare Tunnel for public Immich share links
+  # The tunnel proxies to Immich - share links are protected by their own tokens,
+  # and the main app requires login, so exposing the full app is safe.
+  services.cloudflared = {
+    enable = true;
+    tunnels."immich-share" = {
+      credentialsFile = config.age.secrets.cloudflare-tunnel.path;
+      default = "http_status:404";
+      ingress = {
+        "photos-share.jenga.xyz" = "http://127.0.0.1:2283";
+      };
     };
   };
 
