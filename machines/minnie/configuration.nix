@@ -11,6 +11,20 @@
 
   system.stateVersion = 6;
 
+  environment.darwinConfig = "/Users/jenga/git/nix-config/machines/minnie/configuration.nix";
+
+  # Bake npins store paths into the activate script's NIX_PATH check.
+  # The activate script uses config.nix.nixPath directly (not the runtime
+  # NIX_PATH env var), so these must be set here rather than in the switch script.
+  nix.nixPath = let
+    pins = import ../../npins;
+  in [
+    "nixpkgs=${pins.nixpkgs}"
+    "darwin=${pins.nix-darwin}"
+    "home-manager=${pins.home-manager}"
+    "darwin-config=/Users/jenga/git/nix-config/machines/minnie/configuration.nix"
+  ];
+
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
   home-manager.users.jenga = import ./home.nix;

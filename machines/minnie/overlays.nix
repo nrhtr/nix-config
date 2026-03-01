@@ -14,6 +14,9 @@
           sha256 = "sha256-Pjm+lMEOcAo4j9w12lmpIy52bWXwXlfNAGUQgqmIc0Y=";
         };
 
+        pyproject = true;
+        build-system = [prev.python3Packages.setuptools];
+
         propagatedBuildInputs = with prev.python3Packages; [
           psutil
         ];
@@ -21,21 +24,16 @@
 
       awscurl = prev.python3Packages.buildPythonApplication rec {
         pname = "awscurl";
-        version = "2023-03-28";
+        version = "0.36";
 
-        src = prev.fetchFromGitHub {
-          owner = "nrhtr";
-          repo = pname;
-          rev = "202004f5e12271bcf987b66907501ac47d9119b0";
-          hash = "sha256-M5pkTvIlMbxpay0GoSN3N7F9pcem0TA+OGDfR4dfW1k=";
+        src = prev.python3Packages.fetchPypi {
+          inherit pname version;
+          hash = "sha256-nrnUlJYW2Q3Xvw0Spn6z4dNIe/CNdadVXZeYEeXaHLQ=";
         };
 
         doCheck = false;
-
-        buildInputs = with prev.python3Packages; [
-          pytest
-          mock
-        ];
+        pyproject = true;
+        build-system = [prev.python3Packages.setuptools];
 
         propagatedBuildInputs = with prev.python3Packages; [
           requests

@@ -9,6 +9,8 @@ HM=$(nix-instantiate --eval -E 'toString (import ./npins).home-manager' --json |
 CONFIG="$(pwd)/machines/minnie/configuration.nix"
 
 echo "Switching minnie..."
+# -I flags are used by the initial nix-build '<darwin>' invocation.
+# The activate script uses nix.nixPath baked at build time (not runtime NIX_PATH).
 sudo darwin-rebuild switch \
   -I nixpkgs="$NIXPKGS" \
   -I darwin="$DARWIN" \
