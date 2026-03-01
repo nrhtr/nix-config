@@ -118,7 +118,7 @@
 
       secretsFile = "${config.age.secrets.wifi.path}";
       networks = {
-        "TelstraD3CE90".pskRaw = "ext:PSK_TSM";
+        "TelstraD3CE90-5G".pskRaw = "ext:PSK_TSM";
         #"Richard Gere 5G Rona".psk = "ext:PSK_HOME";
         #"Belong0F70DA-5G".psk = "ext:PSK_A";
         #"Jeremy's iPhone".psk = "ext:PSK_MOB";
