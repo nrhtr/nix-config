@@ -349,12 +349,22 @@ in {
       dnsProvider = "gandiv5";
       credentialsFile = "${config.age.secrets.gandi.path}";
     };
+    "photos.jenga.xyz" = {
+      group = "nginx";
+      dnsProvider = "gandiv5";
+      credentialsFile = "${config.age.secrets.gandi.path}";
+    };
   };
 
   services.actual = {
     enable = true;
     settings.hostname = "127.0.0.1";
     settings.port = 5006;
+  };
+
+  services.immich = {
+    enable = true;
+    host = "127.0.0.1";
   };
 
   networking.firewall.interfaces.wg0.allowedTCPPorts = [
@@ -491,6 +501,15 @@ in {
         useACMEHost = "fonpub.jenga.xyz";
         locations."/" = {
           proxyPass = "http://127.0.0.1:7082/";
+        };
+      };
+      "photos.jenga.xyz" = {
+        listenAddresses = ["10.100.0.6"];
+        forceSSL = true;
+        useACMEHost = "photos.jenga.xyz";
+        locations."/" = {
+          proxyPass = "http://127.0.0.1:2283/";
+          proxyWebsockets = true;
         };
       };
       "tlon.jenga.xyz" = {
