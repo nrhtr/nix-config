@@ -41,7 +41,7 @@ in rec {
       };
 
       check-nixos-configs = {
-        enable = true;
+        enable = false; # too slow for pre-push, run manually
         entry = "bash scripts/check-nixos-configs.sh";
         pass_filenames = false;
         stages = ["pre-push"];
