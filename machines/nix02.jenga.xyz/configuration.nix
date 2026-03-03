@@ -562,7 +562,7 @@ in {
       credentialsFile = config.age.secrets.cloudflare-tunnel.path;
       default = "http_status:404";
       ingress = {
-        "photos-share.jenga.xyz" = "http://127.0.0.1:2283";
+        "photo-share.jenga.xyz" = "http://127.0.0.1:2283";
       };
     };
   };
