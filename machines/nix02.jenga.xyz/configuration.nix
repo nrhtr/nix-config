@@ -538,11 +538,27 @@ in {
           "/api/albums/" = {
             proxyPass = "http://127.0.0.1:2283";
           };
+          # Server info endpoints
+          "/api/server/config" = {
+            proxyPass = "http://127.0.0.1:2283";
+          };
+          "/api/server/media-types" = {
+            proxyPass = "http://127.0.0.1:2283";
+          };
           # Static assets (JS, CSS, etc.)
           "/_app/" = {
             proxyPass = "http://127.0.0.1:2283";
           };
           "/immich-logo.svg" = {
+            proxyPass = "http://127.0.0.1:2283";
+          };
+          "/favicon.ico" = {
+            proxyPass = "http://127.0.0.1:2283";
+          };
+          "~ ^/favicon-.*\\.png$" = {
+            proxyPass = "http://127.0.0.1:2283";
+          };
+          "/manifest.json" = {
             proxyPass = "http://127.0.0.1:2283";
           };
           # Block everything else
