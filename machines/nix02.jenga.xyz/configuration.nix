@@ -98,7 +98,6 @@ in {
     fastmail-nix02.file = ../../secrets/fastmail-nix02.age;
     twilio-env.file = ../../secrets/twilio-env.age;
     gandi.file = ../../secrets/gandi.age;
-    cloudflare-tunnel.file = ../../secrets/cloudflare-tunnel.age;
   };
 
   # We want to still be able to boot without one of these
@@ -355,6 +354,11 @@ in {
       dnsProvider = "gandiv5";
       credentialsFile = "${config.age.secrets.gandi.path}";
     };
+    "share.jenga.dev" = {
+      group = "nginx";
+      dnsProvider = "gandiv5";
+      credentialsFile = "${config.age.secrets.gandi.path}";
+    };
   };
 
   services.actual = {
@@ -513,6 +517,40 @@ in {
           proxyWebsockets = true;
         };
       };
+      # Public Immich access - restricted to share paths only
+      "share.jenga.dev" = {
+        listenAddresses = [ipv4.address];
+        forceSSL = true;
+        useACMEHost = "share.jenga.dev";
+        locations = {
+          # Share pages
+          "/share/" = {
+            proxyPass = "http://127.0.0.1:2283";
+            proxyWebsockets = true;
+          };
+          # API endpoints needed for shares to work
+          "/api/shared-links/" = {
+            proxyPass = "http://127.0.0.1:2283";
+          };
+          "/api/assets/" = {
+            proxyPass = "http://127.0.0.1:2283";
+          };
+          "/api/albums/" = {
+            proxyPass = "http://127.0.0.1:2283";
+          };
+          # Static assets (JS, CSS, etc.)
+          "/_app/" = {
+            proxyPass = "http://127.0.0.1:2283";
+          };
+          "/immich-logo.svg" = {
+            proxyPass = "http://127.0.0.1:2283";
+          };
+          # Block everything else
+          "/" = {
+            return = "403";
+          };
+        };
+      };
       "tlon.jenga.xyz" = {
         forceSSL = true;
         useACMEHost = "tlon.jenga.xyz";
@@ -550,20 +588,6 @@ in {
     enable = true;
     portMap = {
       "8138" = 1138;
-    };
-  };
-
-  # Cloudflare Tunnel for public Immich share links
-  # The tunnel proxies to Immich - share links are protected by their own tokens,
-  # and the main app requires login, so exposing the full app is safe.
-  services.cloudflared = {
-    enable = true;
-    tunnels."immich-share" = {
-      credentialsFile = config.age.secrets.cloudflare-tunnel.path;
-      default = "http_status:404";
-      ingress = {
-        "photo-share.jenga.xyz" = "http://127.0.0.1:2283";
-      };
     };
   };
 
