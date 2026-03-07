@@ -7,18 +7,16 @@ in
     preferLocalBuild = true;
     buildInputs =
       pkgs.lib.optionals (!pkgs.stdenv.isDarwin) [
-        (import ./default.nix).gitleaks
         (import "${sources.morph}/default.nix" {inherit pkgs;})
       ]
       ++ (with pkgs; [
         agenix
         npins
+        pre-commit
+        (import ./default.nix).gitleaks
       ]);
-    shellHook =
-      if pkgs.stdenv.isDarwin
-      then ""
-      else ''
-        ${(import ./default.nix).pre-commit-check.shellHook}
-        ${(import ./default.nix).gitleaks-cfg.shellHook}
-      '';
+    shellHook = ''
+      ${(import ./default.nix).pre-commit-check.shellHook}
+      ${(import ./default.nix).gitleaks-cfg.shellHook}
+    '';
   }

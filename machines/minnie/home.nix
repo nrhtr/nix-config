@@ -83,15 +83,17 @@ in {
 
   programs.git = {
     enable = true;
-    userName = name;
-    userEmail = email;
     ignores = [
       "/.direnv"
       "/.envrc"
       ".vscode"
       "/.idea"
     ];
-    extraConfig = {
+    settings = {
+      user = {
+        name = name;
+        email = email;
+      };
       core = {
         editor = "nvim";
       };
