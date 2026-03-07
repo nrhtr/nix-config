@@ -115,6 +115,7 @@ in {
     [
       # Some basics
       coreutils
+      borgbackup
       curl
       wget
       gopass

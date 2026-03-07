@@ -7,9 +7,11 @@
     <home-manager/nix-darwin>
     ./network.nix
     ./overlays.nix
+    ./borg.nix
   ];
 
   system.stateVersion = 6;
+  system.primaryUser = "jenga";
 
   environment.darwinConfig = "/Users/jenga/git/nix-config/machines/minnie/configuration.nix";
 
