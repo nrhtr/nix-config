@@ -95,7 +95,11 @@ in {
   ];
 
   age.secrets = {
-    fastmail-nix02.file = ../../secrets/fastmail-nix02.age;
+    fastmail-nix02 = {
+      file = ../../secrets/fastmail-nix02.age;
+      group = "smtp-relay";
+      mode = "0440";
+    };
     twilio-env.file = ../../secrets/twilio-env.age;
     gandi.file = ../../secrets/gandi.age;
     kbfirmware-env.file = ../../secrets/kbfirmware-env.age;
@@ -400,8 +404,10 @@ in {
   users.users.kbfirmware = {
     isSystemUser = true;
     group = "kbfirmware";
+    extraGroups = ["smtp-relay"];
   };
   users.groups.kbfirmware = {};
+  users.groups.smtp-relay = {};
 
   systemd.services.kbfirmware = {
     description = "kbfirmware backend API server";
