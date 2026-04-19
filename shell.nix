@@ -12,7 +12,7 @@ in
       ++ (with pkgs; [
         agenix
         npins
-        pre-commit
+        prek
         (import ./default.nix).gitleaks
       ]);
     shellHook = ''
