@@ -10,8 +10,8 @@ buildGoModule {
   src = fetchFromGitHub {
     owner = "nrhtr";
     repo = "kbfirmware";
-    rev = "5e1528d654d284378b0a1794923b2ac9183ab597";
-    hash = "sha256-VKTXQe9FZ8R2geZZaOWoWU8P/vbLQROun1FqENFYi24=";
+    rev = "a886f248a500886cff568400c1f4e4137664d3f2";
+    hash = "sha256-Cfv0XEV8IZZmzbqBvhUgYth8bouQTlSBx/05LxA44qg=";
   };
 
   vendorHash = "sha256-vlGmqYWcL5wC9c0JxzOjzCmSR+ju/lxscx2KBe9N2Fo=";
