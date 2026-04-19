@@ -5,7 +5,7 @@ buildGoModule {
 
   src = (import ../../npins).kbfirmware;
 
-  vendorHash = "sha256-vlGmqYWcL5wC9c0JxzOjzCmSR+ju/lxscx2KBe9N2Fo=";
+  vendorHash = "sha256-U9lvhS932JS52QvTXBJRXdoRNPYdP0/DxqNVIdxuhVU=";
 
   env.CGO_ENABLED = "0";
   ldflags = [
