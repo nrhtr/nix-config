@@ -397,6 +397,12 @@ in {
     allowedUDPPorts = [25565]; # minecraft
   };
 
+  users.users.kbfirmware = {
+    isSystemUser = true;
+    group = "kbfirmware";
+  };
+  users.groups.kbfirmware = {};
+
   systemd.services.kbfirmware = {
     description = "kbfirmware backend API server";
     wantedBy = ["multi-user.target"];
@@ -407,7 +413,8 @@ in {
     };
     serviceConfig = {
       ExecStart = "${pkgs.kbfirmware}/bin/kbfirmware";
-      DynamicUser = true;
+      User = "kbfirmware";
+      Group = "kbfirmware";
       StateDirectory = "kbfirmware";
       Restart = "on-failure";
       EnvironmentFile = config.age.secrets.kbfirmware-env.path;
