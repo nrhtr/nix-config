@@ -55,6 +55,19 @@
       "url": "https://github.com/nix-community/home-manager/archive/cb6c151f5c9db4df0b69d06894dc8484de1f16a0.tar.gz",
       "hash": "07xxcbm86fp0zxljd9d4n12qdjvihvzdcpp664k4041ch3wy4chh"
     },
+    "kbfirmware": {
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "nrhtr",
+        "repo": "kbfirmware"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "a3b1abec35e5f9647a15c93a5f8185c692412ca9",
+      "url": "https://github.com/nrhtr/kbfirmware/archive/a3b1abec35e5f9647a15c93a5f8185c692412ca9.tar.gz",
+      "hash": "0dgvc9k0jcgx7lxxfb519lb44mm2ah5nvdgihfb3b5n85zaw43vw"
+    },
     "morph": {
       "type": "Git",
       "repository": {
