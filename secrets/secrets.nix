@@ -18,4 +18,5 @@ in {
   "twilio-env.age".publicKeys = all;
   "fastmail-nix02.age".publicKeys = all;
   "gandi.age".publicKeys = all;
+  "kbfirmware-env.age".publicKeys = all;
 }

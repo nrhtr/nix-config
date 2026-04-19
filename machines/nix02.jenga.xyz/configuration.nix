@@ -98,6 +98,7 @@ in {
     fastmail-nix02.file = ../../secrets/fastmail-nix02.age;
     twilio-env.file = ../../secrets/twilio-env.age;
     gandi.file = ../../secrets/gandi.age;
+    kbfirmware-env.file = ../../secrets/kbfirmware-env.age;
   };
 
   # We want to still be able to boot without one of these
@@ -409,6 +410,7 @@ in {
       DynamicUser = true;
       StateDirectory = "kbfirmware";
       Restart = "on-failure";
+      EnvironmentFile = config.age.secrets.kbfirmware-env.path;
     };
   };
 
