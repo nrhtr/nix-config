@@ -135,6 +135,7 @@ in {
     (self: super: {
       zfsStable = customizeZfs super.zfsStable;
       genesis = self.callPackage ./../../packages/genesis/default.nix {};
+      kbfirmware = self.callPackage ./../../packages/kbfirmware/default.nix {};
       minecraft-overviewer =
         self.python311Packages.callPackage ./../../packages/minecraft-overviewer/default.nix
         {};
@@ -359,6 +360,11 @@ in {
       dnsProvider = "gandiv5";
       credentialsFile = "${config.age.secrets.gandi.path}";
     };
+    "kbfirmware.jenga.dev" = {
+      group = "nginx";
+      dnsProvider = "gandiv5";
+      credentialsFile = "${config.age.secrets.gandi.path}";
+    };
   };
 
   services.actual = {
@@ -388,6 +394,22 @@ in {
       ]
       ++ [25565]; # minecraft
     allowedUDPPorts = [25565]; # minecraft
+  };
+
+  systemd.services.kbfirmware = {
+    description = "kbfirmware backend API server";
+    wantedBy = ["multi-user.target"];
+    after = ["network.target"];
+    environment = {
+      LISTEN_ADDR = "127.0.0.1:8080";
+      DB_PATH = "/var/lib/kbfirmware/kbfirmware.db";
+    };
+    serviceConfig = {
+      ExecStart = "${pkgs.kbfirmware}/bin/kbfirmware";
+      DynamicUser = true;
+      StateDirectory = "kbfirmware";
+      Restart = "on-failure";
+    };
   };
 
   services.genesis.enable = true;
@@ -515,6 +537,14 @@ in {
         locations."/" = {
           proxyPass = "http://127.0.0.1:2283/";
           proxyWebsockets = true;
+        };
+      };
+      "kbfirmware.jenga.dev" = {
+        listenAddresses = [ipv4.address];
+        forceSSL = true;
+        useACMEHost = "kbfirmware.jenga.dev";
+        locations."/" = {
+          proxyPass = "http://127.0.0.1:8080/";
         };
       };
       # Public Immich access - restricted to share paths only
