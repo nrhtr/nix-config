@@ -11,5 +11,6 @@ buildGoModule {
   ldflags = [
     "-s"
     "-w"
+    "-X kbfirmware/email.sendmailBin=/run/wrappers/bin/sendmail"
   ];
 }
