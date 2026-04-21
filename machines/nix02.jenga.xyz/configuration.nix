@@ -414,6 +414,7 @@ in {
     wantedBy = ["multi-user.target"];
     after = ["network.target"];
     environment = {
+      SITE_URL = "https://kbfirmware.jenga.dev";
       LISTEN_ADDR = "127.0.0.1:8080";
       DB_PATH = "/var/lib/kbfirmware/kbfirmware.db";
     };
