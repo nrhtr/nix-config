@@ -64,9 +64,9 @@
       },
       "branch": "main",
       "submodules": false,
-      "revision": "5ba5880db52594080864c1dcc5e9aae3f3acf969",
-      "url": "https://github.com/nrhtr/kbfirmware/archive/5ba5880db52594080864c1dcc5e9aae3f3acf969.tar.gz",
-      "hash": "1ssxkmzm2vz19pna2kdm4rxyz1hnxb05frf3rjwap2qj5q89qhld"
+      "revision": "1cf3883a7c77bbc02c1837cf916eaa362f2fb0f8",
+      "url": "https://github.com/nrhtr/kbfirmware/archive/1cf3883a7c77bbc02c1837cf916eaa362f2fb0f8.tar.gz",
+      "hash": "0kwrv0abjiaz2cg1zqmrnik5yggcw59f7h3pn28s8a0cafxzhn1h"
     },
     "morph": {
       "type": "Git",
