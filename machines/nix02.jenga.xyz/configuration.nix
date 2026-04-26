@@ -550,6 +550,15 @@ in {
           return = "301 https://kbfirmware.xyz$request_uri";
         };
       };
+      "www.kbfirmware.xyz" = {
+        listenAddresses = [ipv4.address];
+        forceSSL = true;
+        sslCertificate = ../../secrets/kbfirmware.xyz.cert;
+        sslCertificateKey = config.age.secrets.kbfirmware-xyz-key.path;
+        locations."/" = {
+          return = "301 https://kbfirmware.xyz$request_uri";
+        };
+      };
       "kbfirmware.xyz" = {
         listenAddresses = [ipv4.address];
         forceSSL = true;
