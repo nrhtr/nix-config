@@ -370,6 +370,11 @@ in {
       dnsProvider = "gandiv5";
       credentialsFile = "${config.age.secrets.gandi.path}";
     };
+    "kbfirmware.xyz" = {
+      group = "nginx";
+      dnsProvider = "gandiv5";
+      credentialsFile = "${config.age.secrets.gandi.path}";
+    };
   };
 
   services.actual = {
@@ -414,7 +419,7 @@ in {
     wantedBy = ["multi-user.target"];
     after = ["network.target"];
     environment = {
-      SITE_URL = "https://kbfirmware.jenga.dev";
+      SITE_URL = "https://kbfirmware.xyz";
       LISTEN_ADDR = "127.0.0.1:8080";
       DB_PATH = "/var/lib/kbfirmware/kbfirmware.db";
     };
@@ -559,6 +564,14 @@ in {
         listenAddresses = [ipv4.address];
         forceSSL = true;
         useACMEHost = "kbfirmware.jenga.dev";
+        locations."/" = {
+          return = "301 https://kbfirmware.xyz$request_uri";
+        };
+      };
+      "kbfirmware.xyz" = {
+        listenAddresses = [ipv4.address];
+        forceSSL = true;
+        useACMEHost = "kbfirmware.xyz";
         locations."/" = {
           proxyPass = "http://127.0.0.1:8080/";
         };
