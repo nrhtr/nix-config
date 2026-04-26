@@ -321,11 +321,6 @@ in {
       dnsProvider = "gandiv5";
       credentialsFile = "${config.age.secrets.gandi.path}";
     };
-    "minecraft.jenga.xyz" = {
-      group = "nginx";
-      dnsProvider = "gandiv5";
-      credentialsFile = "${config.age.secrets.gandi.path}";
-    };
     "actual.jenga.xyz" = {
       group = "nginx";
       dnsProvider = "gandiv5";
@@ -342,16 +337,6 @@ in {
       credentialsFile = "${config.age.secrets.gandi.path}";
     };
     "fonpub.jenga.xyz" = {
-      group = "nginx";
-      dnsProvider = "gandiv5";
-      credentialsFile = "${config.age.secrets.gandi.path}";
-    };
-    "git.jenga.xyz" = {
-      group = "nginx";
-      dnsProvider = "gandiv5";
-      credentialsFile = "${config.age.secrets.gandi.path}";
-    };
-    "tlon.jenga.xyz" = {
       group = "nginx";
       dnsProvider = "gandiv5";
       credentialsFile = "${config.age.secrets.gandi.path}";
@@ -395,6 +380,7 @@ in {
     # genesis terminal / HTTP UI
     allowedTCPPorts =
       [
+        80 # HTTP (needed for ACME HTTP-01 challenge)
         443
         1138
       ]
@@ -490,12 +476,12 @@ in {
     virtualHosts = {
       "minecraft.jenga.xyz" = {
         forceSSL = true;
-        useACMEHost = "minecraft.jenga.xyz";
+        enableACME = true;
         root = "/var/www/minecraft-overviewer";
       };
       "git.jenga.xyz" = {
         forceSSL = true;
-        useACMEHost = "git.jenga.xyz";
+        enableACME = true;
         root = "${pkgs.cgit}/cgit";
         locations = {
           "~* ^/cgit/(.*)" = {
@@ -623,7 +609,7 @@ in {
       };
       "tlon.jenga.xyz" = {
         forceSSL = true;
-        useACMEHost = "tlon.jenga.xyz";
+        enableACME = true;
         root = "/var/www/tlon.jenga.xyz";
 
         locations = {
