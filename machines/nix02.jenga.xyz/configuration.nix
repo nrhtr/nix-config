@@ -103,6 +103,7 @@ in {
     twilio-env.file = ../../secrets/twilio-env.age;
     gandi.file = ../../secrets/gandi.age;
     kbfirmware-env.file = ../../secrets/kbfirmware-env.age;
+    kbfirmware-xyz-key.file = ../../secrets/kbfirmware-xyz-key.age;
   };
 
   # We want to still be able to boot without one of these
@@ -370,11 +371,6 @@ in {
       dnsProvider = "gandiv5";
       credentialsFile = "${config.age.secrets.gandi.path}";
     };
-    "kbfirmware.xyz" = {
-      group = "nginx";
-      dnsProvider = "gandiv5";
-      credentialsFile = "${config.age.secrets.gandi.path}";
-    };
   };
 
   services.actual = {
@@ -571,7 +567,9 @@ in {
       "kbfirmware.xyz" = {
         listenAddresses = [ipv4.address];
         forceSSL = true;
-        useACMEHost = "kbfirmware.xyz";
+        # use Cloudflare origin cert
+        sslCertificate = ../../secrets/kbfirmware.xyz.cert;
+        sslCertificateKey = config.age.secrets.kbfirmware-xyz-key.path;
         locations."/" = {
           proxyPass = "http://127.0.0.1:8080/";
         };
