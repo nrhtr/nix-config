@@ -103,7 +103,11 @@ in {
     twilio-env.file = ../../secrets/twilio-env.age;
     gandi.file = ../../secrets/gandi.age;
     kbfirmware-env.file = ../../secrets/kbfirmware-env.age;
-    kbfirmware-xyz-key.file = ../../secrets/kbfirmware-xyz-key.age;
+    kbfirmware-xyz-key = {
+      file = ../../secrets/kbfirmware-xyz-key.age;
+      group = "nginx";
+      mode = "0440";
+    };
   };
 
   # We want to still be able to boot without one of these
