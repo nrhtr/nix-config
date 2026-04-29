@@ -146,6 +146,7 @@ in {
       zfsStable = customizeZfs super.zfsStable;
       genesis = self.callPackage ./../../packages/genesis/default.nix {};
       kbfirmware = self.callPackage ./../../packages/kbfirmware/default.nix {};
+      wg-exit-node = self.callPackage ./../../packages/wg-exit-node/default.nix {};
       minecraft-overviewer =
         self.python311Packages.callPackage ./../../packages/minecraft-overviewer/default.nix
         {};

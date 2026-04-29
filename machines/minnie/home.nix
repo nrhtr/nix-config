@@ -115,6 +115,8 @@ in {
 
   home.packages = with pkgs;
     [
+      wg-exit-node
+
       # Some basics
       coreutils
       borgbackup

@@ -5,6 +5,7 @@
 }: {
   nixpkgs.overlays = [
     (final: prev: {
+      wg-exit-node = prev.callPackage ./../../packages/wg-exit-node/default.nix {};
       aws2_wrap = prev.python3Packages.buildPythonApplication rec {
         pname = "aws2-wrap";
         version = "1.2.8";
