@@ -86,13 +86,12 @@
   # Add ability to use TouchID for sudo authentication
   security.pam.services.sudo_local.touchIdAuth = true;
 
-  # macFUSE (kernel extension, cannot be packaged by Nix) + borgbackup with
-  # FUSE support for `borg mount`. After the first `darwin-rebuild switch`,
-  # approve the kernel extension in System Settings → Privacy & Security.
+  # borgbackup with FUSE support for `borg mount`.
+  # Note: macFUSE must be installed manually: brew install --cask macfuse --no-quarantine
+  # then approve the kernel extension in System Settings → Privacy & Security.
   homebrew = {
     enable = true;
     taps = ["borgbackup/tap"];
     brews = ["borgbackup/tap/borgbackup-fuse"];
-    casks = ["macfuse"];
   };
 }
