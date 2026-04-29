@@ -6,7 +6,7 @@
   servers = lib.filterAttrs (_: n: n ? endpoint) nodes;
 
   # Extract the IP portion from "host:port"
-  endpointIP = endpoint: builtins.elemAt (builtins.splitString ":" endpoint) 0;
+  endpointIP = endpoint: builtins.elemAt (lib.splitString ":" endpoint) 0;
 
   validNames = lib.concatStringsSep ", " (lib.attrNames servers);
 
