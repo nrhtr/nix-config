@@ -407,6 +407,7 @@ in {
     after = ["network.target"];
     environment = {
       SITE_URL = "https://kbfirmware.xyz";
+      SITE_URL_ALIASES = "kbfirmware.jenga.dev";
       LISTEN_ADDR = "127.0.0.1:8080";
       DB_PATH = "/var/lib/kbfirmware/kbfirmware.db";
     };
