@@ -3,7 +3,10 @@
   nodes = import ../../common/wg-nodes.nix;
   self = mesh.nodes.minnie;
   hostsEntries = lib.concatStringsSep "\n" (
-    lib.mapAttrsToList (name: node: "${node.ip}  ${name}") nodes
+    lib.mapAttrsToList (name: node: let
+      allNames = [name] ++ (node.aliases or []);
+    in "${node.ip}  ${lib.concatStringsSep "  " allNames}")
+    nodes
   );
 in {
   networking.wg-quick.interfaces.wg0 = {
