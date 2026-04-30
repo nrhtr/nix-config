@@ -8,7 +8,6 @@
     ./network.nix
     ./overlays.nix
     ./borg.nix
-    ../../common/wg-hosts.nix
   ];
 
   system.stateVersion = 6;
