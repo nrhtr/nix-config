@@ -20,6 +20,13 @@
         helix
         fish
       ];
+
+      programs.fish = {
+        enable = true;
+        shellAliases = {
+          upd = "cd ~/git/nix-config && sudo bash scripts/switch.sh";
+        };
+      };
     };
   };
 }

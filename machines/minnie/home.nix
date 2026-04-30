@@ -73,7 +73,7 @@ in {
       export PATH="$HOME/.ops/bin:$PATH"
     '';
     shellAliases = {
-      upd = "cd ~/git/nix-config && sudo bash scripts/switch-minnie.sh";
+      upd = "cd ~/git/nix-config && sudo bash scripts/switch.sh";
     };
     shellAbbrs = {
       "9k" = "k9s";
