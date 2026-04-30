@@ -69,8 +69,11 @@ in {
   services.openssh.enable = lib.mkDefault true;
   services.openssh.settings.PermitRootLogin = "prohibit-password";
   services.openssh.ports = [22 18061];
+  # Prevent openssh from auto-opening ports on all interfaces
+  services.openssh.openFirewall = false;
 
-  # Port 22 only reachable via WireGuard; 18061 open on all interfaces
+  # 18061 open publicly; port 22 only reachable via WireGuard
+  networking.firewall.allowedTCPPorts = [18061];
   networking.firewall.interfaces.wg0.allowedTCPPorts = [22];
 
   users.users.root.openssh.authorizedKeys.keys = lib.mkDefault sshKeys;
