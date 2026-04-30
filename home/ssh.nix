@@ -11,6 +11,10 @@
         user = "jenga";
         port = 18061;
       };
+      "nix02" = {
+        user = "jenga";
+        port = 18061;
+      };
       "hk-s020.rsync.net" = {extraOptions.UpdateHostKeys = "no";};
     };
   };
