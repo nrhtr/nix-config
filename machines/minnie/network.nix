@@ -25,6 +25,10 @@ in {
   # won't follow, breaking getaddrinfo (SSH etc). Write directly instead.
   system.activationScripts.wg-hosts.text = ''
     hostfile=/private/etc/hosts
+    # Create hosts file with localhost entries if missing
+    if [ ! -f "$hostfile" ]; then
+      printf '127.0.0.1\tlocalhost\n255.255.255.255\tbroadcasthost\n::1\t\tlocalhost\n' > "$hostfile"
+    fi
     # Remove previous managed block, append updated entries
     awk '/^# wg-mesh-start$/{skip=1} /^# wg-mesh-end$/{skip=0;next} !skip{print}' \
       "$hostfile" > /tmp/wg-hosts.tmp && mv /tmp/wg-hosts.tmp "$hostfile"
