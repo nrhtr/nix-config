@@ -6,6 +6,7 @@
 }: let
   sources = import ../npins;
   agenix = sources.agenix;
+  sshKeys = import ./ssh-keys.nix;
 in {
   imports = ["${agenix}/modules/age.nix"];
 
@@ -69,8 +70,7 @@ in {
   services.openssh.settings.PermitRootLogin = "prohibit-password";
   services.openssh.ports = [18061];
 
-  users.users.root.openssh.authorizedKeys.keys =
-    lib.mkDefault ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB+0iNkzHDqAOYFVLpFq9vLM2lcD2J+vqucukiMNK9qY jenga@thinkpad"];
+  users.users.root.openssh.authorizedKeys.keys = lib.mkDefault sshKeys;
 
   security.sudo.wheelNeedsPassword = false;
 
@@ -78,14 +78,6 @@ in {
 
   networking.firewall.allowPing = true;
   networking.firewall.logRefusedConnections = false;
-
-  networking.extraHosts = ''
-    10.100.0.1 nix01.wireguard
-    10.100.0.6 nix02.wireguard sorpex.jenga.xyz tallur.jenga.xyz fonpub.jenga.xyz actual.jenga.xy
-    45.76.124.245 nix01 nix01.jenga.xyz
-    51.222.109.62 nix02 nix02.jenga.xyz
-    192.168.0.6 minnie
-  '';
 
   # LetsEncrypt
   security.acme = {
@@ -99,9 +91,6 @@ in {
     description = "Jeremy Parker";
     shell = pkgs.fish;
     extraGroups = ["wheel" "networkmanager"];
-    openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB+0iNkzHDqAOYFVLpFq9vLM2lcD2J+vqucukiMNK9qY jenga@thinkpad"
-      "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBMETRRIYWUGbdmmSU/b3+hDf15gCqTVxQrpJrY2PKbEndHOW4PZHt61NYReYXOBWgO/z8x40uQ7ZdxwwKKrDQS4= enclave@iPhone"
-    ];
+    openssh.authorizedKeys.keys = sshKeys;
   };
 }
