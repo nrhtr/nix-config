@@ -23,7 +23,7 @@ in {
 
   # environment.etc creates a read-only symlink that macOS mDNSResponder
   # won't follow, breaking getaddrinfo (SSH etc). Write directly instead.
-  system.activationScripts.wg-hosts.text = ''
+  system.activationScripts.extraActivation.text = ''
     hostfile=/private/etc/hosts
     # Create hosts file with localhost entries if missing
     if [ ! -f "$hostfile" ]; then
