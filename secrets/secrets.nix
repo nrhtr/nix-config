@@ -20,4 +20,5 @@ in {
   "gandi.age".publicKeys = all;
   "kbfirmware-env.age".publicKeys = all;
   "kbfirmware-xyz-key.age".publicKeys = all;
+  "jenga-dev-key.age".publicKeys = all;
 }

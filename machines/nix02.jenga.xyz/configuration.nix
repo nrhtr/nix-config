@@ -108,6 +108,11 @@ in {
       group = "nginx";
       mode = "0440";
     };
+    jenga-dev-key = {
+      file = ../../secrets/jenga-dev-key.age;
+      group = "nginx";
+      mode = "0440";
+    };
   };
 
   # We want to still be able to boot without one of these
@@ -356,11 +361,6 @@ in {
       dnsProvider = "gandiv5";
       credentialsFile = "${config.age.secrets.gandi.path}";
     };
-    "kbfirmware.jenga.dev" = {
-      group = "nginx";
-      dnsProvider = "gandiv5";
-      credentialsFile = "${config.age.secrets.gandi.path}";
-    };
   };
 
   services.actual = {
@@ -551,7 +551,8 @@ in {
       "kbfirmware.jenga.dev" = {
         listenAddresses = [ipv4.address];
         forceSSL = true;
-        useACMEHost = "kbfirmware.jenga.dev";
+        sslCertificate = ../../secrets/jenga.dev.cert;
+        sslCertificateKey = config.age.secrets.jenga-dev-key.path;
         locations."/" = {
           return = "301 https://kbfirmware.xyz$request_uri";
         };
