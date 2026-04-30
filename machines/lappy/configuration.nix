@@ -190,7 +190,7 @@
   # Make sure we do remote builds on the right port
   programs.ssh.extraConfig = ''
     Host nix02
-    Port 18061
+    Port 22
   '';
 
   system.stateVersion = "22.05";
