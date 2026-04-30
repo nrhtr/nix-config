@@ -32,8 +32,6 @@ in {
     # Remove previous managed block, append updated entries
     awk '/^# wg-mesh-start$/{skip=1} /^# wg-mesh-end$/{skip=0;next} !skip{print}' \
       "$hostfile" > /tmp/wg-hosts.tmp && mv /tmp/wg-hosts.tmp "$hostfile"
-    printf '\n# wg-mesh-start\n' >> "$hostfile"
-    cat ${hostsFile} >> "$hostfile"
-    printf '\n# wg-mesh-end\n' >> "$hostfile"
+    { printf '\n# wg-mesh-start\n'; cat ${hostsFile}; printf '\n# wg-mesh-end\n'; } >> "$hostfile"
   '';
 }
