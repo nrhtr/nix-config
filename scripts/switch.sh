@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-cd "$(git rev-parse --show-toplevel)"
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
 case "$(hostname -s)" in
   minnie) exec sudo bash scripts/switch-minnie.sh ;;
