@@ -551,7 +551,7 @@ in {
       };
       "kbfirmware.jenga.dev" = {
         listenAddresses = [ipv4.address];
-        forceSSL = true;
+        addSSL = true;
         sslCertificate = ../../secrets/jenga.dev.cert;
         sslCertificateKey = config.age.secrets.jenga-dev-key.path;
         locations."/" = {
