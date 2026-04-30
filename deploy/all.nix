@@ -17,7 +17,7 @@ in {
     };
   };
 
-  "nix01.wireguard" = {
+  "nix01" = {
     config,
     pkgs,
     ...
@@ -32,7 +32,7 @@ in {
     deployment.substituteOnDestination = true;
   };
 
-  "nix02.wireguard" = {
+  "nix02" = {
     config,
     pkgs,
     ...

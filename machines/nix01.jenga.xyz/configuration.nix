@@ -8,6 +8,7 @@
     ./hardware-configuration.nix
     ./wireguard.nix
     ../../common/shared.nix
+    ../../common/wg-hosts.nix
   ];
 
   boot.loader.grub.device = "/dev/vda"; # (for BIOS systems only)

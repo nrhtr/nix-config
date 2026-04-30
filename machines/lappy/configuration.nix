@@ -13,6 +13,7 @@
     ./borg-notifier.nix
 
     ./../../common/shared.nix
+    ./../../common/wg-hosts.nix
 
     # stuff with home-manager
     # fixme: still assumes NixOS
@@ -86,7 +87,7 @@
   '';
   nix.buildMachines = [
     {
-      hostName = "nix02.wireguard";
+      hostName = "nix02";
       system = "x86_64-linux";
       sshUser = "root";
       sshKey = "/root/.ssh/id_ed25519";
@@ -187,7 +188,7 @@
 
   # Make sure we do remote builds on the right port
   programs.ssh.extraConfig = ''
-    Host nix02.wireguard
+    Host nix02
     Port 18061
   '';
 

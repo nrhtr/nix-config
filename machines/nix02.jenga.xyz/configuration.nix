@@ -89,6 +89,7 @@ in {
     #../../home/terminal.nix
 
     ../../common/shared.nix
+    ../../common/wg-hosts.nix
     ../../modules/genesis.nix
     # override module using python 2 package
     ../../modules/websockify.nix
