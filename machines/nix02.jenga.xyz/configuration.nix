@@ -164,9 +164,6 @@ in {
           buildGoModule = pkgs-unstable.buildGoModule;
         };
       wg-exit-node = self.callPackage ./../../packages/wg-exit-node/default.nix {};
-      #minecraft-overviewer =
-      #self.python311Packages.callPackage ./../../packages/minecraft-overviewer/default.nix
-      #{};
     })
   ];
 
@@ -476,16 +473,24 @@ in {
   services.genesis.enable = true;
   services.genesis.hostname = "tlon.jenga.xyz";
 
-  # Does not build as of 2026-05-06
-  #systemd.services.overviewer = rec {
-  #description = "Update minecraft world map on minecraft.jenga.xyz";
-  #startAt = "hourly";
+  services.bluemap = {
+    enable = true;
+    eula = true;
 
-  #serviceConfig = {
-  #User = "minecraft";
-  #ExecStart = "${pkgs.minecraft-overviewer}/bin/overviewer.py /var/lib/minecraft/world /var/www/minecraft-overviewer/";
-  #};
-  #};
+    maps = {
+      "overworld" = {
+        world = "${config.services.minecraft-server.dataDir}/world";
+        ambient-light = 0.2;
+      };
+    };
+
+    # Configure webserver to view the map
+    webserverSettings = {
+      enabled = true;
+      port = 8100;
+      bind = "127.0.0.1";
+    };
+  };
 
   services.minecraft-server = {
     enable = true;
@@ -537,7 +542,9 @@ in {
         listenAddresses = [ipv4.address];
         forceSSL = true;
         enableACME = true;
-        root = "/var/www/minecraft-overviewer";
+        locations."/" = {
+          proxyPass = "http://127.0.0.1:8100/";
+        };
       };
       "git.jenga.xyz" = {
         listenAddresses = [ipv4.address];
