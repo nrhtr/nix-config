@@ -2,6 +2,7 @@ let
   sources = import ./npins;
   pkgs = import sources.nixpkgs {};
   agenix = pkgs.callPackage "${sources.agenix}/pkgs/agenix.nix" {};
+  gen-wg-conf = import ./common/gen-wg-conf.nix {inherit pkgs;};
 in
   pkgs.mkShell {
     preferLocalBuild = true;
@@ -13,6 +14,7 @@ in
         agenix
         npins
         prek
+        gen-wg-conf
         (import ./default.nix).gitleaks
       ]);
     shellHook = ''

@@ -103,9 +103,35 @@
       },
       "branch": "nixos-25.11",
       "submodules": false,
-      "revision": "e764fc9a405871f1f6ca3d1394fb422e0a0c3951",
-      "url": "https://github.com/NixOS/nixpkgs/archive/e764fc9a405871f1f6ca3d1394fb422e0a0c3951.tar.gz",
-      "hash": "0sch128mp1bcvbixx847ykyhsk5mnqfw1wgwi7igs2hhgdvammmi"
+      "revision": "0c88e1f2bdb93d5999019e99cb0e61e1fe2af4c5",
+      "url": "https://github.com/NixOS/nixpkgs/archive/0c88e1f2bdb93d5999019e99cb0e61e1fe2af4c5.tar.gz",
+      "hash": "004fbmvifmsbx4fx7ah5ichvj8ki6xlqajlsin5qq77dn0lf9ydb"
+    },
+    "nixpkgs-unstable": {
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "NixOS",
+        "repo": "nixpkgs"
+      },
+      "branch": "nixpkgs-unstable",
+      "submodules": false,
+      "revision": "bc57abace07689cfd34203aa5fb4027514895987",
+      "url": "https://github.com/NixOS/nixpkgs/archive/bc57abace07689cfd34203aa5fb4027514895987.tar.gz",
+      "hash": "112fa4cgf5aack5iqp9d5vva5zhxic06pp4l04z1kixsh46df3cb"
+    },
+    "spruce": {
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "nrhtr",
+        "repo": "spruce"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "23ba1f3e18d85f031efd65e69e6d08ceabf98c16",
+      "url": "https://github.com/nrhtr/spruce/archive/23ba1f3e18d85f031efd65e69e6d08ceabf98c16.tar.gz",
+      "hash": "0mg7v59730b0lczmhsp4bjxkxqhmjspch559hfxbhw3l0j4jk65r"
     }
   },
   "version": 5

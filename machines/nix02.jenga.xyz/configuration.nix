@@ -104,6 +104,7 @@ in {
     twilio-env.file = ../../secrets/twilio-env.age;
     gandi.file = ../../secrets/gandi.age;
     kbfirmware-env.file = ../../secrets/kbfirmware-env.age;
+    spruce-env.file = ../../secrets/spruce-env.age;
     kbfirmware-xyz-key = {
       file = ../../secrets/kbfirmware-xyz-key.age;
       group = "nginx";
@@ -152,6 +153,15 @@ in {
       zfsStable = customizeZfs super.zfsStable;
       genesis = self.callPackage ./../../packages/genesis/default.nix {};
       kbfirmware = self.callPackage ./../../packages/kbfirmware/default.nix {};
+      spruce = let
+        pkgs-unstable = import (import ../../npins).nixpkgs-unstable {
+          inherit (self) system;
+          config = {};
+        };
+      in
+        self.callPackage ./../../packages/spruce/default.nix {
+          buildGoModule = pkgs-unstable.buildGoModule;
+        };
       wg-exit-node = self.callPackage ./../../packages/wg-exit-node/default.nix {};
       minecraft-overviewer =
         self.python311Packages.callPackage ./../../packages/minecraft-overviewer/default.nix
@@ -362,6 +372,11 @@ in {
       dnsProvider = "gandiv5";
       credentialsFile = "${config.age.secrets.gandi.path}";
     };
+    "spruce.jenga.xyz" = {
+      group = "nginx";
+      dnsProvider = "gandiv5";
+      credentialsFile = "${config.age.secrets.gandi.path}";
+    };
   };
 
   services.actual = {
@@ -400,7 +415,37 @@ in {
     extraGroups = ["smtp-relay"];
   };
   users.groups.kbfirmware = {};
+
+  users.users.spruce = {
+    isSystemUser = true;
+    group = "spruce";
+  };
+  users.groups.spruce = {};
   users.groups.smtp-relay = {};
+
+  systemd.services.spruce = {
+    description = "Spruce listing scanner";
+    wantedBy = ["multi-user.target"];
+    after = ["network.target"];
+    environment = {
+      SPRUCE_LISTEN_ADDR = "127.0.0.1:8090";
+      SPRUCE_DB_PATH = "/var/lib/spruce/spruce.db";
+      SPRUCE_SITE_URL = "https://spruce.jenga.xyz";
+      SPRUCE_SMTP_HOST = "smtp.fastmail.com";
+      SPRUCE_SMTP_PORT = "465";
+      SPRUCE_EMAIL_FROM = "spruce@jenga.xyz";
+      SPRUCE_EMAIL_TO = "jeremy@jenga.xyz";
+      SPRUCE_DIGEST_TZ = "Australia/Sydney";
+    };
+    serviceConfig = {
+      ExecStart = "${pkgs.spruce}/bin/darkly";
+      User = "spruce";
+      Group = "spruce";
+      StateDirectory = "spruce";
+      Restart = "on-failure";
+      EnvironmentFile = config.age.secrets.spruce-env.path;
+    };
+  };
 
   systemd.services.kbfirmware = {
     description = "kbfirmware backend API server";
@@ -547,6 +592,14 @@ in {
         locations."/" = {
           proxyPass = "http://127.0.0.1:2283/";
           proxyWebsockets = true;
+        };
+      };
+      "spruce.jenga.xyz" = {
+        listenAddresses = ["10.100.0.6"];
+        forceSSL = true;
+        useACMEHost = "spruce.jenga.xyz";
+        locations."/" = {
+          proxyPass = "http://127.0.0.1:8090/";
         };
       };
       "kbfirmware.jenga.dev" = {

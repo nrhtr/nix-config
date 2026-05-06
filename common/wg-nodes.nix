@@ -23,7 +23,7 @@
   };
   iphone = {
     ip = "10.100.0.3";
-    publicKey = "vaD8ITVvM5mNJW4Z+iXZvsN6WJIgi7ZjVxDWIh42XV4=";
+    publicKey = "Zn+yDrr1LgGKnVCqrjCJno0sVa+yhferr4W9CppUOXY=";
   };
   lappy = {
     ip = "10.100.0.4";

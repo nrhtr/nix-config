@@ -21,4 +21,5 @@ in {
   "kbfirmware-env.age".publicKeys = all;
   "kbfirmware-xyz-key.age".publicKeys = all;
   "jenga-dev-key.age".publicKeys = all;
+  "spruce-env.age".publicKeys = all;
 }
