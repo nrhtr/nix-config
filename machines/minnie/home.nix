@@ -127,6 +127,7 @@ in {
       helix
 
       # Dev stuff
+      skopeo
       dive
       go
       gopls

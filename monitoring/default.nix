@@ -10,8 +10,14 @@
 #   GATUS_SMTP_PASS  — Fastmail app password for alert emails
 {system ? "x86_64-linux"}: let
   sources = import ../npins;
-  # Use nixpkgs-unstable for a current Gatus build
+  # nixpkgs-unstable for up-to-date Gatus and WireGuard tools
   pkgs = import sources.nixpkgs-unstable {
+    inherit system;
+    config = {};
+  };
+  # Stable nixpkgs for Docker image tooling — buildLayeredImage's host-side
+  # Python validation script (pythoncheck.sh) is broken on darwin in unstable
+  pkgs-stable = import sources.nixpkgs {
     inherit system;
     config = {};
   };
@@ -66,28 +72,21 @@
       # Inject private key into WireGuard config
       mkdir -p /etc/wireguard
       sed "s|WG_PRIVATE_KEY_PLACEHOLDER|''${WG_PRIVATE_KEY}|" \
-        /etc/wireguard/wg0.conf.template > /etc/wireguard/wg0.conf
+        ${wgTemplate} > /etc/wireguard/wg0.conf
       chmod 600 /etc/wireguard/wg0.conf
 
       # Resolve internal hostnames via WireGuard IPs
-      cat /etc/gatus/internal-hosts >> /etc/hosts
+      cat ${internalHosts} >> /etc/hosts
 
       wg-quick up wg0
-      exec gatus --config /etc/gatus/gatus.yaml
+      exec gatus --config ${gatusConfig}
     '';
   };
-
-  configLayer = pkgs.runCommand "monitor-config" {} ''
-    mkdir -p $out/etc/gatus $out/etc/wireguard
-    cp ${gatusConfig} $out/etc/gatus/gatus.yaml
-    cp ${wgTemplate} $out/etc/wireguard/wg0.conf.template
-    cp ${internalHosts} $out/etc/gatus/internal-hosts
-  '';
 in
-  pkgs.dockerTools.buildLayeredImage {
+  pkgs-stable.dockerTools.buildLayeredImage {
     name = "jenga-monitor";
     tag = "latest";
-    contents = [startScript configLayer];
+    contents = [startScript];
     extraCommands = ''
       mkdir -p etc tmp
       printf 'root:x:0:0:root:/root:/bin/sh\nnobody:x:65534:65534:nobody:/var/empty:/bin/sh\n' \

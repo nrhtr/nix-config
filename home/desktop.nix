@@ -61,6 +61,7 @@
 
         # local dev
         zig
+        skopeo
 
         killall
         inotify-tools
