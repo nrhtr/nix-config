@@ -70,16 +70,18 @@
     ];
     text = ''
       # Inject private key into WireGuard config
-      mkdir -p /etc/wireguard
-      sed "s|WG_PRIVATE_KEY_PLACEHOLDER|''${WG_PRIVATE_KEY}|" \
-        ${wgTemplate} > /etc/wireguard/wg0.conf
-      chmod 600 /etc/wireguard/wg0.conf
+      if [ -n "''${WG_PRIVATE_KEY:-}" ]: then
+        mkdir -p /etc/wireguard
+        sed "s|WG_PRIVATE_KEY_PLACEHOLDER|''${WG_PRIVATE_KEY}|" \
+          ${wgTemplate} > /etc/wireguard/wg0.conf
+        chmod 600 /etc/wireguard/wg0.conf
 
-      # Resolve internal hostnames via WireGuard IPs
-      cat ${internalHosts} >> /etc/hosts
+        # Resolve internal hostnames via WireGuard IPs
+        cat ${internalHosts} >> /etc/hosts
 
-      wg-quick up wg0
-      exec gatus --config ${gatusConfig}
+        wg-quick up wg0
+      fi
+      GATUS_CONFIG_PATH=${gatusConfig} exec gatus
     '';
   };
 in

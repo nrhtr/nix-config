@@ -67,7 +67,7 @@
       host = "smtp.fastmail.com";
       port = 465;
       tls = true;
-      to = ["jeremy@jenga.xyz"];
+      to = "jeremy@jenga.xyz";
     };
 
     web.port = 8080;
