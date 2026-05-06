@@ -537,14 +537,28 @@ in {
         listenAddresses = [ipv4.address];
         forceSSL = true;
         enableACME = true;
+
         root = config.services.bluemap.webRoot;
+
         locations = {
+          "/" = {
+            index = "index.html";
+            extraConfig = "try_files \$uri \$uri/ =404;";
+          };
+
           "@empty".return = "204";
 
-          "~* ^/maps/[^/]*/tiles/".extraConfig = ''
-            error_page 404 = @empty;
-            gzip_static always;
-          '';
+          "~* ^/maps/[^/]*/tiles/" = {
+            extraConfig = ''
+              error_page 404 = @empty;
+              gzip_static always;
+              # Crucial for some browsers to realize these are compressed
+              add_header Content-Encoding gzip;
+              # Tiles don't change often, cache them!
+              expires 7d;
+              add_header Cache-Control "public, no-transform";
+            '';
+          };
         };
       };
       "git.jenga.xyz" = {
