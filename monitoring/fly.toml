@@ -1,5 +1,5 @@
 app = "jenga-monitor"
-primary_region = "syd"
+primary_region = "iad"
 
 # Image is built by Nix and pushed manually — see monitoring/default.nix
 [build]

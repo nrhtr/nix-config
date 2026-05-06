@@ -15,7 +15,7 @@
     publicKey = "NPR39BYbGOVnDljmP0w0dvAVbeWv6Ggp197pMBrJxgM=";
     endpoint = "51.222.109.62:51820";
     listenPort = 51820;
-    aliases = ["sorpex.jenga.xyz" "tallur.jenga.xyz" "fonpub.jenga.xyz" "actual.jenga.xyz" "photos.jenga.xyz"];
+    aliases = ["sorpex.jenga.xyz" "tallur.jenga.xyz" "fonpub.jenga.xyz" "actual.jenga.xyz" "photos.jenga.xyz" "spruce.jenga.xyz"];
   };
   minnie = {
     ip = "10.100.0.2";

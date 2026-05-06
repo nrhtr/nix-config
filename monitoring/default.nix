@@ -70,7 +70,7 @@
     ];
     text = ''
       # Inject private key into WireGuard config
-      if [ -n "''${WG_PRIVATE_KEY:-}" ]: then
+      if [ -n "''${WG_PRIVATE_KEY:-}" ]; then
         mkdir -p /etc/wireguard
         sed "s|WG_PRIVATE_KEY_PLACEHOLDER|''${WG_PRIVATE_KEY}|" \
           ${wgTemplate} > /etc/wireguard/wg0.conf
@@ -81,7 +81,13 @@
 
         wg-quick up wg0
       fi
-      GATUS_CONFIG_PATH=${gatusConfig} exec gatus
+
+      cp ${gatusConfig} /etc/gatus-config.yaml
+      if [ -n "''${FLY_REGION:-}" ]; then
+        sed -i "s|REGION_PLACEHOLDER|''${FLY_REGION}|" /etc/gatus-config.yaml
+      fi
+
+      GATUS_CONFIG_PATH=/etc/gatus-config.yaml exec gatus
     '';
   };
 in
@@ -98,5 +104,8 @@ in
       printf 'hosts: files dns\n' \
         > etc/nsswitch.conf
     '';
-    config.Cmd = ["${startScript}/bin/start-monitor"];
+    config = {
+      Cmd = ["${startScript}/bin/start-monitor"];
+      Env = ["SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"];
+    };
   }

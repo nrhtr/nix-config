@@ -11,6 +11,7 @@ let
       image=$(nix-build monitoring/default.nix --system x86_64-linux --no-out-link)
       fly auth docker
       docker load < "$image"
+      docker tag jenga-monitor:latest registry.fly.io/jenga-monitor:latest
       docker push registry.fly.io/jenga-monitor:latest
       fly deploy --image registry.fly.io/jenga-monitor:latest --app jenga-monitor
     '';

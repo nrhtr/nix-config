@@ -39,6 +39,7 @@
         name = "share.jenga.dev";
         url = "https://share.jenga.dev";
         group = "Public";
+        status = 403; # we expect 403 Forbidden at /
       })
 
       # Internal services — reachable via WireGuard
@@ -68,6 +69,13 @@
       port = 465;
       tls = true;
       to = "jeremy@jenga.xyz";
+    };
+
+    ui = {
+      title = "jenga.xyz | Status";
+      description = "Uptime status for various jenga.xyz applications";
+      dashboard-heading = "Status";
+      dashboard-subheading = "This dashboard is running in the 'REGION_PLACEHOLDER' fly.io region.";
     };
 
     web.port = 8080;
