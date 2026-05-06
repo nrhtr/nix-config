@@ -534,6 +534,7 @@ in {
 
     virtualHosts = {
       "minecraft.jenga.xyz" = {
+        listenAddresses = [ipv4.address];
         forceSSL = true;
         enableACME = true;
         root = "/var/www/minecraft-overviewer";
@@ -697,6 +698,7 @@ in {
         };
       };
       "tlon.jenga.xyz" = {
+        listenAddresses = [ipv4.address];
         forceSSL = true;
         enableACME = true;
         root = "/var/www/tlon.jenga.xyz";

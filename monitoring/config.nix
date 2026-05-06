@@ -27,6 +27,27 @@
     ];
   };
 
+  mkTcpEndpoint = {
+    name,
+    url,
+    group,
+    interval ? "5m",
+  }: {
+    inherit name url group interval;
+    conditions = [
+      "[CONNECTED] == true"
+      "[RESPONSE_TIME] < 10000"
+    ];
+    alerts = [
+      {
+        type = "email";
+        failure-threshold = 2;
+        success-threshold = 1;
+        description = "''${name}'' is down";
+      }
+    ];
+  };
+
   config = {
     endpoints = [
       # Public sites — checked directly
@@ -44,6 +65,16 @@
       (mkEndpoint {
         name = "git.jenga.xyz";
         url = "https://git.jenga.xyz";
+        group = "Public";
+      })
+      (mkEndpoint {
+        name = "tlon.jenga.xyz";
+        url = "https://tlon.jenga.xyz";
+        group = "Public";
+      })
+      (mkTcpEndpoint {
+        name = "tlon-mud";
+        url = "tcp://tlon.jenga.xyz:1138";
         group = "Public";
       })
 
