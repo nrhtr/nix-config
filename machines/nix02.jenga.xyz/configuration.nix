@@ -539,6 +539,7 @@ in {
         root = "/var/www/minecraft-overviewer";
       };
       "git.jenga.xyz" = {
+        listenAddresses = [ipv4.address];
         forceSSL = true;
         enableACME = true;
         root = "${pkgs.cgit}/cgit";
@@ -715,6 +716,10 @@ in {
       };
     };
   };
+
+  systemd.tmpfiles.rules = [
+    "d /var/lib/cgit/repos 0755 root root -"
+  ];
 
   services.fcgiwrap.instances.cgit = {
     socket = {

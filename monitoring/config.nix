@@ -41,6 +41,11 @@
         group = "Public";
         status = 403; # we expect 403 Forbidden at /
       })
+      (mkEndpoint {
+        name = "git.jenga.xyz";
+        url = "https://git.jenga.xyz";
+        group = "Public";
+      })
 
       # Internal services — reachable via WireGuard
       (mkEndpoint {
