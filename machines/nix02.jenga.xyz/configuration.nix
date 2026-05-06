@@ -378,6 +378,11 @@ in {
       dnsProvider = "gandiv5";
       credentialsFile = "${config.age.secrets.gandi.path}";
     };
+    "status.jenga.xyz" = {
+      group = "nginx";
+      dnsProvider = "gandiv5";
+      credentialsFile = "${config.age.secrets.gandi.path}";
+    };
   };
 
   services.actual = {
@@ -602,6 +607,14 @@ in {
         useACMEHost = "spruce.jenga.xyz";
         locations."/" = {
           proxyPass = "http://127.0.0.1:8090/";
+        };
+      };
+      "status.jenga.xyz" = {
+        listenAddresses = [ipv4.address];
+        forceSSL = true;
+        useACMEHost = "status.jenga.xyz";
+        locations."/" = {
+          proxyPass = "http://10.100.0.7:8080/";
         };
       };
       "kbfirmware.jenga.dev" = {
