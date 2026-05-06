@@ -163,9 +163,9 @@ in {
           buildGoModule = pkgs-unstable.buildGoModule;
         };
       wg-exit-node = self.callPackage ./../../packages/wg-exit-node/default.nix {};
-      minecraft-overviewer =
-        self.python311Packages.callPackage ./../../packages/minecraft-overviewer/default.nix
-        {};
+      #minecraft-overviewer =
+      #self.python311Packages.callPackage ./../../packages/minecraft-overviewer/default.nix
+      #{};
     })
   ];
 
@@ -470,15 +470,16 @@ in {
   services.genesis.enable = true;
   services.genesis.hostname = "tlon.jenga.xyz";
 
-  systemd.services.overviewer = rec {
-    description = "Update minecraft world map on minecraft.jenga.xyz";
-    startAt = "hourly";
+  # Does not build as of 2026-05-06
+  #systemd.services.overviewer = rec {
+  #description = "Update minecraft world map on minecraft.jenga.xyz";
+  #startAt = "hourly";
 
-    serviceConfig = {
-      User = "minecraft";
-      ExecStart = "${pkgs.minecraft-overviewer}/bin/overviewer.py /var/lib/minecraft/world /var/www/minecraft-overviewer/";
-    };
-  };
+  #serviceConfig = {
+  #User = "minecraft";
+  #ExecStart = "${pkgs.minecraft-overviewer}/bin/overviewer.py /var/lib/minecraft/world /var/www/minecraft-overviewer/";
+  #};
+  #};
 
   services.minecraft-server = {
     enable = true;
