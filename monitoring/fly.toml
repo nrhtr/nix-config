@@ -1,0 +1,14 @@
+app = "jenga-monitor"
+primary_region = "syd"
+
+# Image is built by Nix and pushed manually — see monitoring/default.nix
+[build]
+  image = "registry.fly.io/jenga-monitor:latest"
+
+[[vm]]
+  memory = "256mb"
+  cpu_kind = "shared"
+  cpus = 1
+
+# No public services — Gatus web UI is accessible via WireGuard only
+# (http://10.100.0.7:8080 once the tunnel is up)

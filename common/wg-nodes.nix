@@ -33,4 +33,10 @@
     ip = "10.100.0.5";
     publicKey = "3Px0oJgiRegKzctSdhzfuuUAy62PyN5z65WWVmiyDyM=";
   };
+  fly-monitor = {
+    ip = "10.100.0.7";
+    # Run: wg genkey | tee /tmp/fly.key | wg pubkey  then update this and
+    # fly secrets set WG_PRIVATE_KEY=$(cat /tmp/fly.key)
+    publicKey = "0kpNu7k78ybnOzsOd5lHKn6noO1QtD3bn0ICyJNxoXQ=";
+  };
 }

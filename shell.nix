@@ -3,6 +3,18 @@ let
   pkgs = import sources.nixpkgs {};
   agenix = pkgs.callPackage "${sources.agenix}/pkgs/agenix.nix" {};
   gen-wg-conf = import ./common/gen-wg-conf.nix {inherit pkgs;};
+
+  push-monitor = pkgs.writeShellApplication {
+    name = "push-monitor";
+    runtimeInputs = [pkgs.docker pkgs.flyctl];
+    text = ''
+      image=$(nix-build monitoring/default.nix --system x86_64-linux --no-out-link)
+      fly auth docker
+      docker load < "$image"
+      docker push registry.fly.io/jenga-monitor:latest
+      fly deploy --image registry.fly.io/jenga-monitor:latest --app jenga-monitor
+    '';
+  };
 in
   pkgs.mkShell {
     preferLocalBuild = true;
@@ -15,6 +27,7 @@ in
         npins
         prek
         gen-wg-conf
+        push-monitor
         (import ./default.nix).gitleaks
       ]);
     shellHook = ''

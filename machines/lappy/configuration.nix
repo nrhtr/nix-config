@@ -224,6 +224,7 @@
     }))
     mpv
     blightmud
+    flyctl
 
     waynergy
 
