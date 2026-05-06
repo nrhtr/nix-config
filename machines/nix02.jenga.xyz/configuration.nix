@@ -484,12 +484,7 @@ in {
       };
     };
 
-    # Configure webserver to view the map
-    webserverSettings = {
-      enabled = true;
-      port = 8100;
-      bind = "127.0.0.1";
-    };
+    enableNginx = false;
   };
 
   services.minecraft-server = {
@@ -542,8 +537,14 @@ in {
         listenAddresses = [ipv4.address];
         forceSSL = true;
         enableACME = true;
-        locations."/" = {
-          proxyPass = "http://127.0.0.1:8100/";
+        root = config.services.bluemap.webRoot;
+        locations = {
+          "@empty".return = "204";
+
+          "~* ^/maps/[^/]*/tiles/".extraConfig = ''
+            error_page 404 = @empty;
+            gzip_static always;
+          '';
         };
       };
       "git.jenga.xyz" = {
