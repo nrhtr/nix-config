@@ -544,6 +544,9 @@ in {
         enableACME = true;
         root = "${pkgs.cgit}/cgit";
         locations = {
+          "~* ^/(cgit\\.css|cgit\\.png|favicon\\.ico)$" = {
+            extraConfig = "try_files $uri =404;";
+          };
           "~* ^/cgit/(.*)" = {
             extraConfig = ''
               alias ${pkgs.cgit}/cgit/$1;
