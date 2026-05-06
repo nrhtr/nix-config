@@ -439,7 +439,7 @@ in {
       SPRUCE_DIGEST_TZ = "Australia/Sydney";
     };
     serviceConfig = {
-      ExecStart = "${pkgs.spruce}/bin/darkly";
+      ExecStart = "${pkgs.spruce}/bin/spruce";
       User = "spruce";
       Group = "spruce";
       StateDirectory = "spruce";
