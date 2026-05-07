@@ -512,6 +512,7 @@ in {
   services.nsd = {
     enable = true;
     interfaces = ["127.0.0.1"];
+    port = 5353;
     zones = {
       "jenga.xyz" = {
         data = dns.lib.toString "jenga.xyz" (import ../../common/jenga.xyz.nix {inherit dns;});
@@ -531,7 +532,7 @@ in {
       stub-zone = [
         {
           name = "jenga.xyz";
-          stub-addr = "127.0.0.1";
+          stub-addr = "127.0.0.1@5353";
         }
       ];
       forward-zone = [
