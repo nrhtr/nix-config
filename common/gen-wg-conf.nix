@@ -26,14 +26,25 @@
       '')
     servers);
 
-  # Case branches for --via <server>: one server, full VPN CIDR
-  viaCases = lib.concatStrings (lib.mapAttrsToList (serverName: server: ''
-      ${serverName})
+  # All servers as peers with one nominated as hub (gets hubCIDR), rest get /32
+  mkViaPeers = viaName:
+    lib.concatStrings (lib.mapAttrsToList (serverName: server: ''
         printf '\n[Peer]\n'
         printf 'PublicKey = ${server.publicKey}\n'
-        printf 'AllowedIPs = ${hubCIDR}\n'
+        printf 'AllowedIPs = ${
+          if serverName == viaName
+          then hubCIDR
+          else "${server.ip}/32"
+        }\n'
         printf 'Endpoint = ${server.endpoint}\n'
         printf 'PersistentKeepalive = 25\n'
+      '')
+      servers);
+
+  # Case branches for --via <server>
+  viaCases = lib.concatStrings (lib.mapAttrsToList (serverName: _: ''
+      ${serverName})
+        ${mkViaPeers serverName}
         ;;
     '')
     servers);
