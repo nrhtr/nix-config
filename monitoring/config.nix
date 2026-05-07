@@ -65,6 +65,11 @@
     endpoints = [
       # Public sites — checked directly
       (mkEndpoint {
+        name = "boycrisis.net";
+        url = "https://boycrisis.net";
+        group = "Public";
+      })
+      (mkEndpoint {
         name = "kbfirmware.xyz";
         url = "https://kbfirmware.xyz";
         group = "Public";
@@ -92,6 +97,11 @@
       })
 
       # Internal services — reachable via WireGuard
+      (mkEndpoint {
+        name = "vault";
+        url = "https://vault.jenga.xyz";
+        group = "Internal";
+      })
       (mkEndpoint {
         name = "spruce";
         url = "https://spruce.jenga.xyz";

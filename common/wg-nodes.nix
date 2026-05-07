@@ -9,6 +9,7 @@
     endpoint = "45.76.124.245:51820";
     listenPort = 51820;
     routedCIDR = "10.100.0.0/16"; # hub — routes all VPN subnet traffic
+    aliases = ["vault.jenga.xyz"];
   };
   nix02 = {
     ip = "10.100.0.6";
