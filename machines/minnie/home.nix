@@ -129,6 +129,7 @@ in {
     [
       wg-exit-node
       (pkgs.callPackage ../../packages/apply-gandi-dns {})
+      (pkgs.callPackage ../../packages/gandi-dns-records {})
 
       # Some basics
       coreutils
