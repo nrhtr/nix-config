@@ -18,6 +18,7 @@ in {
   networking.wg-quick.interfaces.wg0 = {
     address = ["${self.ip}/16"];
     privateKeyFile = "/etc/wireguard.privkey";
+    dns = ["10.100.0.6"];
     peers = mesh.mkPeers "minnie";
   };
 
