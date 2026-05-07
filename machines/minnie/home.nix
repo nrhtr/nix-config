@@ -83,6 +83,7 @@ in {
 
   programs.ssh = {
     enable = true;
+    enableDefaultConfig = false;
     matchBlocks."*" = {
       # Reuse existing connections — avoids paying SSH handshake cost (~1s at
       # 235ms RTT to nix02) on every Nix store operation during deploys.
