@@ -115,11 +115,6 @@
         group = "Devices";
       })
       (mkPingEndpoint {
-        name = "iphone";
-        url = "icmp://iphone";
-        group = "Devices";
-      })
-      (mkPingEndpoint {
         name = "lappy";
         url = "icmp://lappy";
         group = "Devices";
