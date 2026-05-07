@@ -738,6 +738,10 @@ in {
           };
           "/" = {
             proxyPass = "http://127.0.0.1:1180/";
+            extraConfig = ''
+              proxy_redirect http://tlon.jenga.xyz:1180/ /;
+              proxy_redirect https://tlon.jenga.xyz:1180/ /;
+            '';
           };
         };
       };
