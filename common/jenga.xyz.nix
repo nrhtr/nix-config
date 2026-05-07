@@ -18,6 +18,7 @@ with dns.lib.combinators; {
     photos.A = ["10.100.0.6"];
     nix02.A = ["10.100.0.6"];
     nix01.A = ["10.100.0.1"];
+    vault.A = ["10.100.0.1"];
     spruce.A = ["10.100.0.6"];
     status.A = ["10.100.0.6"];
   };

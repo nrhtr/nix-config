@@ -11,6 +11,11 @@
     ../../common/wg-hosts.nix
   ];
 
+  # NOTE: Before deploying, add nix01's host key to secrets/secrets.nix and re-key:
+  #   ssh root@nix01 cat /etc/ssh/ssh_host_ed25519_key.pub
+  #   agenix -r -i ~/.ssh/id_ed25519
+  age.secrets.gandi.file = ../../secrets/gandi.age;
+
   boot.loader.grub.device = "/dev/vda"; # (for BIOS systems only)
   #boot.loader.systemd-boot.enable = true; # (for UEFI systems only)
 
@@ -29,13 +34,45 @@
     } # HTTPS
   ];
 
-  services.nginx.enable = true;
-  services.nginx.virtualHosts = {
-    "boycrisis.net" = {
-      serverAliases = ["www.boycrisis.net"];
-      forceSSL = true;
-      enableACME = true;
-      root = "/var/www/boycrisis.net";
+  security.acme.defaults.email = "jeremy@jenga.xyz";
+  security.acme.acceptTerms = true;
+  security.acme.certs."vault.jenga.xyz" = {
+    group = "nginx";
+    dnsProvider = "gandiv5";
+    credentialsFile = "${config.age.secrets.gandi.path}";
+  };
+
+  services.vaultwarden = {
+    enable = true;
+    config = {
+      DOMAIN = "https://vault.jenga.xyz";
+      ROCKET_ADDRESS = "127.0.0.1";
+      ROCKET_PORT = 8222;
+      SIGNUPS_ALLOWED = true;
+    };
+  };
+
+  services.nginx = {
+    enable = true;
+    recommendedProxySettings = true;
+    recommendedTlsSettings = true;
+
+    virtualHosts = {
+      "boycrisis.net" = {
+        serverAliases = ["www.boycrisis.net"];
+        forceSSL = true;
+        enableACME = true;
+        root = "/var/www/boycrisis.net";
+      };
+
+      "vault.jenga.xyz" = {
+        listenAddresses = ["10.100.0.1"];
+        forceSSL = true;
+        useACMEHost = "vault.jenga.xyz";
+        locations."/" = {
+          proxyPass = "http://127.0.0.1:8222";
+        };
+      };
     };
   };
 

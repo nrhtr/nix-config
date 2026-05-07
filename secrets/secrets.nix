@@ -8,6 +8,8 @@ let
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPmei4NEQszZh4UAZwDz3V17+Nfyxzfgx/VRi/LMebtI root@thinkpad" # lappy
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJoXruu0pxDUA5A29eUsVGVKADiNNBRzB/ZU3pQdlnh8 root@nix02"
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIM6qyid58VPMvsu14KuE+ZgBRJWtePWlQHbhU8i6clcS root@minnie"
+    # TODO: fill in then run: agenix -r -i ~/.ssh/id_ed25519
+    # "ssh-ed25519 AAAA... root@nix01"
   ];
   all = users ++ systems;
 in {
