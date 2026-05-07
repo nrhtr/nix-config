@@ -20,7 +20,7 @@ in
   pkgs.mkShell {
     preferLocalBuild = true;
     buildInputs =
-      pkgs.lib.optionals (!pkgs.stdenv.isDarwin) [
+      [
         (import "${sources.morph}/default.nix" {inherit pkgs;})
       ]
       ++ (with pkgs; [
