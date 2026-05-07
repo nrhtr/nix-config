@@ -185,7 +185,7 @@ in {
     address = ipv6.gateway;
     interface = networkInterface;
   };
-  networking.nameservers = ["8.8.8.8"];
+  networking.nameservers = ["127.0.0.1"];
 
   # Remote unlocking, see <https://nixos.wiki/wiki/NixOS_on_ZFS>,
   # section "Unlock encrypted zfs via ssh on boot"
@@ -523,8 +523,8 @@ in {
     enable = true;
     settings = {
       server = {
-        interface = ["10.100.0.6"];
-        access-control = ["10.100.0.0/16 allow"];
+        interface = ["10.100.0.6" "127.0.0.1"];
+        access-control = ["10.100.0.0/16 allow" "127.0.0.0/8 allow"];
         do-not-query-localhost = "no";
         domain-insecure = ["jenga.xyz"];
       };
