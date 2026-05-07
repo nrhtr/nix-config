@@ -108,10 +108,13 @@
     };
 
     ui = {
-      title = "jenga.xyz | Status";
-      description = "Uptime status for various jenga.xyz applications";
-      dashboard-heading = "Status";
-      dashboard-subheading = "This dashboard is running in the 'REGION_PLACEHOLDER' fly.io region.";
+      title = "updog";
+      description = "Is it up?";
+      header = "Updog";
+      dashboard-heading = "Updog";
+      logo = "https://up.jenga.xyz/logo.jpeg";
+      favicon = "https://up.jenga.xyz/logo.jpeg";
+      dashboard-subheading = "Running in the 'REGION_PLACEHOLDER' fly.io region.";
     };
 
     web.port = 8080;

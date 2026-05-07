@@ -81,6 +81,17 @@ in {
     };
   };
 
+  programs.ssh = {
+    enable = true;
+    matchBlocks."*" = {
+      # Reuse existing connections — avoids paying SSH handshake cost (~1s at
+      # 235ms RTT to nix02) on every Nix store operation during deploys.
+      controlMaster = "auto";
+      controlPath = "~/.ssh/control/%r@%h:%p";
+      controlPersist = "10m";
+    };
+  };
+
   programs.git = {
     enable = true;
     ignores = [

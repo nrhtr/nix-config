@@ -25,6 +25,7 @@ in
       ]
       ++ (with pkgs; [
         agenix
+        colmena
         npins
         prek
         gen-wg-conf

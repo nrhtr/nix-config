@@ -1,6 +1,7 @@
 let
   sources = import ../npins;
   pkgs = import sources.nixpkgs {
+    system = "x86_64-linux";
     config = {
       allowUnfree = true;
       permittedInsecurePackages = [
