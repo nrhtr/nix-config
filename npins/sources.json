@@ -129,9 +129,9 @@
       },
       "branch": "main",
       "submodules": false,
-      "revision": "2e27f45018ecb0525d8a0c78ca4044b9b88058c3",
-      "url": "https://github.com/nrhtr/spruce/archive/2e27f45018ecb0525d8a0c78ca4044b9b88058c3.tar.gz",
-      "hash": "0vch2ggii085mg1aj93vc78zjd5skn0myhcgw0p4fm2lvnzibyig"
+      "revision": "bfd9185823ad4a83e34d2d52e0ce05ced5d107ab",
+      "url": "https://github.com/nrhtr/spruce/archive/bfd9185823ad4a83e34d2d52e0ce05ced5d107ab.tar.gz",
+      "hash": "0m2dc054razp0f5hic5rb3lndijhdzgd3zk4gx4rcn5gxy2yg64l"
     }
   },
   "version": 5
