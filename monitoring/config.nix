@@ -27,6 +27,19 @@
     ];
   };
 
+  mkPingEndpoint = {
+    name,
+    url,
+    group,
+    interval ? "5m",
+  }: {
+    inherit name url group interval;
+    conditions = [
+      "[CONNECTED] == true"
+      "[RESPONSE_TIME] < 10000"
+    ];
+  };
+
   mkTcpEndpoint = {
     name,
     url,
@@ -93,6 +106,23 @@
         name = "photos";
         url = "https://photos.jenga.xyz";
         group = "Internal";
+      })
+
+      # Personal devices — ICMP ping only, no alerts
+      (mkPingEndpoint {
+        name = "minnie";
+        url = "icmp://minnie";
+        group = "Devices";
+      })
+      (mkPingEndpoint {
+        name = "iphone";
+        url = "icmp://iphone";
+        group = "Devices";
+      })
+      (mkPingEndpoint {
+        name = "lappy";
+        url = "icmp://lappy";
+        group = "Devices";
       })
     ];
 

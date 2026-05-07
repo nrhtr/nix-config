@@ -20,14 +20,17 @@
   minnie = {
     ip = "10.100.0.2";
     publicKey = "sEmPJty4lq17TUyvCPBxEsnLaI0hy0SeO/5xryFA9UE=";
+    aliases = ["minnie"];
   };
   iphone = {
     ip = "10.100.0.3";
     publicKey = "Zn+yDrr1LgGKnVCqrjCJno0sVa+yhferr4W9CppUOXY=";
+    aliases = ["iphone"];
   };
   lappy = {
     ip = "10.100.0.4";
     publicKey = "dIJ1EYTiyRbT5TJQ+5wi04uyFOjvoti09wrNYmwmBUI=";
+    aliases = ["lappy"];
   };
   apu2 = {
     ip = "10.100.0.5";

@@ -511,7 +511,7 @@ in {
 
   services.nsd = {
     enable = true;
-    interfaces = ["10.100.0.6"];
+    interfaces = ["127.0.0.1"];
     zones = {
       "jenga.internal" = {
         data = dns.lib.toString "jenga.internal" (import ../../common/jenga.internal.nix {inherit dns;});
@@ -519,6 +519,34 @@ in {
       "jenga.xyz" = {
         data = dns.lib.toString "jenga.xyz" (import ../../common/jenga.xyz.nix {inherit dns;});
       };
+    };
+  };
+
+  services.unbound = {
+    enable = true;
+    settings = {
+      server = {
+        interface = ["10.100.0.6"];
+        access-control = ["10.100.0.0/16 allow"];
+        do-not-query-localhost = "no";
+        domain-insecure = ["jenga.internal" "jenga.xyz"];
+      };
+      stub-zone = [
+        {
+          name = "jenga.internal";
+          stub-addr = "127.0.0.1";
+        }
+        {
+          name = "jenga.xyz";
+          stub-addr = "127.0.0.1";
+        }
+      ];
+      forward-zone = [
+        {
+          name = ".";
+          forward-addr = ["1.1.1.1" "1.0.0.1"];
+        }
+      ];
     };
   };
 
