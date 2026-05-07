@@ -112,8 +112,7 @@
       description = "Is it up?";
       header = "Updog";
       dashboard-heading = "Updog";
-      logo = "https://up.jenga.xyz/logo.jpeg";
-      favicon = "https://up.jenga.xyz/logo.jpeg";
+      logo = "/logo.jpeg";
       dashboard-subheading = "Running in the 'REGION_PLACEHOLDER' fly.io region.";
     };
 
