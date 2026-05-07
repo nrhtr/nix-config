@@ -128,6 +128,7 @@ in {
   home.packages = with pkgs;
     [
       wg-exit-node
+      (pkgs.callPackage ../../packages/apply-gandi-dns {})
 
       # Some basics
       coreutils
