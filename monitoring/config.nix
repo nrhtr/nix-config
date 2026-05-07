@@ -138,9 +138,9 @@
     };
 
     ui = {
-      title = "updog";
+      title = "up.jenga.xyz | Updog";
       description = "Is it up?";
-      header = "Updog";
+      header = "up.jenga.xyz";
       dashboard-heading = "Updog";
       logo = "/logo.jpeg";
       dashboard-subheading = "Running in the 'REGION_PLACEHOLDER' fly.io region.";
