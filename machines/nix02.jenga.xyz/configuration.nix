@@ -641,7 +641,7 @@ in {
         forceSSL = true;
         useACMEHost = "up.jenga.xyz";
         locations = {
-          "/logo.jpeg" = {
+          "= /logo.jpeg" = {
             alias = "${../../monitoring/logo.jpeg}";
           };
           "/" = {
