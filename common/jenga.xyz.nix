@@ -3,7 +3,7 @@ with dns.lib.combinators; {
   SOA = {
     nameServer = "nix02.jenga.xyz.";
     adminEmail = "jeremy@jenga.xyz";
-    serial = 2026050602;
+    serial = 2026050800;
   };
 
   NS = ["nix02.jenga.xyz."];
