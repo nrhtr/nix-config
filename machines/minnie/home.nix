@@ -81,6 +81,15 @@ in {
     };
   };
 
+  programs.rbw = {
+    enable = true;
+    settings = {
+      email = "jeremy@jenga.xyz";
+      base_url = "https://vault.jenga.xyz";
+      pinentry = pkgs.pinentry_mac;
+    };
+  };
+
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;
@@ -128,7 +137,6 @@ in {
   home.packages = with pkgs;
     [
       wg-exit-node
-      rbw
 
       # Some basics
       coreutils
