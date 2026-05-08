@@ -19,6 +19,7 @@
       home.packages = with pkgs; [
         helix
         fish
+        rbw
       ];
 
       programs.fish = {

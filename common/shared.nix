@@ -22,6 +22,7 @@ in {
     htop
     mtr
     pass
+    rbw
     tmux
     gnupg
     magic-wormhole

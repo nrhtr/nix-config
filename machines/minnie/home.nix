@@ -128,6 +128,7 @@ in {
   home.packages = with pkgs;
     [
       wg-exit-node
+      rbw
 
       # Some basics
       coreutils
