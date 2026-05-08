@@ -32,9 +32,6 @@
 
   nixpkgs.overlays = [
     (self: super: rec {
-      discord = super.discord.overrideAttrs (_: {
-        src = builtins.fetchTarball "https://discord.com/api/download?platform=linux&format=tar.gz";
-      });
       silk-guardian = self.callPackage ../../packages/silk-guardian/default.nix {
         linuxPackages = config.boot.kernelPackages;
       };
@@ -212,7 +209,6 @@
     pavucontrol
     anki-bin
     signal-desktop
-    discord
     openssl
     morph
     playerctl
