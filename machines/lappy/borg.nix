@@ -50,10 +50,9 @@ in {
       persistentTimer = true;
 
       prune.keep = {
-        within = "1d"; # Keep all archives from the last day
-        daily = 10;
-        weekly = 4;
-        monthly = -1; # Keep at least one archive for each month
+        within = "1d";
+        monthly = 12;
+        yearly = -1;
       };
 
       environment = {

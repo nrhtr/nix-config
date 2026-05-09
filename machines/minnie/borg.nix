@@ -45,9 +45,8 @@
 
     ${pkgs.borgbackup}/bin/borg prune \
       --keep-within 1d \
-      --keep-daily 7 \
-      --keep-weekly 4 \
-      --keep-monthly -1 \
+      --keep-monthly 12 \
+      --keep-yearly -1 \
       "${BORG_REPO}"
   '';
 in {
