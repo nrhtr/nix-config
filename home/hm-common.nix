@@ -1,6 +1,11 @@
 # Shared home-manager config imported by all user machines.
 # Machine-specific things (pinentry, PATH quirks, packages) stay in each machine's home.nix.
-{pkgs, ...}: {
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: {
   programs.direnv = {
     enable = true;
     nix-direnv.enable = true;
@@ -65,4 +70,10 @@
   home.packages = with pkgs; [
     helix
   ];
+
+  # Run install.sh after every switch to keep dotfiles symlinks current.
+  # install.sh is idempotent: it removes and relinks existing symlinks.
+  home.activation.dotfiles = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    $DRY_RUN_CMD bash ${config.home.homeDirectory}/git/nix-config/dotfiles/install.sh
+  '';
 }
