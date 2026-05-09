@@ -50,8 +50,6 @@ in {
     # FIXME: Dodgy fix for PATH order issues (e.g. vi/vim/git in system paths)
     interactiveShellInit = ''
       fish_add_path -mP /etc/profiles/per-user/${userName}/bin
-      fish_add_path /Users/jeremyparker/bin
-      fish_add_path /Users/jeremyparker/Library/Python/3.9/bin
       fish_add_path ~/.local/bin
 
       # homebrew

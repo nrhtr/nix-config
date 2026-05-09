@@ -24,6 +24,7 @@
 
   programs.fish = {
     enable = true;
+    interactiveShellInit = "fish_add_path $HOME/bin";
     shellAliases = {
       upd = "cd ~/git/nix-config && sudo bash scripts/switch.sh";
       dim-screen = "dpms";
