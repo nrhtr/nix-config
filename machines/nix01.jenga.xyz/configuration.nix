@@ -7,6 +7,7 @@
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
     ./wireguard.nix
+    ./borg.nix
     ../../common/shared.nix
     ../../common/wg-hosts.nix
   ];
