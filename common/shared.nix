@@ -59,6 +59,16 @@ in {
 
   programs.mosh.enable = true;
   programs.fish.enable = true;
+  programs.fish.interactiveShellInit = ''
+    function gopass
+      printf 'Deprecated: use rbw instead. To override: command gopass\n'
+      return 1
+    end
+    function pass
+      printf 'Deprecated: use rbw instead. To override: command pass\n'
+      return 1
+    end
+  '';
   programs.neovim = {
     enable = true;
 

@@ -59,6 +59,10 @@ in {
 
   programs.fish = {
     enable = true;
+    functions = {
+      gopass.body = "printf 'Deprecated: use rbw instead. To override: command gopass\\n'; return 1";
+      pass.body = "printf 'Deprecated: use rbw instead. To override: command pass\\n'; return 1";
+    };
 
     # FIXME: Dodgy fix for PATH order issues (e.g. vi/vim/git in system paths)
     interactiveShellInit = ''
