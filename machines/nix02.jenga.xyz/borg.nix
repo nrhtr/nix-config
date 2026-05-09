@@ -6,12 +6,14 @@
 }: {
   age.secrets = {
     borg-phrase = {
-      owner = "root";
+      owner = "jenga";
       file = ../../secrets/borg-phrase.age;
+      path = "/home/jenga/.secrets/borg-phrase";
     };
     borg-key = {
       owner = "jenga";
       file = ../../secrets/borg-key.age;
+      path = "/home/jenga/.secrets/borg-key";
     };
   };
 
@@ -46,5 +48,9 @@
         inherit BORG_RSH BORG_REMOTE_PATH;
       };
     };
+  };
+
+  environment.sessionVariables = {
+    inherit BORG_REPO BORG_RSH BORG_REMOTE_PATH BORG_PASSCOMMAND;
   };
 }
