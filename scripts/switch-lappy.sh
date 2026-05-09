@@ -8,7 +8,7 @@ HM=$(nix-instantiate --eval -E 'toString (import ./npins).home-manager' --json |
 CONFIG="$(pwd)/machines/lappy/configuration.nix"
 
 echo "Switching lappy..."
-sudo nixos-rebuild switch \
+nixos-rebuild switch \
   -I nixpkgs="$NIXPKGS" \
   -I home-manager="$HM" \
   -I nixos-config="$CONFIG"
