@@ -20,9 +20,6 @@ in {
     deployment = {
       targetPort = 22;
       targetUser = "root";
-      # Build on the target rather than locally — avoids round-tripping
-      # x86_64-linux store paths through the macOS build machine.
-      buildOnTarget = true;
     };
   };
 
