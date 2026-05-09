@@ -17,7 +17,7 @@
     export BORG_REMOTE_PATH="${BORG_REMOTE_PATH}"
     export BORG_PASSCOMMAND="${BORG_PASSCOMMAND}"
 
-    ARCHIVE="${BORG_REPO}::$(date '+%Y-%m-%dT%H.%M.%S')"
+    ARCHIVE="${BORG_REPO}::minnie-main-$(date '+%Y-%m-%dT%H.%M.%S')"
 
     ${pkgs.borgbackup}/bin/borg create \
       --compression auto,lzma \
@@ -70,7 +70,12 @@ in {
     serviceConfig = {
       Label = "org.nixos.borgbackup-main";
       ProgramArguments = ["${borgScript}"];
-      StartCalendarInterval = [{Hour = 2; Minute = 0;}];
+      StartCalendarInterval = [
+        {
+          Hour = 2;
+          Minute = 0;
+        }
+      ];
       StandardOutPath = "/Users/jenga/Library/Logs/borgbackup.log";
       StandardErrorPath = "/Users/jenga/Library/Logs/borgbackup.log";
       RunAtLoad = false;
