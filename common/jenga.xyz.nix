@@ -3,7 +3,7 @@ with dns.lib.combinators; {
   SOA = {
     nameServer = "nix02.jenga.xyz.";
     adminEmail = "jeremy@jenga.xyz";
-    serial = 2026050804;
+    serial = 2026050805;
   };
 
   NS = ["nix02.jenga.xyz."];
@@ -22,6 +22,6 @@ with dns.lib.combinators; {
     tlon.CNAME = ["nix02.jenga.xyz."];
     photos.CNAME = ["nix02.jenga.xyz."];
     spruce.CNAME = ["nix02.jenga.xyz."];
-    up.A = ["51.222.109.62"];
+    up.CNAME = ["nix02.jenga.xyz."];
   };
 }

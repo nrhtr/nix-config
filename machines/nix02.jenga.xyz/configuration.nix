@@ -662,7 +662,7 @@ in {
         };
       };
       "up.jenga.xyz" = {
-        listenAddresses = [ipv4.address];
+        listenAddresses = [ipv4.address "10.100.0.6"];
         forceSSL = true;
         useACMEHost = "up.jenga.xyz";
         locations = {
