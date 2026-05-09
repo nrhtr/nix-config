@@ -9,6 +9,15 @@ with lib; let
   BORG_RSH = "ssh -i ${config.age.secrets.borg-key.path}";
   BORG_REMOTE_PATH = "borg14"; # Use borg 1.4.x
   BORG_PASSCOMMAND = "cat ${config.age.secrets.borg-phrase.path}";
+
+  heartbeatUrl = "https://up.jenga.xyz/api/v1/endpoints/backups_lappy/external";
+  heartbeatToken = config.age.secrets.borg-heartbeat-token.path;
+
+  heartbeatFailScript = pkgs.writeShellScript "borg-heartbeat-lappy-fail" ''
+    ${pkgs.curl}/bin/curl -s -o /dev/null -X POST \
+      "${heartbeatUrl}?success=false" \
+      -H "Authorization: Bearer $(cat ${heartbeatToken})" || true
+  '';
 in {
   age.secrets = {
     borg-phrase = {
@@ -20,6 +29,11 @@ in {
       owner = "jenga";
       file = ../../secrets/borg-key.age;
       path = "/home/jenga/.secrets/borg-key";
+    };
+    borg-heartbeat-token = {
+      owner = "jenga";
+      file = ../../secrets/borg-heartbeat-token.age;
+      path = "/home/jenga/.secrets/borg-heartbeat-token";
     };
   };
 
@@ -49,6 +63,12 @@ in {
       startAt = "*-*-* 00/02:00:00";
       persistentTimer = true;
 
+      postHook = ''
+        ${pkgs.curl}/bin/curl -s -o /dev/null -X POST \
+          "${heartbeatUrl}?success=true" \
+          -H "Authorization: Bearer $(cat ${heartbeatToken})" || true
+      '';
+
       prune.keep = {
         within = "1d";
         daily = 7;
@@ -61,6 +81,17 @@ in {
         inherit BORG_RSH;
         inherit BORG_REMOTE_PATH;
       };
+    };
+  };
+
+  # Send failure heartbeat when borgbackup-job-main.service fails
+  systemd.services.borgbackup-job-main.unitConfig.OnFailure = "borgbackup-heartbeat-lappy-fail.service";
+  systemd.services.borgbackup-heartbeat-lappy-fail = {
+    description = "Send borg backup failure heartbeat to Gatus";
+    serviceConfig = {
+      Type = "oneshot";
+      User = "jenga";
+      ExecStart = "${heartbeatFailScript}";
     };
   };
 

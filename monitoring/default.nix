@@ -6,8 +6,9 @@
 # Deploy:  fly deploy --image registry.fly.io/jenga-monitor:latest --app jenga-monitor
 #
 # Required Fly secrets:
-#   WG_PRIVATE_KEY   — WireGuard private key for the fly-monitor peer
-#   GATUS_SMTP_PASS  — Fastmail app password for alert emails
+#   WG_PRIVATE_KEY      — WireGuard private key for the fly-monitor peer
+#   GATUS_SMTP_PASS     — Fastmail app password for alert emails
+#   GATUS_BORG_TOKEN    — Bearer token for borg backup heartbeat endpoints
 {system ? "x86_64-linux"}: let
   sources = import ../npins;
   # nixpkgs-unstable for up-to-date Gatus and WireGuard tools

@@ -12,12 +12,22 @@
   BORG_REMOTE_PATH = "borg14"; # Use borg 1.4.x
   BORG_PASSCOMMAND = "cat ${config.age.secrets.borg-phrase.path}";
 
+  heartbeatUrl = "https://up.jenga.xyz/api/v1/endpoints/backups_minnie/external";
+  heartbeatToken = config.age.secrets.borg-heartbeat-token.path;
+
   borgScript = pkgs.writeShellScript "borgbackup-minnie" ''
     export BORG_RSH="${BORG_RSH}"
     export BORG_REMOTE_PATH="${BORG_REMOTE_PATH}"
     export BORG_PASSCOMMAND="${BORG_PASSCOMMAND}"
 
     ARCHIVE="${BORG_REPO}::minnie-main-$(date '+%Y-%m-%dT%H.%M.%S')"
+
+    _send_heartbeat() {
+      curl -s -o /dev/null -X POST \
+        "${heartbeatUrl}?success=$1" \
+        -H "Authorization: Bearer $(cat ${heartbeatToken})" || true
+    }
+    trap '_send_heartbeat false' ERR
 
     ${pkgs.borgbackup}/bin/borg create \
       --compression auto,lzma \
@@ -50,6 +60,8 @@
       --keep-monthly 12 \
       --keep-yearly -1 \
       "${BORG_REPO}"
+
+    _send_heartbeat true
   '';
 in {
   imports = ["${agenix}/modules/age.nix"];
@@ -64,6 +76,11 @@ in {
       owner = "jenga";
       file = ../../secrets/borg-key.age;
       path = "/Users/jenga/.secrets/borg-key";
+    };
+    borg-heartbeat-token = {
+      owner = "jenga";
+      file = ../../secrets/borg-heartbeat-token.age;
+      path = "/Users/jenga/.secrets/borg-heartbeat-token";
     };
   };
 

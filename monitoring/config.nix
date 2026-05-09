@@ -61,7 +61,23 @@
     ];
   };
 
+  mkBorgEndpoint = name: {
+    inherit name;
+    group = "Backups";
+    token = "\${GATUS_BORG_TOKEN}";
+    alerts = [
+      {
+        type = "email";
+        failure-threshold = 1;
+        success-threshold = 1;
+        description = "${name} borg backup has not run successfully";
+      }
+    ];
+  };
+
   config = {
+    external-endpoints = map mkBorgEndpoint ["minnie" "lappy" "nix01" "nix02"];
+
     endpoints = [
       # Public sites — checked directly
       (mkEndpoint {
