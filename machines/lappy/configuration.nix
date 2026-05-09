@@ -11,7 +11,6 @@
 
     ./wireguard.nix
     ./borg.nix
-    ./borg-notifier.nix
 
     ./../../common/shared.nix
     ./../../common/wg-hosts.nix
