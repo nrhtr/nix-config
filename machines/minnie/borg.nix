@@ -22,13 +22,6 @@
 
     ARCHIVE="${BORG_REPO}::minnie-main-$(date '+%Y-%m-%dT%H.%M.%S')"
 
-    _send_heartbeat() {
-      curl -s -o /dev/null -X POST \
-        "${heartbeatUrl}?success=$1" \
-        -H "Authorization: Bearer $(cat ${heartbeatToken})" || true
-    }
-    trap '_send_heartbeat false' ERR
-
     ${pkgs.borgbackup}/bin/borg create \
       --compression auto,lzma \
       --exclude-caches \
@@ -61,7 +54,9 @@
       --keep-yearly -1 \
       "${BORG_REPO}"
 
-    _send_heartbeat true
+    curl -s -o /dev/null -X POST \
+      "${heartbeatUrl}?success=true" \
+      -H "Authorization: Bearer $(cat ${heartbeatToken})" || true
   '';
 in {
   imports = ["${agenix}/modules/age.nix"];

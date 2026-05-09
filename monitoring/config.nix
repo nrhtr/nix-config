@@ -65,11 +65,13 @@
     inherit name;
     group = "Backups";
     token = "\${GATUS_BORG_TOKEN}";
+    heartbeat.interval = "168h"; # Alert if no heartbeat received within 1 week
     alerts = [
       {
         type = "email";
         failure-threshold = 1;
         success-threshold = 1;
+        send-on-resolved = true;
         description = "${name} borg backup has not run successfully";
       }
     ];
