@@ -71,7 +71,11 @@ in {
     serviceConfig = {
       Label = "org.nixos.borgbackup-main";
       ProgramArguments = ["${borgScript}"];
-      StartInterval = 7200; # every 2 hours
+      # Odd hours to avoid colliding with lappy (even hours), both back up to rsync.net
+      StartCalendarInterval = map (h: {
+        Hour = h;
+        Minute = 0;
+      }) [1 3 5 7 9 11 13 15 17 19 21 23];
       StandardOutPath = "/Users/jenga/Library/Logs/borgbackup.log";
       StandardErrorPath = "/Users/jenga/Library/Logs/borgbackup.log";
       RunAtLoad = false;
