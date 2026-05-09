@@ -537,16 +537,6 @@ in {
         }
       ];
       forward-zone = [
-        # More-specific than the jenga.xyz stub-zone, so unbound uses public
-        # DNS for Fly.io apps rather than the internal authoritative zone.
-        {
-          name = "fly.dev";
-          forward-addr = ["1.1.1.1" "1.0.0.1"];
-        }
-        {
-          name = "up.jenga.xyz";
-          forward-addr = ["1.1.1.1" "1.0.0.1"];
-        }
         {
           name = ".";
           forward-addr = ["1.1.1.1" "1.0.0.1"];

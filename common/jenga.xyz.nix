@@ -3,7 +3,7 @@ with dns.lib.combinators; {
   SOA = {
     nameServer = "nix02.jenga.xyz.";
     adminEmail = "jeremy@jenga.xyz";
-    serial = 2026050800;
+    serial = 2026050801;
   };
 
   NS = ["nix02.jenga.xyz."];
@@ -21,5 +21,6 @@ with dns.lib.combinators; {
     vault.A = ["10.100.0.1"];
     spruce.A = ["10.100.0.6"];
     status.A = ["10.100.0.6"];
+    up.A = ["51.222.109.62"];
   };
 }
