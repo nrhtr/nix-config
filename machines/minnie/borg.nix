@@ -45,6 +45,8 @@
 
     ${pkgs.borgbackup}/bin/borg prune \
       --keep-within 1d \
+      --keep-daily 7 \
+      --keep-weekly 4 \
       --keep-monthly 12 \
       --keep-yearly -1 \
       "${BORG_REPO}"
@@ -69,12 +71,7 @@ in {
     serviceConfig = {
       Label = "org.nixos.borgbackup-main";
       ProgramArguments = ["${borgScript}"];
-      StartCalendarInterval = [
-        {
-          Hour = 2;
-          Minute = 0;
-        }
-      ];
+      StartInterval = 7200; # every 2 hours
       StandardOutPath = "/Users/jenga/Library/Logs/borgbackup.log";
       StandardErrorPath = "/Users/jenga/Library/Logs/borgbackup.log";
       RunAtLoad = false;

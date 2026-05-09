@@ -51,6 +51,8 @@ in {
 
       prune.keep = {
         within = "1d";
+        daily = 7;
+        weekly = 4;
         monthly = 12;
         yearly = -1;
       };
