@@ -14,6 +14,7 @@
 
   heartbeatUrl = "https://up.jenga.xyz/api/v1/endpoints/backups_minnie/external";
   heartbeatToken = config.age.secrets.borg-heartbeat-token.path;
+  heartbeatScript = import ../../common/borg-heartbeat.nix {inherit pkgs;};
 
   borgScript = pkgs.writeShellScript "borgbackup-minnie" ''
     export BORG_RSH="${BORG_RSH}"
@@ -22,12 +23,7 @@
 
     ARCHIVE="${BORG_REPO}::minnie-main-$(date '+%Y-%m-%dT%H.%M.%S')"
 
-    _heartbeat_fail() {
-      curl -s -o /dev/null -X POST \
-        "${heartbeatUrl}?success=false" \
-        -H "Authorization: Bearer $(cat ${heartbeatToken})" || true
-    }
-    trap _heartbeat_fail ERR
+    trap '${heartbeatScript} "${heartbeatUrl}" "${heartbeatToken}" false' ERR
 
     ${pkgs.borgbackup}/bin/borg create \
       --compression auto,lzma \
@@ -61,9 +57,7 @@
       --keep-yearly -1 \
       "${BORG_REPO}"
 
-    curl -s -o /dev/null -X POST \
-      "${heartbeatUrl}?success=true" \
-      -H "Authorization: Bearer $(cat ${heartbeatToken})" || true
+    ${heartbeatScript} "${heartbeatUrl}" "${heartbeatToken}" true
   '';
 in {
   imports = ["${agenix}/modules/age.nix"];
