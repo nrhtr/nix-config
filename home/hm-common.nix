@@ -24,7 +24,10 @@
 
   programs.fish = {
     enable = true;
-    shellAliases.upd = "cd ~/git/nix-config && sudo bash scripts/switch.sh";
+    shellAliases = {
+      upd = "cd ~/git/nix-config && sudo bash scripts/switch.sh";
+      dim-screen = "dpms";
+    };
     functions = {
       gopass.body = "printf 'Deprecated: use rbw instead. To override: command gopass\\n'; return 1";
       pass.body = "printf 'Deprecated: use rbw instead. To override: command pass\\n'; return 1";
