@@ -26,6 +26,42 @@
     };
   };
 
+  programs.neovim = {
+    enable = true;
+    viAlias = true;
+    vimAlias = true;
+    vimdiffAlias = true;
+  };
+
+  programs.git = {
+    enable = true;
+    ignores = [
+      "/.direnv"
+      "/.envrc"
+      ".vscode"
+      "/.idea"
+    ];
+    settings = {
+      user = {
+        name = "Jeremy Parker";
+        email = "jeremy@jenga.xyz";
+      };
+      core.editor = "nvim";
+      init.defaultBranch = "main";
+    };
+  };
+
+  # Reuse existing connections — avoids paying SSH handshake cost on every
+  # Nix store operation during deploys.
+  programs.ssh = {
+    enable = true;
+    matchBlocks."*" = {
+      controlMaster = "auto";
+      controlPath = "~/.ssh/control/%r@%h:%p";
+      controlPersist = "10m";
+    };
+  };
+
   home.packages = with pkgs; [
     helix
   ];

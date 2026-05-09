@@ -4,9 +4,7 @@
   lib,
   ...
 }: let
-  name = "Jeremy Parker";
   userName = "jenga";
-  email = "jeremy@jenga.xyz";
 in {
   imports = [../../home/hm-common.nix];
 
@@ -69,47 +67,8 @@ in {
 
   programs.rbw.settings.pinentry = pkgs.pinentry_mac;
 
-  programs.ssh = {
-    enable = true;
-    enableDefaultConfig = false;
-    matchBlocks."*" = {
-      # Reuse existing connections — avoids paying SSH handshake cost (~1s at
-      # 235ms RTT to nix02) on every Nix store operation during deploys.
-      controlMaster = "auto";
-      controlPath = "~/.ssh/control/%r@%h:%p";
-      controlPersist = "10m";
-    };
-  };
-
-  programs.git = {
-    enable = true;
-    ignores = [
-      "/.direnv"
-      "/.envrc"
-      ".vscode"
-      "/.idea"
-    ];
-    settings = {
-      user = {
-        name = name;
-        email = email;
-      };
-      core = {
-        editor = "nvim";
-      };
-      init = {
-        defaultBranch = "main";
-      };
-    };
-  };
-
-  programs.neovim = {
-    enable = true;
-
-    viAlias = true;
-    vimAlias = true;
-    vimdiffAlias = true;
-  };
+  # Suppress deprecation warning; controlMaster is set in hm-common.nix
+  programs.ssh.enableDefaultConfig = false;
 
   home.packages = with pkgs;
     [
