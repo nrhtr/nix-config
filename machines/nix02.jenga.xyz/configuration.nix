@@ -505,6 +505,7 @@ in {
       max-players = 4;
       motd = "NixOS Minecraft server!";
       white-list = true;
+      online-mode = false;
     };
     jvmOpts = "-Xmx2560M -Xms1024M -Dfml.readTimeout=60";
   };
