@@ -23,8 +23,8 @@
 
     ARCHIVE="${BORG_REPO}::minnie-main-$(date '+%Y-%m-%dT%H.%M.%S')"
 
-    trap '${heartbeatScript} "${heartbeatUrl}" "${heartbeatToken}" false' ERR
-
+    # Borg exit codes: 0 = success, 1 = warnings (files changed etc, still OK), 2 = error
+    borg_rc=0
     ${pkgs.borgbackup}/bin/borg create \
       --compression auto,lzma \
       --exclude-caches \
@@ -47,15 +47,21 @@
       --exclude 'sh:**/*.pyc' \
       --exclude 'sh:**/.venv' \
       "$ARCHIVE" \
-      /Users/jenga
+      /Users/jenga || borg_rc=$?
 
+    if [[ $borg_rc -ge 2 ]]; then
+      ${heartbeatScript} "${heartbeatUrl}" "${heartbeatToken}" false
+      exit $borg_rc
+    fi
+
+    # Prune warnings are non-critical
     ${pkgs.borgbackup}/bin/borg prune \
       --keep-within 1d \
       --keep-daily 7 \
       --keep-weekly 4 \
       --keep-monthly 12 \
       --keep-yearly -1 \
-      "${BORG_REPO}"
+      "${BORG_REPO}" || true
 
     ${heartbeatScript} "${heartbeatUrl}" "${heartbeatToken}" true
   '';
