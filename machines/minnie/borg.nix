@@ -22,6 +22,13 @@
 
     ARCHIVE="${BORG_REPO}::minnie-main-$(date '+%Y-%m-%dT%H.%M.%S')"
 
+    _heartbeat_fail() {
+      curl -s -o /dev/null -X POST \
+        "${heartbeatUrl}?success=false" \
+        -H "Authorization: Bearer $(cat ${heartbeatToken})" || true
+    }
+    trap _heartbeat_fail ERR
+
     ${pkgs.borgbackup}/bin/borg create \
       --compression auto,lzma \
       --exclude-caches \

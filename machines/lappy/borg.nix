@@ -12,6 +12,12 @@ with lib; let
 
   heartbeatUrl = "https://up.jenga.xyz/api/v1/endpoints/backups_lappy/external";
   heartbeatToken = config.age.secrets.borg-heartbeat-token.path;
+
+  heartbeatFailScript = pkgs.writeShellScript "borg-heartbeat-lappy-fail" ''
+    ${pkgs.curl}/bin/curl -s -o /dev/null -X POST \
+      "${heartbeatUrl}?success=false" \
+      -H "Authorization: Bearer $(cat ${heartbeatToken})" || true
+  '';
 in {
   age.secrets = {
     borg-phrase = {
@@ -75,6 +81,16 @@ in {
         inherit BORG_RSH;
         inherit BORG_REMOTE_PATH;
       };
+    };
+  };
+
+  systemd.services.borgbackup-job-main.unitConfig.OnFailure = "borgbackup-heartbeat-lappy-fail.service";
+  systemd.services.borgbackup-heartbeat-lappy-fail = {
+    description = "Send borg backup failure heartbeat to Gatus";
+    serviceConfig = {
+      Type = "oneshot";
+      User = "jenga";
+      ExecStart = "${heartbeatFailScript}";
     };
   };
 
