@@ -46,6 +46,10 @@ in {
     compression = "auto,lzma";
     startAt = "daily";
 
+    # Needed for the sqlite3 WAL checkpoint in preHook — borgbackup
+    # runs with ProtectSystem=strict so writes are blocked by default.
+    readWritePaths = ["/var/lib/bitwarden_rs"];
+
     # Flush SQLite WAL into the main db file before backup to ensure
     # a consistent snapshot (bitwarden_rs uses WAL mode).
     preHook = ''
