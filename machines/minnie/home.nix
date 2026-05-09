@@ -8,46 +8,37 @@
   userName = "jenga";
   email = "jeremy@jenga.xyz";
 in {
+  imports = [../../home/hm-common.nix];
+
   home.stateVersion = "22.05";
 
-  # Direnv, load and unload environment variables depending on the current directory.
-  # https://direnv.net
-  # https://rycee.gitlab.io/home-manager/options.html#opt-programs.direnv.enable
-  programs.direnv = {
-    enable = true;
+  # "layout poetry" support
+  programs.direnv.stdlib = ''
+    layout_poetry() {
+      PYPROJECT_TOML="''${PYPROJECT_TOML:-pyproject.toml}"
+      if [[ ! -f "$PYPROJECT_TOML" ]]; then
+          log_status "No pyproject.toml found. Executing \`poetry init\` to create a \`$PYPROJECT_TOML\` first."
+          poetry init
+      fi
 
-    nix-direnv.enable = true;
+      if [[ -d ".venv" ]]; then
+          VIRTUAL_ENV="$(pwd)/.venv"
+      else
+          VIRTUAL_ENV=$(poetry env info --path 2>/dev/null ; true)
+      fi
 
-    # "layout poetry" support
-    stdlib = ''
-      layout_poetry() {
-        PYPROJECT_TOML="''${PYPROJECT_TOML:-pyproject.toml}"
-        if [[ ! -f "$PYPROJECT_TOML" ]]; then
-            log_status "No pyproject.toml found. Executing \`poetry init\` to create a \`$PYPROJECT_TOML\` first."
-            poetry init
-        fi
+      if [[ -z $VIRTUAL_ENV || ! -d $VIRTUAL_ENV ]]; then
+          log_status "No virtual environment exists. Executing \`poetry install\` to create one."
+          poetry install
+          VIRTUAL_ENV=$(poetry env info --path)
+      fi
 
-        if [[ -d ".venv" ]]; then
-            VIRTUAL_ENV="$(pwd)/.venv"
-        else
-            VIRTUAL_ENV=$(poetry env info --path 2>/dev/null ; true)
-        fi
+      PATH_add "$VIRTUAL_ENV/bin"
+      export POETRY_ACTIVE=1
+      export VIRTUAL_ENV
+    }
+  '';
 
-        if [[ -z $VIRTUAL_ENV || ! -d $VIRTUAL_ENV ]]; then
-            log_status "No virtual environment exists. Executing \`poetry install\` to create one."
-            poetry install
-            VIRTUAL_ENV=$(poetry env info --path)
-        fi
-
-        PATH_add "$VIRTUAL_ENV/bin"
-        export POETRY_ACTIVE=1
-        export VIRTUAL_ENV
-      }
-    '';
-  };
-
-  # Htop
-  # https://rycee.gitlab.io/home-manager/options.html#opt-programs.htop.enable
   programs.htop.enable = true;
   programs.htop.settings.show_program_path = true;
 
@@ -58,12 +49,6 @@ in {
   };
 
   programs.fish = {
-    enable = true;
-    functions = {
-      gopass.body = "printf 'Deprecated: use rbw instead. To override: command gopass\\n'; return 1";
-      pass.body = "printf 'Deprecated: use rbw instead. To override: command pass\\n'; return 1";
-    };
-
     # FIXME: Dodgy fix for PATH order issues (e.g. vi/vim/git in system paths)
     interactiveShellInit = ''
       fish_add_path -mP /etc/profiles/per-user/${userName}/bin
@@ -76,23 +61,13 @@ in {
       export OPS_DIR="$HOME/.ops"
       export PATH="$HOME/.ops/bin:$PATH"
     '';
-    shellAliases = {
-      upd = "cd ~/git/nix-config && sudo bash scripts/switch.sh";
-    };
     shellAbbrs = {
       "9k" = "k9s";
       k = "kubectl";
     };
   };
 
-  programs.rbw = {
-    enable = true;
-    settings = {
-      email = "jeremy@jenga.xyz";
-      base_url = "https://vault.jenga.xyz";
-      pinentry = pkgs.pinentry_mac;
-    };
-  };
+  programs.rbw.settings.pinentry = pkgs.pinentry_mac;
 
   programs.ssh = {
     enable = true;
@@ -136,8 +111,6 @@ in {
     vimdiffAlias = true;
   };
 
-  programs.nix-index.enable = true;
-
   home.packages = with pkgs;
     [
       wg-exit-node
@@ -149,7 +122,6 @@ in {
       wget
       gopass
       gnupg
-      helix
 
       # Dev stuff
       skopeo
