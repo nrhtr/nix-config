@@ -623,7 +623,7 @@ in {
         };
       };
       "sorpex-fighut.nock.dev" = {
-        listenAddresses = ["10.100.0.6"];
+        listenAddresses = [ipv4.address "10.100.0.6"];
         forceSSL = true;
         useACMEHost = "nock.dev";
         locations."/" = {
@@ -631,7 +631,7 @@ in {
         };
       };
       "fonpub.nock.dev" = {
-        listenAddresses = ["10.100.0.6"];
+        listenAddresses = [ipv4.address "10.100.0.6"];
         forceSSL = true;
         useACMEHost = "nock.dev";
         locations."/" = {
