@@ -353,21 +353,6 @@ in {
       dnsProvider = "gandiv5";
       credentialsFile = "${config.age.secrets.gandi.path}";
     };
-    "sorpex.jenga.xyz" = {
-      group = "nginx";
-      dnsProvider = "gandiv5";
-      credentialsFile = "${config.age.secrets.gandi.path}";
-    };
-    "tallur.jenga.xyz" = {
-      group = "nginx";
-      dnsProvider = "gandiv5";
-      credentialsFile = "${config.age.secrets.gandi.path}";
-    };
-    "fonpub.jenga.xyz" = {
-      group = "nginx";
-      dnsProvider = "gandiv5";
-      credentialsFile = "${config.age.secrets.gandi.path}";
-    };
     "photos.jenga.xyz" = {
       group = "nginx";
       dnsProvider = "gandiv5";
@@ -628,30 +613,6 @@ in {
           proxyPass = "http://127.0.0.1:5006/";
         };
       };
-      "sorpex.jenga.xyz" = {
-        listenAddresses = ["10.100.0.6"];
-        forceSSL = true;
-        useACMEHost = "sorpex.jenga.xyz";
-        locations."/" = {
-          proxyPass = "http://127.0.0.1:7080/";
-        };
-      };
-      "tallur.jenga.xyz" = {
-        listenAddresses = ["10.100.0.6"];
-        forceSSL = true;
-        useACMEHost = "tallur.jenga.xyz";
-        locations."/" = {
-          proxyPass = "http://127.0.0.1:7081/";
-        };
-      };
-      "fonpub.jenga.xyz" = {
-        listenAddresses = ["10.100.0.6"];
-        forceSSL = true;
-        useACMEHost = "fonpub.jenga.xyz";
-        locations."/" = {
-          proxyPass = "http://127.0.0.1:7082/";
-        };
-      };
       "photos.jenga.xyz" = {
         listenAddresses = ["10.100.0.6"];
         forceSSL = true;
@@ -662,11 +623,19 @@ in {
         };
       };
       "sorpex-fighut.nock.dev" = {
-        listenAddresses = [ipv4.address "10.100.0.6"];
+        listenAddresses = ["10.100.0.6"];
         forceSSL = true;
         useACMEHost = "nock.dev";
         locations."/" = {
           proxyPass = "http://127.0.0.1:8081/";
+        };
+      };
+      "fonpub.nock.dev" = {
+        listenAddresses = ["10.100.0.6"];
+        forceSSL = true;
+        useACMEHost = "nock.dev";
+        locations."/" = {
+          proxyPass = "http://127.0.0.1:8082/";
         };
       };
       "spruce.jenga.xyz" = {
