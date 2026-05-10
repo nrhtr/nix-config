@@ -337,6 +337,11 @@ in {
   security.acme.defaults.email = "jeremy@jenga.xyz";
   security.acme.acceptTerms = true;
   security.acme.certs = {
+    "*.nock.dev" = {
+      group = "nginx";
+      dnsProvider = "gandiv5";
+      credentialsFile = "${config.age.secrets.gandi.path}";
+    };
     "live.jenga.xyz" = {
       group = "nginx";
       dnsProvider = "gandiv5";
@@ -653,6 +658,14 @@ in {
         locations."/" = {
           proxyPass = "http://127.0.0.1:2283/";
           proxyWebsockets = true;
+        };
+      };
+      "sorpex-fighut.nock.dev" = {
+        listenAddresses = [ipv4.address "10.100.0.6"];
+        forceSSL = true;
+        useACMEHost = "*.nock.dev";
+        locations."/" = {
+          proxyPass = "http://127.0.0.1:8081/";
         };
       };
       "spruce.jenga.xyz" = {
