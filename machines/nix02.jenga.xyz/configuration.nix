@@ -337,7 +337,8 @@ in {
   security.acme.defaults.email = "jeremy@jenga.xyz";
   security.acme.acceptTerms = true;
   security.acme.certs = {
-    "*.nock.dev" = {
+    "nock.dev" = {
+      domain = "*.nock.dev";
       group = "nginx";
       dnsProvider = "gandiv5";
       credentialsFile = "${config.age.secrets.gandi.path}";
@@ -663,7 +664,7 @@ in {
       "sorpex-fighut.nock.dev" = {
         listenAddresses = [ipv4.address "10.100.0.6"];
         forceSSL = true;
-        useACMEHost = "*.nock.dev";
+        useACMEHost = "nock.dev";
         locations."/" = {
           proxyPass = "http://127.0.0.1:8081/";
         };
