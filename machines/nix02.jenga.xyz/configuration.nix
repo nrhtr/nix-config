@@ -178,7 +178,7 @@ in {
   networking.useDHCP = false;
   networking.interfaces."${networkInterface}" = {
     ipv4.addresses = [{inherit (ipv4) address prefixLength;}];
-    ipv6.addresses = [{inherit (ipv4) address prefixLength;}];
+    ipv6.addresses = [{inherit (ipv6) address prefixLength;}];
   };
   networking.defaultGateway = ipv4.gateway;
   networking.defaultGateway6 = {
