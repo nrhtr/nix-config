@@ -518,8 +518,8 @@ in {
     enable = true;
     settings = {
       server = {
-        interface = ["10.100.0.6" "127.0.0.1"];
-        access-control = ["10.100.0.0/16 allow" "127.0.0.0/8 allow"];
+        interface = ["10.100.0.6" "127.0.0.1" "::1"];
+        access-control = ["10.100.0.0/16 allow" "127.0.0.0/8 allow" "::1/128 allow"];
         do-not-query-localhost = "no";
         domain-insecure = ["jenga.xyz"];
       };
