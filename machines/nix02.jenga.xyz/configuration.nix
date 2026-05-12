@@ -86,11 +86,14 @@
   gitAutoInitShell =
     pkgs.writeShellScriptBin "git-auto-init-shell" ''
       set -euo pipefail
-      if [[ -z "''${SSH_ORIGINAL_COMMAND:-}" ]]; then
+      # sshd invokes the shell as: shell -c "git-receive-pack 'repo'"
+      # SSH_ORIGINAL_COMMAND is only set for forced commands; use $2 instead.
+      cmd="''${2:-}"
+      if [[ -z "$cmd" ]]; then
         echo "Interactive login not permitted." >&2
         exit 128
       fi
-      if [[ "$SSH_ORIGINAL_COMMAND" =~ ^(git-receive-pack|git[[:space:]]receive-pack)[[:space:]]\'(.*)\'$ ]]; then
+      if [[ "$cmd" =~ ^(git-receive-pack|git[[:space:]]receive-pack)[[:space:]]\'(.*)\'$ ]]; then
         repo="''${BASH_REMATCH[2]}"
         if [[ "$repo" == *..* ]]; then
           echo "Invalid repository path." >&2
@@ -98,7 +101,7 @@
         fi
         [[ -d "$repo" ]] || ${pkgs.git}/bin/git init --bare "$repo" >&2
       fi
-      exec ${pkgs.git}/bin/git-shell -c "$SSH_ORIGINAL_COMMAND"
+      exec ${pkgs.git}/bin/git-shell -c "$cmd"
     ''
     // {shellPath = "/bin/git-auto-init-shell";};
 in {
