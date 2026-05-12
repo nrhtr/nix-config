@@ -83,22 +83,24 @@
 
   # Restricted shell for the git user: auto-inits bare repos on first push,
   # then hands off to real git-shell for security and command execution.
-  gitAutoInitShell = pkgs.writeShellScript "git-auto-init-shell" ''
-    set -euo pipefail
-    if [[ -z "''${SSH_ORIGINAL_COMMAND:-}" ]]; then
-      echo "Interactive login not permitted." >&2
-      exit 128
-    fi
-    if [[ "$SSH_ORIGINAL_COMMAND" =~ ^(git-receive-pack|git[[:space:]]receive-pack)[[:space:]]\'(.*)\'$ ]]; then
-      repo="''${BASH_REMATCH[2]}"
-      if [[ "$repo" == *..* ]]; then
-        echo "Invalid repository path." >&2
-        exit 1
+  gitAutoInitShell =
+    pkgs.writeShellScriptBin "git-auto-init-shell" ''
+      set -euo pipefail
+      if [[ -z "''${SSH_ORIGINAL_COMMAND:-}" ]]; then
+        echo "Interactive login not permitted." >&2
+        exit 128
       fi
-      [[ -d "$repo" ]] || ${pkgs.git}/bin/git init --bare "$repo" >&2
-    fi
-    exec ${pkgs.git}/bin/git-shell -c "$SSH_ORIGINAL_COMMAND"
-  '';
+      if [[ "$SSH_ORIGINAL_COMMAND" =~ ^(git-receive-pack|git[[:space:]]receive-pack)[[:space:]]\'(.*)\'$ ]]; then
+        repo="''${BASH_REMATCH[2]}"
+        if [[ "$repo" == *..* ]]; then
+          echo "Invalid repository path." >&2
+          exit 1
+        fi
+        [[ -d "$repo" ]] || ${pkgs.git}/bin/git init --bare "$repo" >&2
+      fi
+      exec ${pkgs.git}/bin/git-shell -c "$SSH_ORIGINAL_COMMAND"
+    ''
+    // {shellPath = "/bin/git-auto-init-shell";};
 in {
   imports = [
     ./hardware-configuration.nix
