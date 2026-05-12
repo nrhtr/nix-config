@@ -84,7 +84,10 @@ in {
     system.activationScripts.git-mirror-remotes = {
       deps = ["users" "groups"];
       text = ''
-        ${pkgs.util-linux}/bin/runuser -u git -- ${setupScript}
+        # tmpfiles hasn't run yet at activation time, so create the gitconfig
+        # symlink here directly so git can find safe.directory = *.
+        ln -sf ${gitUserConfig} ${reposDir}/.gitconfig
+        HOME=${reposDir} ${pkgs.util-linux}/bin/runuser -u git -- ${setupScript}
       '';
     };
   };
