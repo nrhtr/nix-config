@@ -118,6 +118,7 @@ in {
     ../../modules/genesis.nix
     # override module using python 2 package
     ../../modules/websockify.nix
+    ../../modules/git-mirror.nix
   ];
 
   age.secrets = {
@@ -442,6 +443,10 @@ in {
   };
   users.groups.spruce = {};
   users.groups.smtp-relay = {};
+
+  jenga.git.mirrors = [
+    "test"
+  ];
 
   users.users.git = {
     isSystemUser = true;

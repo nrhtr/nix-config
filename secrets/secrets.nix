@@ -25,4 +25,5 @@ in {
   "jenga-dev-key.age".publicKeys = all;
   "spruce-env.age".publicKeys = all;
   "borg-heartbeat-token.age".publicKeys = all;
+  "github-mirror-key.age".publicKeys = all;
 }
