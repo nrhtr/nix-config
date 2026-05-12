@@ -91,7 +91,10 @@ in {
       serviceConfig = {
         Type = "oneshot";
         User = "git";
-        Environment = "HOME=${reposDir}";
+        Environment = [
+          "HOME=${reposDir}"
+          "GIT_SSH_COMMAND=${pkgs.openssh}/bin/ssh"
+        ];
         ExecStart = mirrorScript;
       };
     };
