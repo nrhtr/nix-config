@@ -32,7 +32,10 @@ in {
   };
 
   services.borgbackup.jobs.main = {
-    paths = "/var/lib/minecraft/world";
+    paths = [
+      "/var/lib/minecraft/world"
+      "/var/lib/cgit/repos"
+    ];
     repo = BORG_REPO;
     user = "root";
 
