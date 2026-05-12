@@ -59,6 +59,7 @@
       };
       core.editor = "nvim";
       init.defaultBranch = "main";
+      advice.defaultBranchName = false;
     };
   };
 

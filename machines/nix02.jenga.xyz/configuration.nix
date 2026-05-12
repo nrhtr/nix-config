@@ -60,7 +60,7 @@
     favicon=/favicon.ico
     root-title=git.jenga.xyz
     root-desc=Git repositories
-    clone-url=https://git.jenga.xyz/$CGIT_REPO_URL ssh://git@git.jenga.xyz:18061/~/$CGIT_REPO_URL
+    clone-url=https://git.jenga.xyz/$CGIT_REPO_URL git@git.jenga.xyz:$CGIT_REPO_URL
     enable-index-owner=0
     enable-commit-graph=1
     enable-log-filecount=1

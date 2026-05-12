@@ -55,7 +55,7 @@ in {
       };
 
       compression = "auto,lzma";
-      startAt = "*-*-* 00/02:00:00";
+      startAt = "*-*-* 02:00:00";
       persistentTimer = true;
 
       postHook = ''
