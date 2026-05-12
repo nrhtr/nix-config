@@ -87,6 +87,8 @@ in {
         # tmpfiles hasn't run yet at activation time, so create the gitconfig
         # symlink here directly so git can find safe.directory = *.
         ln -sf ${gitUserConfig} ${reposDir}/.gitconfig
+        # Fix ownership in case any previous run wrote repo files as root.
+        chown -R git:git ${reposDir}
         HOME=${reposDir} ${pkgs.util-linux}/bin/runuser -u git -- ${setupScript}
       '';
     };
