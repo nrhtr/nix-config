@@ -8,22 +8,7 @@ with lib; let
   cfg = config.jenga.git;
   reposDir = "/var/lib/cgit/repos";
 
-  postReceiveHook = pkgs.writeShellScript "post-receive" ''
-    set -euo pipefail
-    if ${pkgs.git}/bin/git remote | grep -q '^github$'; then
-      echo "[mirror] Pushing to GitHub..." >&2
-      ${pkgs.git}/bin/git push github || echo "[mirror] Push to GitHub failed (non-fatal)" >&2
-    fi
-  '';
-
-  hooksDir = pkgs.runCommand "git-global-hooks" {} ''
-    mkdir -p $out
-    ln -s ${postReceiveHook} $out/post-receive
-  '';
-
   gitUserConfig = pkgs.writeText "git-user-gitconfig" ''
-    [core]
-      hooksPath = ${hooksDir}
     [safe]
       directory = *
   '';
@@ -34,6 +19,7 @@ with lib; let
       StrictHostKeyChecking accept-new
   '';
 
+  # Configures the github remote for each declared repo.
   setupScript = pkgs.writeShellScript "git-mirror-setup" ''
     set -euo pipefail
     ${concatMapStringsSep "\n" (repo: ''
@@ -51,6 +37,18 @@ with lib; let
         fi
       '')
       cfg.mirrors}
+  '';
+
+  # Pushes all repos that have a github remote. Runs on a timer.
+  mirrorScript = pkgs.writeShellScript "git-mirror-push" ''
+    set -euo pipefail
+    for repo in ${reposDir}/*.git; do
+      [[ -d "$repo" ]] || continue
+      if ${pkgs.git}/bin/git -C "$repo" remote | grep -q '^github$'; then
+        echo "Mirroring $repo..."
+        ${pkgs.git}/bin/git -C "$repo" push github || echo "Push failed for $repo (non-fatal)"
+      fi
+    done
   '';
 in {
   options.jenga.git = {
@@ -75,22 +73,35 @@ in {
     };
 
     systemd.tmpfiles.rules = [
-      "L+ ${reposDir}/.gitconfig - - - - ${gitUserConfig}"
       "d  ${reposDir}/.ssh 0700 git git -"
       "L+ ${reposDir}/.ssh/config - - - - ${sshConfig}"
     ];
 
-    # Runs on every nixos-rebuild switch to keep remotes in sync with the declared list.
     system.activationScripts.git-mirror-remotes = {
       deps = ["users" "groups"];
       text = ''
-        # tmpfiles hasn't run yet at activation time, so create the gitconfig
-        # symlink here directly so git can find safe.directory = *.
         ln -sf ${gitUserConfig} ${reposDir}/.gitconfig
-        # Fix ownership in case any previous run wrote repo files as root.
         chown -R git:git ${reposDir}
         HOME=${reposDir} ${pkgs.util-linux}/bin/runuser -u git -- ${setupScript}
       '';
+    };
+
+    systemd.services.git-mirror = {
+      description = "Mirror git repos to GitHub";
+      serviceConfig = {
+        Type = "oneshot";
+        User = "git";
+        Environment = "HOME=${reposDir}";
+        ExecStart = mirrorScript;
+      };
+    };
+
+    systemd.timers.git-mirror = {
+      wantedBy = ["timers.target"];
+      timerConfig = {
+        OnCalendar = "*-*-* 00/6:00:00";
+        Persistent = true;
+      };
     };
   };
 }

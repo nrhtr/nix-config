@@ -19,6 +19,7 @@
       "git.jenga.xyz" = {
         user = "git";
         port = 18061;
+        controlMaster = "no";
       };
     };
   };
