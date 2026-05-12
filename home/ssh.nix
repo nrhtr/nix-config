@@ -1,12 +1,12 @@
 {
-  config,
-  pkgs,
-  lib,
-  ...
-}: {
-  home-manager.users.jenga = {
-    programs.ssh.enable = true;
-    programs.ssh.matchBlocks = {
+  programs.ssh = {
+    enable = true;
+    matchBlocks = {
+      "*" = {
+        controlMaster = "auto";
+        controlPath = "~/.ssh/control/%r@%h:%p";
+        controlPersist = "10m";
+      };
       "nix01" = {
         user = "jenga";
         port = 22;
@@ -16,6 +16,10 @@
         port = 22;
       };
       "hk-s020.rsync.net" = {extraOptions.UpdateHostKeys = "no";};
+      "git.jenga.xyz" = {
+        user = "git";
+        port = 18061;
+      };
     };
   };
 }

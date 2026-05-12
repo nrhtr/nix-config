@@ -6,7 +6,7 @@
 }: let
   userName = "jenga";
 in {
-  imports = [../../home/hm-common.nix];
+  imports = [../../home/common.nix];
 
   home.stateVersion = "22.05";
 

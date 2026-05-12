@@ -60,7 +60,7 @@
     favicon=/favicon.ico
     root-title=git.jenga.xyz
     root-desc=Git repositories
-    clone-url=https://git.jenga.xyz/$CGIT_REPO_URL
+    clone-url=https://git.jenga.xyz/$CGIT_REPO_URL ssh://git@git.jenga.xyz:18061/~/$CGIT_REPO_URL
     enable-index-owner=0
     enable-commit-graph=1
     enable-log-filecount=1
@@ -80,6 +80,25 @@
 
   sources = import ../../npins;
   dns = import sources."dns.nix" {inherit pkgs;};
+
+  # Restricted shell for the git user: auto-inits bare repos on first push,
+  # then hands off to real git-shell for security and command execution.
+  gitAutoInitShell = pkgs.writeShellScript "git-auto-init-shell" ''
+    set -euo pipefail
+    if [[ -z "''${SSH_ORIGINAL_COMMAND:-}" ]]; then
+      echo "Interactive login not permitted." >&2
+      exit 128
+    fi
+    if [[ "$SSH_ORIGINAL_COMMAND" =~ ^(git-receive-pack|git[[:space:]]receive-pack)[[:space:]]\'(.*)\'$ ]]; then
+      repo="''${BASH_REMATCH[2]}"
+      if [[ "$repo" == *..* ]]; then
+        echo "Invalid repository path." >&2
+        exit 1
+      fi
+      [[ -d "$repo" ]] || ${pkgs.git}/bin/git init --bare "$repo" >&2
+    fi
+    exec ${pkgs.git}/bin/git-shell -c "$SSH_ORIGINAL_COMMAND"
+  '';
 in {
   imports = [
     ./hardware-configuration.nix
@@ -418,6 +437,15 @@ in {
   };
   users.groups.spruce = {};
   users.groups.smtp-relay = {};
+
+  users.users.git = {
+    isSystemUser = true;
+    group = "git";
+    home = "/var/lib/cgit/repos";
+    shell = gitAutoInitShell;
+    openssh.authorizedKeys.keys = authKeys;
+  };
+  users.groups.git = {};
 
   systemd.services.spruce = {
     description = "Spruce listing scanner";
@@ -764,7 +792,7 @@ in {
   };
 
   systemd.tmpfiles.rules = [
-    "d /var/lib/cgit/repos 0755 root root -"
+    "d /var/lib/cgit/repos 0755 git git -"
   ];
 
   services.fcgiwrap.instances.cgit = {

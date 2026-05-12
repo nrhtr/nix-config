@@ -14,10 +14,6 @@
 
     ./../../common/shared.nix
     ./../../common/wg-hosts.nix
-
-    # stuff with home-manager
-    # fixme: still assumes NixOS
-    ./../../home/all.nix
   ];
 
   #displayOutput = "LVDS-1";
@@ -190,6 +186,28 @@
   '';
 
   system.stateVersion = "22.05";
+
+  time.timeZone = "Australia/Melbourne";
+  programs.sway.enable = true;
+  fonts.packages = with pkgs; [
+    dejavu_fonts
+    font-awesome_4
+    terminus_font
+    inconsolata
+  ];
+  age.secrets.sonata = {
+    owner = "jenga";
+    file = ../../secrets/sonata.age;
+  };
+  services.getty.autologinUser = "jenga";
+  hardware.bluetooth.enable = true;
+  users.extraUsers.jenga.extraGroups = ["audio" "docker"];
+  services.gpm.enable = true;
+
+  home-manager.users.jenga = {
+    imports = [../../home/all.nix];
+    programs.rbw.settings.pinentry = pkgs.pinentry-curses;
+  };
 
   environment.systemPackages = with pkgs; [
     lan-mouse
