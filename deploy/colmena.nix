@@ -18,7 +18,7 @@ in {
   defaults = {lib, ...}: {
     nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
     deployment = {
-      targetPort = 22;
+      targetPort = lib.mkDefault 22;
       targetUser = "root";
     };
   };
@@ -35,8 +35,6 @@ in {
 
   nix03 = {...}: {
     imports = [../machines/nix03.jenga.xyz/configuration.nix];
-    # Use IP directly until WireGuard is configured; switch to "nix03" after
-    deployment.targetHost = "51.161.197.172";
-    deployment.targetPort = 18061;
+    deployment.targetHost = "nix03";
   };
 }
