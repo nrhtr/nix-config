@@ -5,33 +5,30 @@
 ### nix01 — Vultr VPS (45.76.124.245)
 WireGuard hub — routes all VPN subnet traffic (10.100.0.0/16).
  * Vaultwarden — `vault.jenga.xyz` (WireGuard-only)
- * nginx, boycrisis.net static site
- * Borg backup
+ * https://boycrisis.net
 
-### nix02 — Hetzner dedicated (51.222.109.62)
+### nix02 — OVH dedicated (51.222.109.62)
 Primary services host. ZFS mirror on NVMe, Podman containers.
  * cgit — `git.jenga.xyz` (push server + GitHub mirror timer)
  * Actual Budget — `actual.jenga.xyz`
  * Immich photos — `photos.jenga.xyz`, `share.jenga.dev`
  * Spruce listing scanner — `spruce.jenga.xyz`
  * kbfirmware — `kbfirmware.xyz`
- * Genesis/Urbit — `tlon.jenga.xyz`
- * Minecraft + Bluemap map
+ * Genesis/Tlon — `tlon.jenga.xyz`
+ * Minecraft + Bluemap map - `minecraft.jenga.xyz`
  * Unbound + NSD (authoritative DNS for jenga.xyz)
- * Gatus uptime — `up.jenga.xyz`
- * Borg backup (git repos + Minecraft world → rsync.net)
+ * Gatus uptime — `up.jenga.xyz` (proxied to fly.io)
 
 ### nix03 — OVH dedicated (51.161.197.172)
 Bare host. ZFS mirror on NVMe. No services yet.
 
 ### lappy — ThinkPad (daily driver)
-NixOS desktop. Offloads Nix builds to nix02.
+NixOS desktop.
  * Sway WM
  * WireGuard client
  * MPD + PipeWire
 
 ### minnie — Mac Mini (macOS)
- * Borg backup (home dir → rsync.net, 03:00 daily)
  * WireGuard client
 
 ## common
@@ -55,6 +52,9 @@ npins add github nix-community disko
 ```
 
 ### 1. Provision Debian via OVH console
+
+If the rescue system is working & reachable, can skip this step and
+use that directly.
 
 In the OVH manager: Bare Metal → your server → Install → Debian.
 Add your SSH public key during provisioning. Wait ~10 min for it to come up.
@@ -102,7 +102,7 @@ A store path printed means success. Fix any errors before proceeding.
 
 ### 6. Build and install
 
-**Run from lappy** — it has your SSH keys (needed for nixos-anywhere to authenticate to the target) and offloads the Linux build to nix02 via the configured remote builder.
+**Run from lappy**
 
 ```bash
 # nix-build can't extract the store path from npins directly — use nix eval instead
