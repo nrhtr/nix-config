@@ -4,3 +4,7 @@
 result
 .gcroots
 .direnv
+.claude/
+*.db
+fds
+monitoring/*.tar.gz
