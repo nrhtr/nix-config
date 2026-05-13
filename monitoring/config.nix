@@ -176,6 +176,12 @@
       dashboard-subheading = "Running in the 'REGION_PLACEHOLDER' fly.io region.";
     };
 
+    storage = {
+      type = "sqlite";
+      path = "/data/gatus.db";
+      caching = true;
+    };
+
     web.port = 8080;
   };
 in

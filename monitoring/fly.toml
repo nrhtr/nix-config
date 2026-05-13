@@ -12,3 +12,7 @@ primary_region = "iad"
 
 # No public services — Gatus web UI is accessible via WireGuard only
 # (http://10.100.0.7:8080 once the tunnel is up)
+
+[mounts]
+  source = "gatus_data"
+  destination = "/data"

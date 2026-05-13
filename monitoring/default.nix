@@ -97,7 +97,7 @@ in
     tag = "latest";
     contents = [startScript];
     extraCommands = ''
-      mkdir -p etc tmp
+      mkdir -p etc tmp data
       printf 'root:x:0:0:root:/root:/bin/sh\nnobody:x:65534:65534:nobody:/var/empty:/bin/sh\n' \
         > etc/passwd
       printf 'root:x:0:\nnobody:x:65534:\n' \
