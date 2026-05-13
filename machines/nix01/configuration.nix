@@ -10,7 +10,6 @@
     ./borg.nix
     ../../common/shared.nix
     ../../common/wg-hosts.nix
-    ../../modules/disk-health.nix
     ../../modules/boot-alerts.nix
   ];
 
@@ -20,14 +19,10 @@
   age.secrets.gandi.file = ../../secrets/gandi.age;
   age.secrets.fastmail-nix02.file = ../../secrets/fastmail-nix02.age;
 
-  jenga.diskHealth = {
+  jenga.bootAlerts = {
     enable = true;
-    enableZed = false;
-    enableSmartd = false;
     smtpPasswordFile = config.age.secrets.fastmail-nix02.path;
   };
-
-  jenga.bootAlerts.enable = true;
 
   boot.loader.grub.device = "/dev/vda"; # (for BIOS systems only)
   #boot.loader.systemd-boot.enable = true; # (for UEFI systems only)
