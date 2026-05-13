@@ -10,12 +10,23 @@
     ./borg.nix
     ../../common/shared.nix
     ../../common/wg-hosts.nix
+    ../../modules/disk-health.nix
+    ../../modules/boot-alerts.nix
   ];
 
   # NOTE: Before deploying, add nix01's host key to secrets/secrets.nix and re-key:
   #   ssh root@nix01 cat /etc/ssh/ssh_host_ed25519_key.pub
   #   agenix -r -i ~/.ssh/id_ed25519
   age.secrets.gandi.file = ../../secrets/gandi.age;
+  age.secrets.fastmail-nix02.file = ../../secrets/fastmail-nix02.age;
+
+  jenga.diskHealth = {
+    enable = true;
+    enableZed = false;
+    smtpPasswordFile = config.age.secrets.fastmail-nix02.path;
+  };
+
+  jenga.bootAlerts.enable = true;
 
   boot.loader.grub.device = "/dev/vda"; # (for BIOS systems only)
   #boot.loader.systemd-boot.enable = true; # (for UEFI systems only)

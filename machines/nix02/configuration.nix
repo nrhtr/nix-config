@@ -36,21 +36,6 @@
   # cat /etc/machine-id  | head -c8
   hostId = "cd33d586";
 
-  # Mail sender / recepient
-  emailTo = "jeremy@jenga.xyz"; # where to send the notifications
-  emailFrom = "root@${hostName}.jenga.xyz"; # who should be the sender in the emails
-
-  msmtpAccount = {
-    auth = "on";
-    tls = "on";
-    tls_starttls = "off";
-    host = "smtp.fastmail.com";
-    port = "465";
-    user = "jeremy@jenga.xyz";
-    passwordeval = "cat ${config.age.secrets.fastmail-nix02.path}";
-    from = emailFrom;
-  };
-
   cgitrc = pkgs.writeText "cgitrc" ''
     css=/cgit.css
     logo=/cgit.png
@@ -66,14 +51,6 @@
     snapshots=tar.gz zip
     scan-path=/var/lib/cgit/repos
   '';
-
-  # Sends an email with some heading and the zpool status
-  sendEmailEvent = {event}: ''
-    printf "Subject: ${hostName} ${event} ''$(${pkgs.coreutils}/bin/date --iso-8601=seconds)\n\nzpool status:\n\n''$(${pkgs.zfs}/bin/zpool status)" | ${pkgs.msmtp}/bin/msmtp -a default ${emailTo}
-  '';
-
-  # Enables emails for ZFS
-  customizeZfs = zfs: (zfs.override {enableMail = true;});
 
   sources = import ../../npins;
   dns = import sources."dns.nix" {inherit pkgs;};
@@ -117,6 +94,8 @@ in {
     ../../modules/websockify.nix
     ../../modules/git-mirror.nix
     ../../modules/zfs-unlock.nix
+    ../../modules/disk-health.nix
+    ../../modules/boot-alerts.nix
   ];
 
   age.secrets = {
@@ -174,7 +153,6 @@ in {
   # to patch `zfsUnstable` too.
   nixpkgs.overlays = [
     (self: super: {
-      zfsStable = customizeZfs super.zfsStable;
       genesis = self.callPackage ./../../packages/genesis/default.nix {};
       kbfirmware = self.callPackage ./../../packages/kbfirmware/default.nix {};
       spruce = let
@@ -230,79 +208,12 @@ in {
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "22.05"; # Did you read the comment?
 
-  # mstp setup
-  programs.msmtp = {
+  jenga.diskHealth = {
     enable = true;
-    setSendmail = true;
-    defaults = {
-      aliases = builtins.toFile "aliases" ''
-        default: ${emailTo}
-      '';
-    };
-    accounts.default = msmtpAccount;
+    smtpPasswordFile = config.age.secrets.fastmail-nix02.path;
   };
 
-  # ZED setup (ZFS notifications)
-  # Check out <https://github.com/openzfs/zfs/blob/master/cmd/zed/zed.d/zed.rc> for
-  # options.
-  services.zfs.zed.enableMail = true;
-  services.zfs.zed.settings = {
-    ZED_EMAIL_ADDR = [emailTo];
-    ZED_EMAIL_OPTS = "-a 'FROM:${emailFrom}' -s '@SUBJECT@' @ADDRESS@";
-    ZED_NOTIFY_VERBOSE = true;
-  };
-
-  # smartd email notifications -- probably redundant given ZED, but
-  # you never know.
-  services.smartd.enable = true;
-  services.smartd.notifications.mail.enable = true;
-  services.smartd.notifications.mail.sender = emailFrom;
-  services.smartd.notifications.mail.recipient = emailTo;
-
-  # Email alerts on startup, shutdown, and Mondays :).
-  #
-  # For startup / shutdown messages we have two services that
-  # stay alive from boot since shutdown. The boot alert sends
-  # a message at the beginning, the shutdown message sends a message
-  # at the end (through ExecStop, which in nix is `preStop`).
-  #
-  # This seems to be the most reliable way of sending messages before
-  # shutdown in systemd: the main advantage is that since we specify
-  # `after = [ "network.target" ]`, we know that it will be stopped
-  # before the network gets stopped, since services are stopped
-  # in reverse order. See <https://serverfault.com/a/785355>.
-  #
-  # Moreover, the RemainAfterExit is needed so that we do not
-  # restart the service every time we change the configuration
-  # (unless the service has changed).
-  systemd.services."boot-mail-alert" = {
-    wantedBy = ["multi-user.target"];
-    after = ["network.target"];
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-    };
-    script = sendEmailEvent {event = "just booted";};
-  };
-  systemd.services."shutdown-mail-alert" = {
-    wantedBy = ["multi-user.target"];
-    after = ["network.target"];
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-    };
-    script = "true";
-    preStop = sendEmailEvent {event = "is shutting down";};
-  };
-  systemd.services."weekly-mail-alert" = {
-    serviceConfig.Type = "oneshot";
-    script = sendEmailEvent {event = "is still alive";};
-  };
-  systemd.timers."weekly-mail-alert" = {
-    wantedBy = ["timers.target"];
-    partOf = ["weekly-mail-alert.service"];
-    timerConfig.OnCalendar = "weekly";
-  };
+  jenga.bootAlerts.enable = true;
 
   virtualisation.podman.enable = true;
   virtualisation.podman.dockerCompat = true;

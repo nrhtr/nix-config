@@ -31,6 +31,8 @@ in {
     ../../common/shared.nix
     ../../common/wg-hosts.nix
     ../../modules/zfs-unlock.nix
+    ../../modules/disk-health.nix
+    ../../modules/boot-alerts.nix
   ];
 
   networking.hostName = hostName;
@@ -70,8 +72,6 @@ in {
   boot.initrd.availableKernelModules = ["nvme" "xhci_pci" "ahci" "usbhid" "sd_mod"];
   boot.kernelModules = ["kvm-intel"];
 
-  services.smartd.enable = true;
-
   jenga.zfsUnlock = {
     enable = true;
     networkInterface = "eno1";
@@ -83,6 +83,14 @@ in {
   users.users.root.openssh.authorizedKeys.keys = authKeys;
 
   age.identityPaths = [/etc/ssh/ssh_host_ed25519_key];
+  age.secrets.fastmail-nix02.file = ../../secrets/fastmail-nix02.age;
+
+  jenga.diskHealth = {
+    enable = true;
+    smtpPasswordFile = config.age.secrets.fastmail-nix02.path;
+  };
+
+  jenga.bootAlerts.enable = true;
 
   time.timeZone = "UTC";
 
