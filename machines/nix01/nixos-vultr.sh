@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 limit=2000
 mem=$(free -tm | awk '/Total:/ {print $2}')
 dev="/dev/vda"
@@ -57,4 +57,4 @@ cat << EOF > /mnt/etc/nixos/configuration.nix
 EOF
 
 nixos-install --no-root-passwd
-read -p "Unmount ISO and reboot..."
+read -rp "Unmount ISO and reboot..."

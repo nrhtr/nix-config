@@ -13,6 +13,6 @@ let
     .build
     .toplevel;
 in {
-  nix01 = eval ../machines/nix01.jenga.xyz/configuration.nix;
-  nix02 = eval ../machines/nix02.jenga.xyz/configuration.nix;
+  nix01 = eval ../machines/nix01/configuration.nix;
+  nix02 = eval ../machines/nix02/configuration.nix;
 }

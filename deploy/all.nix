@@ -24,7 +24,7 @@ in {
     ...
   }: {
     imports = [
-      ../machines/nix01.jenga.xyz/configuration.nix
+      ../machines/nix01/configuration.nix
     ];
 
     deployment.targetUser = "root";
@@ -39,7 +39,7 @@ in {
     ...
   }: {
     imports = [
-      ../machines/nix02.jenga.xyz/configuration.nix
+      ../machines/nix02/configuration.nix
     ];
 
     deployment.targetUser = "root";

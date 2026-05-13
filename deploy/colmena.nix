@@ -24,17 +24,17 @@ in {
   };
 
   nix01 = {...}: {
-    imports = [../machines/nix01.jenga.xyz/configuration.nix];
+    imports = [../machines/nix01/configuration.nix];
     deployment.targetHost = "nix01";
   };
 
   nix02 = {...}: {
-    imports = [../machines/nix02.jenga.xyz/configuration.nix];
+    imports = [../machines/nix02/configuration.nix];
     deployment.targetHost = "nix02";
   };
 
   nix03 = {...}: {
-    imports = [../machines/nix03.jenga.xyz/configuration.nix];
+    imports = [../machines/nix03/configuration.nix];
     deployment.targetHost = "nix03";
   };
 }
