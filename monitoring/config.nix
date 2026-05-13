@@ -78,7 +78,7 @@
   };
 
   config = {
-    external-endpoints = map mkBorgEndpoint ["minnie" "lappy" "nix01" "nix02"];
+    external-endpoints = map mkBorgEndpoint ["minnie" "lappy" "nix01" "nix02" "nix03"];
 
     endpoints = [
       # Public sites — checked directly
@@ -134,13 +134,6 @@
         name = "photos";
         url = "https://photos.jenga.xyz";
         group = "Internal";
-      })
-
-      # Servers — SSH reachability via WireGuard
-      (mkTcpEndpoint {
-        name = "nix03-ssh";
-        url = "tcp://nix03:22";
-        group = "Servers";
       })
 
       # Personal devices — ICMP ping only, no alerts
