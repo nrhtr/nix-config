@@ -37,6 +37,12 @@
     ip = "10.100.0.5";
     publicKey = "3Px0oJgiRegKzctSdhzfuuUAy62PyN5z65WWVmiyDyM=";
   };
+  nix03 = {
+    ip = "10.100.0.8";
+    publicKey = "m4gQlDR1YxbKxDujKt0gJzbywFHyauYGBw57R1tYvXI=";
+    endpoint = "51.161.197.172:51820";
+    listenPort = 51820;
+  };
   fly-monitor = {
     ip = "10.100.0.7";
     # Run: wg genkey | tee /tmp/fly.key | wg pubkey  then update this and

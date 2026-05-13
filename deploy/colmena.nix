@@ -32,4 +32,10 @@ in {
     imports = [../machines/nix02.jenga.xyz/configuration.nix];
     deployment.targetHost = "nix02";
   };
+
+  nix03 = {...}: {
+    imports = [../machines/nix03/configuration.nix];
+    # Use IP directly until WireGuard and DNS are configured
+    deployment.targetHost = "51.161.197.172";
+  };
 }

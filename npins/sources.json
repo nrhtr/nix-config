@@ -13,6 +13,22 @@
       "url": "https://github.com/ryantm/agenix/archive/b027ee29d959fda4b60b57566d64c98a202e0feb.tar.gz",
       "hash": "1wlpvpj45qfixdzhmk2cgiwlkyaf8a5mjy2jp5lsx2wsxblclngm"
     },
+    "disko": {
+      "type": "GitRelease",
+      "repository": {
+        "type": "GitHub",
+        "owner": "nix-community",
+        "repo": "disko"
+      },
+      "pre_releases": false,
+      "version_upper_bound": null,
+      "release_prefix": null,
+      "submodules": false,
+      "version": "v1.13.0",
+      "revision": "56ef5e72fec74b993ad0973b2dfa4eadeb48ba41",
+      "url": "https://api.github.com/repos/nix-community/disko/tarball/v1.13.0",
+      "hash": "03jz60kw0khm1lp72q65z8gq69bfrqqbj08kw0hbiav1qh3g7p08"
+    },
     "dns.nix": {
       "type": "GitRelease",
       "repository": {

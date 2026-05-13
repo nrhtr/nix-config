@@ -78,7 +78,6 @@ in {
       curl
       wget
       gopass
-      gnupg
 
       # Dev stuff
       skopeo

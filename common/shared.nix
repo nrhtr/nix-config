@@ -10,11 +10,6 @@
 in {
   imports = ["${agenix}/modules/age.nix"];
 
-  programs.gnupg.agent = {
-    enable = true;
-    enableSSHSupport = true;
-  };
-
   environment.systemPackages = with pkgs; [
     screen
     vim
@@ -24,7 +19,6 @@ in {
     pass
     rbw
     tmux
-    gnupg
     magic-wormhole
     iotop
     lsof

@@ -204,6 +204,11 @@
   users.extraUsers.jenga.extraGroups = ["audio" "docker"];
   services.gpm.enable = true;
 
+  programs.gnupg.agent = {
+    enable = true;
+    enableSSHSupport = true;
+  };
+
   home-manager.users.jenga = {
     imports = [../../home/all.nix];
     programs.rbw.settings.pinentry = pkgs.pinentry-curses;
