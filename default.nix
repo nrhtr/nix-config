@@ -34,18 +34,13 @@ in rec {
         settings.exclude = ["./npins"];
       };
 
+      markdownlint.enable = true;
+
       # Custom hooks
       gitleaks = {
         enable = true;
         entry = "${gitleaks}/bin/gitleaks protect --verbose --redact";
         pass_filenames = false;
-      };
-
-      check-nixos-configs = {
-        enable = false; # too slow for pre-push, run manually
-        entry = "bash scripts/check-nixos-configs.sh";
-        pass_filenames = false;
-        stages = ["pre-push"];
       };
     };
   };

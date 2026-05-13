@@ -3,37 +3,46 @@
 ## Hosts
 
 ### nix01 — Vultr VPS (45.76.124.245)
+
 WireGuard hub — routes all VPN subnet traffic (10.100.0.0/16).
- * Vaultwarden — `vault.jenga.xyz` (WireGuard-only)
- * https://boycrisis.net
+
+- Vaultwarden — `vault.jenga.xyz` (WireGuard-only)
+- <https://boycrisis.net>
 
 ### nix02 — OVH dedicated (51.222.109.62)
+
 Primary services host. ZFS mirror on NVMe, Podman containers.
- * cgit — `git.jenga.xyz` (push server + GitHub mirror timer)
- * Actual Budget — `actual.jenga.xyz`
- * Immich photos — `photos.jenga.xyz`, `share.jenga.dev`
- * Spruce listing scanner — `spruce.jenga.xyz`
- * kbfirmware — `kbfirmware.xyz`
- * Genesis/Tlon — `tlon.jenga.xyz`
- * Minecraft + Bluemap map - `minecraft.jenga.xyz`
- * Unbound + NSD (authoritative DNS for jenga.xyz)
- * Gatus uptime — `up.jenga.xyz` (proxied to fly.io)
+
+- cgit — `git.jenga.xyz` (push server + GitHub mirror timer)
+- Actual Budget — `actual.jenga.xyz`
+- Immich photos — `photos.jenga.xyz`, `share.jenga.dev`
+- Spruce listing scanner — `spruce.jenga.xyz`
+- kbfirmware — `kbfirmware.xyz`
+- Genesis/Tlon — `tlon.jenga.xyz`
+- Minecraft + Bluemap map — `minecraft.jenga.xyz`
+- Unbound + NSD (authoritative DNS for jenga.xyz)
+- Gatus uptime — `up.jenga.xyz` (proxied to fly.io)
 
 ### nix03 — OVH dedicated (51.161.197.172)
+
 Bare host. ZFS mirror on NVMe. No services yet.
 
 ### lappy — ThinkPad (daily driver)
+
 NixOS desktop.
- * Sway WM
- * WireGuard client
- * MPD + PipeWire
+
+- Sway WM
+- WireGuard client
+- MPD + PipeWire
 
 ### minnie — Mac Mini (macOS)
- * WireGuard client
+
+- WireGuard client
 
 ## common
- * [Shared system config](./common/shared.nix)
- * [WireGuard mesh nodes](./common/wg-nodes.nix)
+
+- [Shared system config](./common/shared.nix)
+- [WireGuard mesh nodes](./common/wg-nodes.nix)
 
 ---
 
@@ -53,8 +62,7 @@ npins add github nix-community disko
 
 ### 1. Provision Debian via OVH console
 
-If the rescue system is working & reachable, can skip this step and
-use that directly.
+If the rescue system is working & reachable, can skip this step and use that directly.
 
 In the OVH manager: Bare Metal → your server → Install → Debian.
 Add your SSH public key during provisioning. Wait ~10 min for it to come up.
@@ -63,8 +71,8 @@ Add your SSH public key during provisioning. Wait ~10 min for it to come up.
 
 ```bash
 ssh debian@<server-ip>
-ip link show                   # note the interface name (e.g. eno1, enp2s0)
-ip route show default          # note the gateway
+ip link show                      # note the interface name (e.g. eno1, enp2s0)
+ip route show default             # note the gateway
 head -c8 /etc/machine-id && echo  # hostId for ZFS
 ```
 
@@ -81,11 +89,13 @@ Save the private key — you'll write it to `/etc/wireguard.privkey` after insta
 ### 4. Fill in the machine config
 
 Edit `machines/<hostname>/configuration.nix`:
+
 - `networkInterface` — from step 2
 - `ipv4.gateway` — from step 2
 - `hostId` — from step 2
 
 Edit `common/wg-nodes.nix`:
+
 - Replace the placeholder `publicKey` with the output of `wg pubkey` from step 3
 
 ### 5. Evaluate the config locally (pre-flight check)
@@ -96,13 +106,11 @@ Before deploying, verify the config evaluates without errors:
 colmena eval -f deploy/colmena.nix -E '{ nodes, ... }: nodes.nix03.config.system.build.toplevel.drvPath'
 ```
 
-Replace `nix03` with the target hostname.
-
-A store path printed means success. Fix any errors before proceeding.
+Replace `nix03` with the target hostname. A store path printed means success.
 
 ### 6. Build and install
 
-**Run from lappy**
+Run from lappy:
 
 ```bash
 # nix-build can't extract the store path from npins directly — use nix eval instead
@@ -110,12 +118,12 @@ nixpkgs=$(nix eval --raw -f npins nixpkgs)
 
 disko=$(nix-build '<nixpkgs/nixos>' -A config.system.build.diskoScript \
   -I nixpkgs="$nixpkgs" \
-  -I nixos-config=$(pwd)/machines/nix03.jenga.xyz/configuration.nix \
+  -I nixos-config=$(pwd)/machines/nix03/configuration.nix \
   --no-out-link)
 
 system=$(nix-build '<nixpkgs/nixos>' -A system \
   -I nixpkgs="$nixpkgs" \
-  -I nixos-config=$(pwd)/machines/nix03.jenga.xyz/configuration.nix \
+  -I nixos-config=$(pwd)/machines/nix03/configuration.nix \
   --no-out-link)
 
 # Install — wipes the disks and reboots into NixOS
