@@ -82,7 +82,7 @@ in {
 
   users.users.root.openssh.authorizedKeys.keys = authKeys;
 
-  age.identityPaths = [/etc/ssh/ssh_host_ed25519_key];
+  age.identityPaths = ["/etc/ssh/ssh_host_ed25519_key"];
   age.secrets.fastmail-nix02.file = ../../secrets/fastmail-nix02.age;
 
   jenga.diskHealth = {
