@@ -136,6 +136,13 @@
         group = "Internal";
       })
 
+      # Servers — SSH reachability via WireGuard
+      (mkTcpEndpoint {
+        name = "nix03-ssh";
+        url = "tcp://nix03:22";
+        group = "Servers";
+      })
+
       # Personal devices — ICMP ping only, no alerts
       (mkPingEndpoint {
         name = "minnie";

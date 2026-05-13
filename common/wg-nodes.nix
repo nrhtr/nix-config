@@ -42,6 +42,7 @@
     publicKey = "m4gQlDR1YxbKxDujKt0gJzbywFHyauYGBw57R1tYvXI=";
     endpoint = "51.161.197.172:51820";
     listenPort = 51820;
+    aliases = ["nix03"];
   };
   fly-monitor = {
     ip = "10.100.0.7";
