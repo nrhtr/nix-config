@@ -19,9 +19,6 @@
   # for a description on how to find out the network card name reliably.
   networkInterface = "enp5s0f0";
 
-  # Needed to load the right driver before boot for the initrd SSH session.
-  networkInterfaceModule = "ixgbe";
-
   # From the Hetzner control panel
   ipv4 = {
     address = "51.222.109.62";
@@ -119,6 +116,7 @@ in {
     # override module using python 2 package
     ../../modules/websockify.nix
     ../../modules/git-mirror.nix
+    ../../modules/zfs-unlock.nix
   ];
 
   age.secrets = {
@@ -212,51 +210,12 @@ in {
   };
   networking.nameservers = ["127.0.0.1"];
 
-  # Remote unlocking, see <https://nixos.wiki/wiki/NixOS_on_ZFS>,
-  # section "Unlock encrypted zfs via ssh on boot"
-  boot.initrd.availableKernelModules = [networkInterfaceModule];
-  boot.kernelParams = [
-    # See <https://www.kernel.org/doc/Documentation/filesystems/nfs/nfsroot.txt> for docs on this
-    # ip=<client-ip>:<server-ip>:<gw-ip>:<netmask>:<hostname>:<device>:<autoconf>:<dns0-ip>:<dns1-ip>:<ntp0-ip>
-    # The server ip refers to the NFS server -- we don't need it.
-    "ip=${ipv4.address}::${ipv4.gateway}:${ipv4.netmask}:${hostName}-initrd:${networkInterface}:off:8.8.8.8"
-  ];
-  boot.initrd.network = {
+  jenga.zfsUnlock = {
     enable = true;
-    ssh = {
-      enable = true;
-
-      # To prevent ssh clients from freaking out because a different host key is used,
-      # a different port for ssh is useful (assuming the same host has also a regular sshd running)
-      port = 2222;
-
-      # hostKeys paths must be unquoted strings, otherwise you'll run into issues
-      # with boot.initrd.secrets the keys are copied to initrd from the path specified;
-      # multiple keys can be set you can generate any number of host keys using
-      # `ssh-keygen -t ed25519 -N "" -f /boot-1/initrd-ssh-key`
-      hostKeys = [
-        /boot-1/initrd-ssh-key
-        /boot-2/initrd-ssh-key
-      ];
-
-      authorizedKeys = authKeys;
-    };
-
-    # this will automatically load the zfs password prompt on login
-    # and kill the other prompt so boot can continue
-    postCommands = ''
-      cat <<EOF > /root/.profile
-      if pgrep -x "zfs" > /dev/null
-      then
-        until zfs load-key -a; do
-          echo "Incorrect passphrase, try again."
-        done
-        killall zfs
-      else
-        echo "zfs not running -- maybe the pool is taking some time to load for some unforseen reason."
-      fi
-      EOF
-    '';
+    networkInterface = networkInterface;
+    networkInterfaceModule = "ixgbe";
+    ipv4 = {inherit (ipv4) address gateway netmask;};
+    authorizedKeys = authKeys;
   };
 
   # SSH
