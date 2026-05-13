@@ -23,6 +23,7 @@
   jenga.diskHealth = {
     enable = true;
     enableZed = false;
+    enableSmartd = false;
     smtpPasswordFile = config.age.secrets.fastmail-nix02.path;
   };
 

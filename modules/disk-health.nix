@@ -45,6 +45,12 @@ in {
       default = true;
       description = "Enable ZFS Event Daemon email alerts. Disable on non-ZFS hosts.";
     };
+
+    enableSmartd = mkOption {
+      type = types.bool;
+      default = true;
+      description = "Enable smartd disk monitoring. Disable on VMs with virtualised disks.";
+    };
   };
 
   config = mkIf cfg.enable {
@@ -79,8 +85,8 @@ in {
       ZED_NOTIFY_VERBOSE = true;
     };
 
-    services.smartd.enable = true;
-    services.smartd.notifications.mail = {
+    services.smartd.enable = cfg.enableSmartd;
+    services.smartd.notifications.mail = lib.mkIf cfg.enableSmartd {
       enable = true;
       sender = cfg.emailFrom;
       recipient = cfg.emailTo;
