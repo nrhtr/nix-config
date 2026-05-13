@@ -30,6 +30,7 @@ in {
 
     ../../common/shared.nix
     ../../common/wg-hosts.nix
+    ../../modules/zfs-unlock.nix
   ];
 
   networking.hostName = hostName;
@@ -70,6 +71,14 @@ in {
   boot.kernelModules = ["kvm-intel"];
 
   services.smartd.enable = true;
+
+  jenga.zfsUnlock = {
+    enable = true;
+    networkInterface = "eno1";
+    networkInterfaceModule = "ixgbe";
+    ipv4 = {inherit (ipv4) address gateway;};
+    authorizedKeys = authKeys;
+  };
 
   users.users.root.openssh.authorizedKeys.keys = authKeys;
 

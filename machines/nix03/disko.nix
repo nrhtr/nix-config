@@ -71,15 +71,25 @@
           "com.sun:auto-snapshot" = "false";
         };
         datasets = {
-          root = {
+          # Encryption root — all child datasets inherit the key
+          "enc" = {
+            type = "zfs_fs";
+            options = {
+              mountpoint = "none";
+              encryption = "aes-256-gcm";
+              keyformat = "passphrase";
+              keylocation = "prompt";
+            };
+          };
+          "enc/root" = {
             type = "zfs_fs";
             mountpoint = "/";
           };
-          nix = {
+          "enc/nix" = {
             type = "zfs_fs";
             mountpoint = "/nix";
           };
-          home = {
+          "enc/home" = {
             type = "zfs_fs";
             mountpoint = "/home";
           };
