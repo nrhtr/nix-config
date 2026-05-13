@@ -1,105 +1,19 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
-with lib; let
-  BORG_REPO = "hk1090@hk1090.rsync.net:thinkpad";
-  BORG_RSH = "ssh -i ${config.age.secrets.borg-key.path}";
-  BORG_REMOTE_PATH = "borg14"; # Use borg 1.4.x
-  BORG_PASSCOMMAND = "cat ${config.age.secrets.borg-phrase.path}";
-
-  heartbeatUrl = "https://up.jenga.xyz/api/v1/endpoints/backups_lappy/external";
-  heartbeatToken = config.age.secrets.borg-heartbeat-token.path;
-  heartbeatScript = import ../../common/borg-heartbeat.nix {inherit pkgs;};
-in {
-  age.secrets = {
-    borg-phrase = {
-      owner = "jenga";
-      file = ../../secrets/borg-phrase.age;
-      path = "/home/jenga/.secrets/borg-phrase";
-    };
-    borg-key = {
-      owner = "jenga";
-      file = ../../secrets/borg-key.age;
-      path = "/home/jenga/.secrets/borg-key";
-    };
-    borg-heartbeat-token = {
-      owner = "jenga";
-      file = ../../secrets/borg-heartbeat-token.age;
-      path = "/home/jenga/.secrets/borg-heartbeat-token";
-    };
+{...}: {
+  jenga.borg = {
+    enable = true;
+    repoName = "thinkpad";
+    heartbeatEndpoint = "backups_lappy";
+    user = "jenga";
+    startAt = "*-*-* 02:00:00";
+    persistentTimer = true;
+    paths = "/home/jenga";
+    exclude = [
+      "/home/jenga/.cache"
+      "/home/jenga/.mozilla"
+      "/home/jenga/.local"
+      "/home/jenga/download"
+      "/home/jenga/rtorrent/download"
+      "/home/jenga/Desktop"
+    ];
   };
-
-  services.borgbackup.jobs = {
-    main = {
-      paths = "/home/jenga";
-      exclude = [
-        "/home/jenga/.cache"
-        "/home/jenga/.mozilla"
-        "/home/jenga/.local"
-
-        "/home/jenga/download"
-        "/home/jenga/rtorrent/download"
-        "/home/jenga/Desktop"
-      ];
-      repo = BORG_REPO;
-      user = "jenga";
-
-      dateFormat = "+%Y-%m-%dT%H.%M.%S";
-
-      encryption = {
-        mode = "repokey";
-        passCommand = BORG_PASSCOMMAND;
-      };
-
-      compression = "auto,lzma";
-      startAt = "*-*-* 02:00:00";
-      persistentTimer = true;
-
-      postHook = ''
-        ${heartbeatScript} "${heartbeatUrl}" "${heartbeatToken}" true
-      '';
-
-      prune.keep = {
-        within = "1d";
-        daily = 7;
-        weekly = 4;
-        monthly = 12;
-        yearly = -1;
-      };
-
-      environment = {
-        inherit BORG_RSH;
-        inherit BORG_REMOTE_PATH;
-      };
-    };
-  };
-
-  systemd.services.borgbackup-job-main.unitConfig.OnFailure = "borgbackup-heartbeat-lappy-fail.service";
-  systemd.services.borgbackup-heartbeat-lappy-fail = {
-    description = "Send borg backup failure heartbeat to Gatus";
-    serviceConfig = {
-      Type = "oneshot";
-      User = "jenga";
-      ExecStart = "${heartbeatScript} ${heartbeatUrl} ${heartbeatToken} false";
-    };
-  };
-
-  home-manager.users.jenga = {
-    home.sessionVariables = {
-      inherit BORG_PASSCOMMAND;
-      inherit BORG_REMOTE_PATH;
-      inherit BORG_REPO;
-      inherit BORG_RSH;
-    };
-  };
-
-  # FIXME: https://github.com/NixOS/nixpkgs/commit/697198834c6a861d30b8fbfe4162525c87155e00
-  #systemd.timers = flip mapAttrs' config.services.borgbackup.jobs
-  #(name: value:
-  #nameValuePair "borgbackup-job-${name}" {
-  #timerConfig.Persistent = true;
-  #});
 }

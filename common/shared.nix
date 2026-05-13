@@ -8,7 +8,10 @@
   agenix = sources.agenix;
   sshKeys = import ./ssh-keys.nix;
 in {
-  imports = ["${agenix}/modules/age.nix"];
+  imports = [
+    "${agenix}/modules/age.nix"
+    ../modules/borg.nix
+  ];
 
   environment.systemPackages = with pkgs; [
     screen
