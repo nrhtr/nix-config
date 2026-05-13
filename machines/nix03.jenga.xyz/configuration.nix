@@ -1,0 +1,81 @@
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}: let
+  hostName = "nix03";
+
+  authKeys = [
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB+0iNkzHDqAOYFVLpFq9vLM2lcD2J+vqucukiMNK9qY jenga@thinkpad"
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIJBLHeD2QmiFu75rRXYKuhLLY1SpI3LCyUH5TO7iVHr jenga@minnie"
+  ];
+
+  networkInterface = "eno1";
+
+  ipv4 = {
+    address = "51.161.197.172";
+    gateway = "51.161.197.254";
+    prefixLength = 24;
+  };
+
+  hostId = "1145a50a";
+
+  sources = import ../../npins;
+in {
+  imports = [
+    ./disko.nix
+    ./wireguard.nix
+    "${sources.disko}/module.nix"
+
+    ../../common/shared.nix
+    ../../common/wg-hosts.nix
+  ];
+
+  networking.hostName = hostName;
+  networking.hostId = hostId;
+
+  networking.useDHCP = false;
+  networking.interfaces."${networkInterface}" = {
+    ipv4.addresses = [{inherit (ipv4) address prefixLength;}];
+  };
+  networking.defaultGateway = ipv4.gateway;
+  networking.nameservers = ["1.1.1.1" "1.0.0.1"];
+
+  boot.supportedFilesystems = ["zfs"];
+  boot.loader.systemd-boot.enable = false;
+  boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader.grub = {
+    enable = true;
+    efiSupport = true;
+    copyKernels = true;
+  };
+  boot.loader.grub.mirroredBoots = [
+    {
+      path = "/boot-1";
+      efiSysMountPoint = "/boot-1";
+      devices = ["nodev"];
+    }
+    {
+      path = "/boot-2";
+      efiSysMountPoint = "/boot-2";
+      devices = ["nodev"];
+    }
+  ];
+
+  fileSystems."/boot-1".options = ["nofail"];
+  fileSystems."/boot-2".options = ["nofail"];
+
+  boot.initrd.availableKernelModules = ["nvme" "xhci_pci" "ahci" "usbhid" "sd_mod"];
+  boot.kernelModules = ["kvm-intel"];
+
+  services.smartd.enable = true;
+
+  users.users.root.openssh.authorizedKeys.keys = authKeys;
+
+  age.identityPaths = [/etc/ssh/ssh_host_ed25519_key];
+
+  time.timeZone = "UTC";
+
+  system.stateVersion = "25.11";
+}

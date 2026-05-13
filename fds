@@ -1,0 +1,34 @@
+
+restarting sysinit-reactivation.target
+warning: the following units failed: network-setup.service, unbound.service
+× network-setup.service - Networking Setup
+     Loaded: loaded (/etc/systemd/system/network-setup.service; enabled; preset: ignored)
+     Active: failed (Result: exit-code) since Thu 2026-05-07 15:49:50 UTC; 2s ago
+   Duration: 1h 47min 44.126s
+ Invocation: b404a728249f491ea90dfe4b3e3debd5
+    Process: 105267 ExecStart=/nix/store/5k3klpk5v8jw378s5dp9j8lh2y39qrvv-unit-script-network-setup-start/bin/network-setup-start (code=exited, status=1/FAILURE)
+   Main PID: 105267 (code=exited, status=1/FAILURE)
+         IP: 0B in, 0B out
+         IO: 0B read, 0B written
+   Mem peak: 5.7M
+        CPU: 145ms
+
+May 07 15:49:50 nix02 systemd[1]: Starting Networking Setup...
+May 07 15:49:50 nix02 network-setup-start[105324]: .resolvconf-wrapped: signature mismatch: /etc/resolv.conf
+May 07 15:49:50 nix02 network-setup-start[105324]: .resolvconf-wrapped: run `resolvconf -u` to update
+May 07 15:49:50 nix02 systemd[1]: network-setup.service: Main process exited, code=exited, status=1/FAILURE
+May 07 15:49:50 nix02 systemd[1]: network-setup.service: Failed with result 'exit-code'.
+May 07 15:49:50 nix02 systemd[1]: Failed to start Networking Setup.
+
+● unbound.service - Unbound recursive Domain Name Server
+     Loaded: loaded (/etc/systemd/system/unbound.service; enabled; preset: ignored)
+     Active: activating (auto-restart) (Result: exit-code) since Thu 2026-05-07 15:49:53 UTC; 307ms ago
+ Invocation: 0a55b84017174856aa02c76ac4b3ec64
+    Process: 105389 ExecStartPre=/nix/store/v52g6lynh5wgysvwnk3fpxr1fqihq998-unit-script-unbound-pre-start/bin/unbound-pre-start (code=exited, status=0/SUCCESS)
+    Process: 105426 ExecStart=/nix/store/nbij8kbv568hqrwrg61dd4df9sqgsk8m-unbound-1.24.2/bin/unbound -p -d -c /etc/unbound/unbound.conf (code=exited, status=1/FAILURE)
+   Main PID: 105426 (code=exited, status=1/FAILURE)
+         IP: 6.8K in, 792B out
+         IO: 0B read, 0B written
+   Mem peak: 4.7M
+        CPU: 151ms
+Error while activating new configuration.

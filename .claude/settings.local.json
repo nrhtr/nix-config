@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(nix-instantiate:*)",
+      "Bash(bash:*)",
+      "Bash(git add:*)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:api.github.com)",
+      "Bash(git -C /Users/jenga/git/nix-config status)",
+      "Bash(git -C /Users/jenga/git/nix-config diff)",
+      "Bash(git *)",
+      "WebFetch(domain:github.com)",
+      "Bash(python3 *)",
+      "Bash(nix-prefetch-url *)",
+      "Bash(openssl x509 *)",
+      "Bash(sed -n '85,95p' /Users/jenga/git/nix-config/machines/lappy/configuration.nix)",
+      "Bash(sed -n '185,200p' /Users/jenga/git/nix-config/machines/lappy/configuration.nix)",
+      "Bash(chmod +x *)",
+      "Read(//Users/jenga/.ssh/**)",
+      "Bash(curl -s https://api.github.com/repos/nrhtr/spruce)",
+      "Bash(curl -s https://api.github.com/repos/nrhtr/spruce/git/trees/main?recursive=1)",
+      "Bash(curl *)",
+      "Bash(npins add *)",
+      "Bash(alejandra *)",
+      "Bash(gh api *)",
+      "WebSearch",
+      "WebFetch(domain:search.nixos.org)",
+      "WebFetch(domain:mynixos.com)",
+      "WebFetch(domain:aux-docs.pyrox.pages.gay)"
+    ]
+  }
+}

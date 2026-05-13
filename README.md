@@ -85,12 +85,12 @@ nixpkgs=$(nix eval --raw -f npins nixpkgs)
 
 disko=$(nix-build '<nixpkgs/nixos>' -A config.system.build.diskoScript \
   -I nixpkgs="$nixpkgs" \
-  -I nixos-config=$(pwd)/machines/nix03/configuration.nix \
+  -I nixos-config=$(pwd)/machines/nix03.jenga.xyz/configuration.nix \
   --no-out-link)
 
 system=$(nix-build '<nixpkgs/nixos>' -A system \
   -I nixpkgs="$nixpkgs" \
-  -I nixos-config=$(pwd)/machines/nix03/configuration.nix \
+  -I nixos-config=$(pwd)/machines/nix03.jenga.xyz/configuration.nix \
   --no-out-link)
 
 # Install — wipes the disks and reboots into NixOS
