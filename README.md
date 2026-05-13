@@ -1,17 +1,42 @@
 # nixos-config
 
-Each system has a symlink `configuration.nix` in `/etc/nixos/` to `./$hostname/configuration.nix`
+## Hosts
 
-## nix01
- * [System config](./nix01/configuration.nix)
- * [Wireguard config](./nix01/wireguard.nix)
+### nix01 — Vultr VPS (45.76.124.245)
+WireGuard hub — routes all VPN subnet traffic (10.100.0.0/16).
+ * Vaultwarden — `vault.jenga.xyz` (WireGuard-only)
+ * nginx, boycrisis.net static site
+ * Borg backup
 
-## thinkpad
- * [System config](./thinkpad/configuration.nix)
- * [Wireguard config](./thinkpad/wireguard.nix)
+### nix02 — Hetzner dedicated (51.222.109.62)
+Primary services host. ZFS mirror on NVMe, Podman containers.
+ * cgit — `git.jenga.xyz` (push server + GitHub mirror timer)
+ * Actual Budget — `actual.jenga.xyz`
+ * Immich photos — `photos.jenga.xyz`, `share.jenga.dev`
+ * Spruce listing scanner — `spruce.jenga.xyz`
+ * kbfirmware — `kbfirmware.xyz`
+ * Genesis/Urbit — `tlon.jenga.xyz`
+ * Minecraft + Bluemap map
+ * Unbound + NSD (authoritative DNS for jenga.xyz)
+ * Gatus uptime — `up.jenga.xyz`
+ * Borg backup (git repos + Minecraft world → rsync.net)
+
+### nix03 — OVH dedicated (51.161.197.172)
+Bare host. ZFS mirror on NVMe. No services yet.
+
+### lappy — ThinkPad (daily driver)
+NixOS desktop. Offloads Nix builds to nix02.
+ * Sway WM
+ * WireGuard client
+ * MPD + PipeWire
+
+### minnie — Mac Mini (macOS)
+ * Borg backup (home dir → rsync.net, 03:00 daily)
+ * WireGuard client
 
 ## common
- * [User accounts](./common/users.nix)
+ * [Shared system config](./common/shared.nix)
+ * [WireGuard mesh nodes](./common/wg-nodes.nix)
 
 ---
 
