@@ -44,10 +44,11 @@ in {
         Restart = "on-failure";
         DynamicUser = true;
         StateDirectory = "urbit-gateway";
+        WorkingDirectory = "%S/urbit-gateway";
       };
 
       environment = {
-        GATEWAY_ADDR = "0.0.0.0:${toString cfg.port}";
+        PORT = "${toString cfg.port}";
         URBITS_DIR = cfg.urbitsDir;
       };
     };

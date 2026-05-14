@@ -80,11 +80,11 @@
   '';
   nix.buildMachines = [
     {
-      hostName = "nix02";
+      hostName = "nix03";
       system = "x86_64-linux";
       sshUser = "root";
       sshKey = "/root/.ssh/id_ed25519";
-      speedFactor = 12;
+      speedFactor = 8;
       supportedFeatures = ["big-parallel"];
     }
   ];
