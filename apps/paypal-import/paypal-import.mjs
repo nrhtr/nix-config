@@ -26,7 +26,13 @@ function parseDate(str) {
 }
 
 function toTransactions(csvContent) {
-  const rows = parse(csvContent, { columns: true, skip_empty_lines: true, bom: true });
+  const rows = parse(csvContent, {
+    columns: header => header.map(h => h.trim()),
+    skip_empty_lines: true,
+    bom: true,
+    relax_column_count: true,
+  });
+  if (rows.length > 0) console.log('  CSV columns:', Object.keys(rows[0]).join(', '));
   const skipped = [];
 
   const txns = rows
