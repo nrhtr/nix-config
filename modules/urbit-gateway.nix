@@ -7,24 +7,13 @@
   cfg = config.jenga.urbitGateway;
   inherit (lib) mkEnableOption mkOption types mkIf;
 
+  sources = import ../npins;
   sourcesJson = builtins.fromJSON (builtins.readFile ../npins/sources.json);
-  urbitSh = sourcesJson.pins."urbit-sh";
 
-  # builtins.fetchGit with explicit ref to avoid nix defaulting to 'master'
-  # (npins does not pass branch as ref in its generated default.nix)
-  urbitShSrc = builtins.fetchGit {
-    url = urbitSh.repository.url;
-    rev = urbitSh.revision;
-    ref = urbitSh.branch;
-    submodules = false;
-  };
-
-  # To update vendorHash: set to lib.fakeHash, run nix build, replace with the
-  # hash from the error message.
   gatewayPkg = pkgs.buildGoModule {
     pname = "urbit-gateway";
-    version = "unstable-${builtins.substring 0 8 urbitSh.revision}";
-    src = urbitShSrc;
+    version = "unstable-${builtins.substring 0 8 sourcesJson.pins."urbit-sh".revision}";
+    src = sources."urbit-sh";
     subPackages = ["cmd/gateway"];
     vendorHash = "sha256-9PiAj3gaXSTb3a7qDfD/iSfdNRRbPB9m5tX+d1qenn8=";
   };
