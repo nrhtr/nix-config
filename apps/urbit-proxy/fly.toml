@@ -10,6 +10,9 @@ primary_region = "syd"
   [[services.ports]]
     port = 22
 
+[env]
+  GATEWAY_URL = "http://10.100.0.8:8080"
+
 [mounts]
   source = "wg_keys"
   destination = "/data"
