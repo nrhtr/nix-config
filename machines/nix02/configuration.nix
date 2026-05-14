@@ -488,7 +488,7 @@ in {
         };
       };
       "git.jenga.xyz" = {
-        listenAddresses = [ipv4.address];
+        listenAddresses = [ipv4.address "10.100.0.6"];
         forceSSL = true;
         enableACME = true;
         root = "${pkgs.cgit}/cgit";
