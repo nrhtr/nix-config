@@ -68,6 +68,10 @@ in {
 
   config = mkIf cfg.enable {
     users.groups.paypal-import = {};
+    users.users.paypal-import = {
+      isSystemUser = true;
+      group = "paypal-import";
+    };
 
     systemd.services.paypal-import = {
       description = "Import PayPal CSV into Actual Budget";
@@ -78,8 +82,8 @@ in {
         ExecStart = "${pkg}/bin/paypal-import";
         StateDirectory = "paypal-import";
         StateDirectoryMode = "0700";
-        DynamicUser = true;
-        SupplementaryGroups = ["paypal-import"];
+        User = "paypal-import";
+        Group = "paypal-import";
       };
 
       environment = {
