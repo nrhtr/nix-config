@@ -1,0 +1,25 @@
+[Interface]
+Address = WG_IP_PLACEHOLDER/16
+PrivateKey = WG_PRIVATE_KEY_PLACEHOLDER
+
+[Peer]
+# nix01
+PublicKey = AlkTmqNuOHKyDRq6O4Pxg+fy/YDiAK8sos6Ylvx/aSk=
+AllowedIPs = 10.100.0.0/16
+Endpoint = 45.76.124.245:51820
+PersistentKeepalive = 25
+
+[Peer]
+# nix02
+PublicKey = NPR39BYbGOVnDljmP0w0dvAVbeWv6Ggp197pMBrJxgM=
+AllowedIPs = 10.100.0.6/32
+Endpoint = 51.222.109.62:51820
+PersistentKeepalive = 25
+
+[Peer]
+# nix03
+PublicKey = m4gQlDR1YxbKxDujKt0gJzbywFHyauYGBw57R1tYvXI=
+AllowedIPs = 10.100.0.8/32
+Endpoint = 51.161.197.172:51820
+PersistentKeepalive = 25
+

@@ -33,6 +33,7 @@ in {
     ../../modules/zfs-unlock.nix
     ../../modules/disk-health.nix
     ../../modules/boot-alerts.nix
+    ../../modules/urbit-gateway.nix
   ];
 
   networking.hostName = hostName;
@@ -91,6 +92,8 @@ in {
   };
 
   jenga.bootAlerts.enable = true;
+
+  jenga.urbitGateway.enable = true;
 
   time.timeZone = "UTC";
 

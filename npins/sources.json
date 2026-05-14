@@ -148,6 +148,18 @@
       "revision": "bfd9185823ad4a83e34d2d52e0ce05ced5d107ab",
       "url": "https://github.com/nrhtr/spruce/archive/bfd9185823ad4a83e34d2d52e0ce05ced5d107ab.tar.gz",
       "hash": "0m2dc054razp0f5hic5rb3lndijhdzgd3zk4gx4rcn5gxy2yg64l"
+    },
+    "urbit-sh": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "git+ssh://git@git.jenga.xyz/~/urbit.sh.git"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "f91a9e611c4e1b7c7c52c6f946d33b0537866c7b",
+      "url": null,
+      "hash": "16w8dnp48smbbzh186z8krr2q5sl1gn172dhjingvhbnqh74rpwf"
     }
   },
   "version": 5

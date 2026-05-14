@@ -50,4 +50,24 @@
     # fly secrets set WG_PRIVATE_KEY=$(cat /tmp/fly.key)
     publicKey = "0kpNu7k78ybnOzsOd5lHKn6noO1QtD3bn0ICyJNxoXQ=";
   };
+
+  # urbit-proxy Fly machines — 2 per region, keys populated after first deploy
+  # Bootstrap: fly logs --app urbit-proxy | grep WIREGUARD_PUBKEY
+  # Then set WG_IP per machine: fly machine update <id> --env WG_IP=10.100.0.x --app urbit-proxy
+  fly-urbit-syd-1 = {
+    ip = "10.100.0.9";
+    publicKey = "PLACEHOLDER";
+  };
+  fly-urbit-syd-2 = {
+    ip = "10.100.0.10";
+    publicKey = "PLACEHOLDER";
+  };
+  fly-urbit-iad-1 = {
+    ip = "10.100.0.11";
+    publicKey = "PLACEHOLDER";
+  };
+  fly-urbit-iad-2 = {
+    ip = "10.100.0.12";
+    publicKey = "PLACEHOLDER";
+  };
 }
