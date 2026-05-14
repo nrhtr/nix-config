@@ -50,6 +50,7 @@ in {
       environment = {
         PORT = "${toString cfg.port}";
         URBITS_DIR = cfg.urbitsDir;
+        PUBLIC_FRONTEND_URL = "https://urbit-ssh.fly.dev";
       };
     };
 

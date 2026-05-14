@@ -11,8 +11,17 @@ primary_region = "syd"
   [[services.ports]]
     port = 22
 
+[[services]]
+  internal_port = 8081
+  protocol = "tcp"
+
+  [[services.ports]]
+    port = 443
+    handlers = ["tls", "http"]
+
 [env]
   GATEWAY_URL = "http://10.100.0.8:7070"
+  # WG_IP is persisted to /data/wg-ip on first boot — not set here
 
 [mounts]
   source = "wg_keys"
