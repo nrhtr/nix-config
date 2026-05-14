@@ -43,9 +43,9 @@ function toTransactions(csvContent) {
     })
     .map(r => ({
       date:        parseDate(r['Date']),
-      amount:      parseAmount(r['Net']),
+      amount:      parseAmount(r['Amount']),
       payee_name:  r['Name'] || undefined,
-      notes:       [r['Item Title'], r['Note']].filter(Boolean).join(' — ') || undefined,
+      notes:       r['Item Title'] || undefined,
       imported_id: r['Transaction ID'],
       cleared:     true,
     }));
