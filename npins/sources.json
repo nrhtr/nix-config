@@ -153,7 +153,7 @@
       "type": "Git",
       "repository": {
         "type": "Git",
-        "url": "git+ssh://git@git.jenga.xyz/~/urbit.sh.git"
+        "url": "https://git.jenga.xyz/urbit.sh.git"
       },
       "branch": "main",
       "submodules": false,
