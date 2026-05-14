@@ -1,5 +1,5 @@
 # Build with: ./deploy.sh (copies npins-pinned source into context)
-FROM golang:1.24-alpine AS builder
+FROM golang:1.25-alpine AS builder
 WORKDIR /build
 COPY _src/ .
 RUN go mod download
