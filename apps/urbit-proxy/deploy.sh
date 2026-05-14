@@ -5,7 +5,7 @@ DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO="$(cd "$DIR/../.." && pwd)"
 
 echo "==> Fetching pinned urbit-sh source via nix..."
-SRC=$(nix-build -E "(import ${REPO}/npins).\"urbit-sh\"" --no-out-link 2>&1 | tail -1)
+SRC=$(nix-build -E "(import ${REPO}/npins).\"urbit-sh\"" --no-out-link)
 
 echo "==> Copying source to build context..."
 rm -rf "$DIR/_src"
