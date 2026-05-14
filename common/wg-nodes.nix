@@ -52,8 +52,8 @@
   };
 
   # urbit-proxy Fly machines — 2 per region, keys populated after first deploy
-  # Bootstrap: fly logs --app urbit-proxy | grep WIREGUARD_PUBKEY
-  # Then set WG_IP per machine: fly machine update <id> --env WG_IP=10.100.0.x --app urbit-proxy
+  # Bootstrap: fly logs --app urbit-ssh | grep WIREGUARD_PUBKEY
+  # Then set WG_IP per machine: fly machine update <id> --env WG_IP=10.100.0.x --app urbit-ssh
   fly-urbit-syd-1 = {
     ip = "10.100.0.9";
     publicKey = "PLACEHOLDER";
@@ -64,7 +64,7 @@
   };
   fly-urbit-iad-1 = {
     ip = "10.100.0.11";
-    publicKey = "PLACEHOLDER";
+    publicKey = "8y4p8Pd7dsZj7dAGBMjeF6G886NdRC+DUYbPDRXYuH0=";
   };
   fly-urbit-iad-2 = {
     ip = "10.100.0.12";
