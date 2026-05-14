@@ -59,7 +59,7 @@ async function main() {
   }
 
   await api.init({ serverURL: SERVER_URL, password: PASSWORD, dataDir: DATA_DIR });
-  await api.downloadBudget({ syncId: SYNC_ID });
+  await api.downloadBudget(SYNC_ID);
 
   const accounts = await api.getAccounts();
   const account  = accounts.find(a => a.name === ACCOUNT_NAME);
