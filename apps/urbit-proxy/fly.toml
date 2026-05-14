@@ -1,7 +1,8 @@
-app = "urbit-proxy"
+app = "urbit-ssh"
 primary_region = "syd"
 
 [build]
+  dockerfile = "Dockerfile"
 
 [[services]]
   internal_port = 2222
