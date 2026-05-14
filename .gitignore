@@ -2,6 +2,7 @@
 /.pre-commit-config.yaml
 /.gitleaks.toml
 result
+apps/urbit-proxy/_src
 .gcroots
 .direnv
 .claude/
