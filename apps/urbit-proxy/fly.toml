@@ -11,7 +11,7 @@ primary_region = "syd"
     port = 22
 
 [env]
-  GATEWAY_URL = "http://10.100.0.8:8080"
+  GATEWAY_URL = "http://10.100.0.8:7070"
 
 [mounts]
   source = "wg_keys"

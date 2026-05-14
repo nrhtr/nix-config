@@ -27,7 +27,7 @@ in {
 
     port = mkOption {
       type = types.port;
-      default = 8080;
+      default = 7070;
     };
 
     urbitsDir = mkOption {
