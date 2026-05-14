@@ -27,4 +27,5 @@ in {
   "spruce-env.age".publicKeys = all;
   "borg-heartbeat-token.age".publicKeys = all;
   "github-mirror-key.age".publicKeys = all;
+  "actual-password.age".publicKeys = all;
 }

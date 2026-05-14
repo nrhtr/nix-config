@@ -1,0 +1,10 @@
+{
+  "name": "paypal-import",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "paypal-import.mjs",
+  "dependencies": {
+    "@actual-app/api": "*",
+    "csv-parse": "^5.0.0"
+  }
+}

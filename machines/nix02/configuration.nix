@@ -91,6 +91,7 @@ in {
     ../../modules/zfs-unlock.nix
     ../../modules/disk-health.nix
     ../../modules/boot-alerts.nix
+    ../../modules/paypal-import.nix
   ];
 
   age.secrets = {
@@ -113,6 +114,7 @@ in {
       group = "nginx";
       mode = "0440";
     };
+    actual-password.file = ../../secrets/actual-password.age;
   };
 
   # We want to still be able to boot without one of these
@@ -215,6 +217,14 @@ in {
   };
 
   jenga.bootAlerts.enable = true;
+
+  jenga.paypalImport = {
+    enable = true;
+    actualServerUrl = "https://actual.jenga.xyz";
+    actualSyncId = "af24af5e-b26c-4460-90c3-2d0374c7719a";
+    actualPasswordFile = config.age.secrets.actual-password.path;
+    accountName = "Paypal Test";
+  };
 
   virtualisation.podman.enable = true;
   virtualisation.podman.dockerCompat = true;
