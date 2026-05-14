@@ -7,13 +7,12 @@ APP="urbit-ssh"
 DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO="$(cd "$DIR/../.." && pwd)"
 
-# Fixed machine IDs — update as machines are provisioned
+# Fixed machine IDs — one per WireGuard peer
 MACHINES=(
-  # e2862ee1c0e098  # iad-1 (10.100.0.11) — provisioned
-  # Add remaining machines here after provisioning:
-  # <syd-1-id>  # syd-1 (10.100.0.9)
-  # <syd-2-id>  # syd-2 (10.100.0.10)
-  # <iad-2-id>  # iad-2 (10.100.0.12)
+  0803791c155e48  # syd-1 (10.100.0.9)
+  0803792a1e33e8  # syd-2 (10.100.0.10)
+  e2862ee1c0e098  # iad-1 (10.100.0.11)
+  5683e220fe9978  # iad-2 (10.100.0.12)
 )
 
 URBIT_URL=$(python3 -c "import json; d=json.load(open('${REPO}/npins/sources.json')); print(d['pins']['urbit-sh']['repository']['url'])")
@@ -31,7 +30,7 @@ fi
 echo "==> Building and pushing image..."
 LABEL="deploy-$(date +%s)"
 cd "$DIR"
-fly deploy --local-only --build-only --image-label "$LABEL"
+fly deploy --local-only --build-only --push --image-label "$LABEL"
 IMAGE="registry.fly.io/${APP}:${LABEL}"
 
 if [[ ${#MACHINES[@]} -eq 0 ]]; then

@@ -56,18 +56,18 @@
   # Then set WG_IP per machine: fly machine update <id> --env WG_IP=10.100.0.x --app urbit-ssh
   fly-urbit-syd-1 = {
     ip = "10.100.0.9";
-    publicKey = "PLACEHOLDER";
+    publicKey = "PZNpiWvge7VSJ+6Pp+FQSyutHjf67tqlzuWXjbiDhlQ="; # 0803791c155e48
   };
   fly-urbit-syd-2 = {
     ip = "10.100.0.10";
-    publicKey = "PLACEHOLDER";
+    publicKey = "LJYo0x8oqOs37iYWQu7BOtbm4MQe3+ctBtrzNLqjQ1o="; # 0803792a1e33e8
   };
   fly-urbit-iad-1 = {
     ip = "10.100.0.11";
-    publicKey = "8y4p8Pd7dsZj7dAGBMjeF6G886NdRC+DUYbPDRXYuH0=";
+    publicKey = "8y4p8Pd7dsZj7dAGBMjeF6G886NdRC+DUYbPDRXYuH0="; # e2862ee1c0e098
   };
   fly-urbit-iad-2 = {
     ip = "10.100.0.12";
-    publicKey = "PLACEHOLDER";
+    publicKey = "cWxoo9tfVKxitTXdefDKARyPIdfN0jdsR4rsiRerVDY="; # 5683e220fe9978
   };
 }
