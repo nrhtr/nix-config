@@ -200,6 +200,12 @@ in {
   users.users.root.openssh.authorizedKeys.keys = authKeys;
   services.openssh.enable = true;
 
+  programs.ssh.extraConfig = ''
+    Host 10.100.0.*
+      IdentityFile /etc/ssh/ssh_host_ed25519_key
+      User root
+  '';
+
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It‘s perfectly fine and recommended to leave
