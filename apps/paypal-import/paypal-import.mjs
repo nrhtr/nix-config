@@ -52,7 +52,7 @@ async function main() {
   mkdirSync(DONE_DIR, { recursive: true });
   mkdirSync(DATA_DIR, { recursive: true });
 
-  const csvFiles = readdirSync(INBOX_DIR).filter(f => f.toLowerCase().endsWith('.csv'));
+  const csvFiles = readdirSync(INBOX_DIR).filter(f => /\.csv$/i.test(f));
   if (csvFiles.length === 0) {
     console.log('No CSV files in inbox — nothing to do.');
     return;

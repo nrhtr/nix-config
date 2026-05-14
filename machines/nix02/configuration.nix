@@ -114,7 +114,11 @@ in {
       group = "nginx";
       mode = "0440";
     };
-    actual-password.file = ../../secrets/actual-password.age;
+    actual-password = {
+      file = ../../secrets/actual-password.age;
+      group = "paypal-import";
+      mode = "0440";
+    };
   };
 
   # We want to still be able to boot without one of these

@@ -67,6 +67,8 @@ in {
   };
 
   config = mkIf cfg.enable {
+    users.groups.paypal-import = {};
+
     systemd.services.paypal-import = {
       description = "Import PayPal CSV into Actual Budget";
       after = ["network.target"];
@@ -77,6 +79,7 @@ in {
         StateDirectory = "paypal-import";
         StateDirectoryMode = "0700";
         DynamicUser = true;
+        SupplementaryGroups = ["paypal-import"];
       };
 
       environment = {
@@ -94,7 +97,7 @@ in {
       description = "Watch for PayPal CSV files to import";
       wantedBy = ["multi-user.target"];
       pathConfig = {
-        PathExistsGlob = "${cfg.inboxDir}/*.csv";
+        DirectoryNotEmpty = cfg.inboxDir;
         Unit = "paypal-import.service";
       };
     };
