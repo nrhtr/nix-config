@@ -15,4 +15,5 @@ git -C "$DIR/_src" checkout "$URBIT_REV"
 trap 'echo "==> Cleaning up _src..."; rm -rf "$DIR/_src"' EXIT
 
 echo "==> Deploying..."
-fly deploy --local-only --config "$DIR/fly.toml"
+cd "$DIR"
+fly deploy --local-only
