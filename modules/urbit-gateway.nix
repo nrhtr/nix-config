@@ -17,9 +17,7 @@
     version = "unstable-${builtins.substring 0 8 sourcesJson.pins."urbit-sh".revision}";
     src = sources."urbit-sh";
     subPackages = ["cmd/gateway"];
-    # Set to lib.fakeHash to get the real hash from a failed build, then replace.
-    # If the repo has a vendor/ dir committed, null works instead.
-    vendorHash = lib.fakeHash;
+    vendorHash = "sha256-9PiAj3gaXSTb3a7qDfD/iSfdNRRbPB9m5tX+d1qenn8=";
   };
 in {
   options.jenga.urbitGateway = {
@@ -48,7 +46,6 @@ in {
         Restart = "on-failure";
         DynamicUser = true;
         StateDirectory = "urbit-gateway";
-        SupplementaryGroups = ["urbit"];
       };
 
       environment = {
