@@ -28,16 +28,16 @@ echo "    Volume: ${VOL_ID}"
 echo "==> Building image..."
 LABEL="provision-$(date +%s)"
 cd "$DIR"
-fly deploy --local-only --build-only --image-label "$LABEL"
+fly deploy --local-only --build-only --push --image-label "$LABEL"
 IMAGE="registry.fly.io/${APP}:${LABEL}"
 
 echo "==> Creating machine (region=${REGION}, WG_IP=${WG_IP})..."
-fly machine create \
+fly machine create "$IMAGE" \
   --app "$APP" \
   --region "$REGION" \
   --env "WG_IP=${WG_IP}" \
   --volume "${VOL_ID}:/data" \
-  --image "$IMAGE" \
+  --port 22:2222/tcp \
   --vm-memory 256 \
   --vm-cpus 1
 
