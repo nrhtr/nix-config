@@ -82,6 +82,7 @@ in {
 
   age.identityPaths = ["/etc/ssh/ssh_host_ed25519_key"];
   age.secrets.fastmail-nix02.file = ../../secrets/fastmail-nix02.age;
+  age.secrets.resend-key.file = ../../secrets/resend-key.age;
 
   jenga.diskHealth = {
     enable = true;
@@ -90,7 +91,10 @@ in {
 
   jenga.bootAlerts.enable = true;
 
-  jenga.urbitGateway.enable = true;
+  jenga.urbitGateway = {
+    enable = true;
+    resendApiKeyFile = config.age.secrets.resend-key.path;
+  };
 
   time.timeZone = "UTC";
 

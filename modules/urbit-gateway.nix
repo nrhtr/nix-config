@@ -31,6 +31,12 @@ in {
       default = "/var/lib/urbit";
       description = "Directory containing urbit piers.";
     };
+
+    resendApiKeyFile = mkOption {
+      type = types.nullOr types.path;
+      default = null;
+      description = "Path to file containing the Resend API key.";
+    };
   };
 
   config = mkIf cfg.enable {
@@ -40,11 +46,19 @@ in {
       after = ["network.target" "wireguard-wg0.service"];
 
       serviceConfig = {
-        ExecStart = "${gatewayPkg}/bin/gateway";
+        ExecStart = pkgs.writeShellScript "urbit-gateway" ''
+          ${lib.optionalString (cfg.resendApiKeyFile != null) ''
+            export RESEND_API_KEY="$(cat "$CREDENTIALS_DIRECTORY/resend-key")"
+          ''}
+          exec ${gatewayPkg}/bin/gateway
+        '';
         Restart = "on-failure";
         DynamicUser = true;
         StateDirectory = "urbit-gateway";
         WorkingDirectory = "%S/urbit-gateway";
+        LoadCredential =
+          lib.mkIf (cfg.resendApiKeyFile != null)
+          "resend-key:${cfg.resendApiKeyFile}";
       };
 
       environment = {
