@@ -41,7 +41,7 @@ in {
     ipv4.addresses = [{inherit (ipv4) address prefixLength;}];
   };
   networking.defaultGateway = ipv4.gateway;
-  networking.nameservers = ["1.1.1.1" "1.0.0.1"];
+  networking.nameservers = ["10.100.0.6" "1.1.1.1" "1.0.0.1"];
 
   boot.supportedFilesystems = ["zfs"];
   boot.loader.systemd-boot.enable = false;

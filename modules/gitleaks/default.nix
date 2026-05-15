@@ -1,5 +1,7 @@
-{settings ? {}}: let
-  pkgs = import <nixpkgs> {};
+{
+  settings ? {},
+  pkgs ? import (import ../../npins).nixpkgs {},
+}: let
   project = pkgs.lib.evalModules {
     modules = [
       ./module.nix

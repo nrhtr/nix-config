@@ -1,45 +1,73 @@
-# Build Firecracker-ready artifacts for the Urbit guest VM.
+# Builds Firecracker-ready artifacts for the Urbit guest VM.
+# Follows the not-os pattern: evalModules with a minimal subset of NixOS
+# modules rather than the full NixOS module system.  This avoids bootloader
+# assertions, initrd requirements, and kernel-config guards that don't apply
+# to Firecracker guests.
 #
 # Usage:
-#   nix-build apps/urbit-infra/vm -A vmlinux  → result/vmlinux (uncompressed ELF, use this path in Firecracker)
-#   nix-build apps/urbit-infra/vm -A rootfs   → result (raw ext4, copy-per-ship)
+#   nix-build apps/urbit-infra/vm -A vmlinux   → result/vmlinux
+#   nix-build apps/urbit-infra/vm -A initrd    → result/initrd
+#   nix-build apps/urbit-infra/vm -A rootfs    → result  (squashfs)
+#   nix-build apps/urbit-infra/vm -A bootArgs  → result  (kernel cmdline file)
 #
-# No initrd: the Firecracker kernel config compiles all drivers in statically,
-# so the kernel mounts the rootfs directly.
-#
-# Kernel format note: Firecracker expects vmlinux (uncompressed ELF) on x86_64.
-# bzImage support was added in later Firecracker releases but vmlinux is the
-# safe default. The nixpkgs kernel build always produces vmlinux in the .dev
-# output regardless of platform target, so we use kernel.dev/vmlinux directly.
-#
-# The rootfs is a writeable raw ext4 image. The gateway copies it
-# (cp --sparse=always) when provisioning each new ship, then attaches
-# it as vda. The per-ship pier lives on a separate vdb volume.
-#
-# Building rootfs requires QEMU/KVM on the build host (nix-build runs
-# make-disk-image.nix inside a lightweight VM). nix02 has KVM available.
+# Boot sequence (no grub, no NixOS bootloader):
+#   Firecracker → vmlinux (kernel) → initrd (stage 1, busybox)
+#     → mounts squashfs rootfs from vda, pier ext4 from vdb
+#     → switch_root → stage2-init (mounts /proc /sys /dev, activates, execs runit)
+#     → runit → dhcpcd → urbit /pier
 let
   sources = import ../../../npins;
   nixpkgs = sources.nixpkgs;
   pkgs = import nixpkgs {system = "x86_64-linux";};
   lib = pkgs.lib;
 
-  guestEval = import "${nixpkgs}/nixos" {
-    configuration = ./guest.nix;
-    system = "x86_64-linux";
+  # Firecracker kernel: exact upstream config, vmlinux copied to $out.
+  # linuxManualConfig with no CONFIG_MODULES produces only one output;
+  # make install copies bzImage but not vmlinux, so we add it in postInstall.
+  firecrackerKernel =
+    (pkgs.linuxManualConfig {
+      inherit (pkgs.linux_6_1) version src;
+      configfile = ./microvm-kernel-x86_64-6.1.config;
+      allowImportFromDerivation = true;
+    })
+    .overrideAttrs (old: {
+      postInstall =
+        (old.postInstall or "")
+        + ''
+          cp vmlinux $out/
+        '';
+    });
+
+  # Minimal system evaluation — no kernel.nix, no bootloader, no initrd module.
+  eval = lib.evalModules {
+    modules = [
+      ./base.nix
+      ./config.nix
+      ./compat.nix
+      "${nixpkgs}/nixos/modules/system/etc/etc.nix"
+      "${nixpkgs}/nixos/modules/system/activation/activation-script.nix"
+      "${nixpkgs}/nixos/modules/misc/nixpkgs.nix"
+      "${nixpkgs}/nixos/modules/misc/assertions.nix"
+      "${nixpkgs}/nixos/modules/misc/lib.nix"
+      {
+        config.nixpkgs.pkgs = pkgs;
+        config.nixpkgs.localSystem.system = "x86_64-linux";
+      }
+    ];
   };
 
-  config = guestEval.config;
-
-  rootfs = import "${nixpkgs}/nixos/lib/make-disk-image.nix" {
-    inherit config lib pkgs;
-    format = "raw";
-    partitionTableType = "none";
-    diskSize = 4096; # MiB — covers NixOS store + urbit binary with headroom
-  };
+  cfg = eval.config;
 in {
-  # vmlinux: uncompressed ELF — nix-build -A vmlinux → result/vmlinux
-  # Use result/vmlinux as Firecracker's kernel_image_path.
-  vmlinux = config.system.build.kernel.dev;
-  rootfs = rootfs;
+  # Uncompressed ELF kernel for Firecracker's kernel_image_path.
+  vmlinux = firecrackerKernel;
+
+  # Tiny busybox initrd: mounts squashfs + pier, switch_roots to stage 2.
+  initrd = cfg.system.build.initialRamdisk;
+
+  # Squashfs OS image for vda — shared read-only across all ships.
+  rootfs = cfg.system.build.squashfs;
+
+  # Kernel boot args — Firecracker boot_source.boot_args should equal
+  # the contents of this file (includes the store-path systemConfig=).
+  bootArgs = cfg.system.build.bootArgs;
 }

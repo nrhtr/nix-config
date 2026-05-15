@@ -15,7 +15,7 @@
     version = "unstable-${builtins.substring 0 8 sourcesJson.pins."urbit-sh".revision}";
     src = sources."urbit-sh";
     subPackages = ["cmd/gateway"];
-    vendorHash = "sha256-9PiAj3gaXSTb3a7qDfD/iSfdNRRbPB9m5tX+d1qenn8=";
+    vendorHash = "sha256-08MKdekl+tq0o3M4OpEFWmmwkSu5YiEkTdYzO1zWuR8=";
   };
 in {
   options.jenga.urbitGateway = {
