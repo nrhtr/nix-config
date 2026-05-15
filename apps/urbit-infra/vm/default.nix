@@ -2,8 +2,10 @@
 #
 # Usage:
 #   nix-build apps/urbit-infra/vm -A vmlinux  → result/vmlinux (uncompressed ELF, use this path in Firecracker)
-#   nix-build apps/urbit-infra/vm -A initrd   → result/initrd
 #   nix-build apps/urbit-infra/vm -A rootfs   → result (raw ext4, copy-per-ship)
+#
+# No initrd: the Firecracker kernel config compiles all drivers in statically,
+# so the kernel mounts the rootfs directly.
 #
 # Kernel format note: Firecracker expects vmlinux (uncompressed ELF) on x86_64.
 # bzImage support was added in later Firecracker releases but vmlinux is the
@@ -39,6 +41,5 @@ in {
   # vmlinux: uncompressed ELF — nix-build -A vmlinux → result/vmlinux
   # Use result/vmlinux as Firecracker's kernel_image_path.
   vmlinux = config.system.build.kernel.dev;
-  initrd = config.system.build.initialRamdisk;
   rootfs = rootfs;
 }
