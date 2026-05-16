@@ -36,15 +36,15 @@
   # A 2-second delay before restart keeps crash output readable in all cases.
   urbitFinish = pkgs.writeScript "urbit-finish" ''
     #!${pkgs.bash}/bin/bash
-    RESTART=yes
+    RESTART=no
     for o in $(cat /proc/cmdline); do
       case $o in
         urbitRestart=*) RESTART="''${o#urbitRestart=}" ;;
       esac
     done
 
-    if [ "$RESTART" = "no" ]; then
-      echo "urbit: exited with restart disabled, shutting down" >&2
+    if [ "$RESTART" != "yes" ]; then
+      echo "urbit: exited, shutting down VM" >&2
       echo 1 > /proc/sys/kernel/sysrq
       echo b > /proc/sysrq-trigger
       exit 111
