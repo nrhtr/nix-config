@@ -45,7 +45,8 @@
 
     if [ "$RESTART" = "no" ]; then
       echo "urbit: exited with restart disabled, shutting down" >&2
-      ${pkgs.util-linux}/sbin/reboot -f
+      echo 1 > /proc/sys/kernel/sysrq
+      echo o > /proc/sysrq-trigger
       exit 111
     fi
 
