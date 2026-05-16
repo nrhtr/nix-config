@@ -82,10 +82,28 @@
         umount "$KEY_MNT"
         exit 1
       fi
-      exec "$VERE" -w "$PIER" -k "$KEYFILE" -d
+      "$VERE" -w "$PIER" -k "$KEYFILE" -d
+    else
+      "$VERE" -d "$PIER"
     fi
 
-    exec "$VERE" -d "$PIER"
+    # Urbit daemonises: parent exits and writes PID to /pier/.urb/pid.
+    # Wait for the PID file, then watch the process so runit can detect crashes.
+    ATTEMPTS=0
+    while [ ! -f "$PIER/.urb/pid" ] && [ "$ATTEMPTS" -lt 20 ]; do
+      sleep 0.5
+      ATTEMPTS=$((ATTEMPTS + 1))
+    done
+
+    PID=$(cat "$PIER/.urb/pid" 2>/dev/null)
+    if [ -z "$PID" ]; then
+      echo "urbit-run: PID file not found after daemon start" >&2
+      exit 1
+    fi
+
+    while kill -0 "$PID" 2>/dev/null; do
+      sleep 1
+    done
   '';
 in {
   environment.systemPackages = with pkgs; [
