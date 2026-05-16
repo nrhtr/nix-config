@@ -14,8 +14,8 @@
     pname = "urbit-gateway";
     version = "unstable-${builtins.substring 0 8 sourcesJson.pins."urbit-sh".revision}";
     src = sources."urbit-sh";
-    subPackages = ["cmd/gateway"];
-    vendorHash = "sha256-08MKdekl+tq0o3M4OpEFWmmwkSu5YiEkTdYzO1zWuR8=";
+    subPackages = ["cmd/gateway" "cmd/fcboot"];
+    vendorHash = "sha256-0H643eZCu8G/rP1694MKkwm3d/UVnxQ4aV1SKHpr3xs=";
   };
 in {
   options.jenga.urbitGateway = {
@@ -59,6 +59,8 @@ in {
         LoadCredential =
           lib.mkIf (cfg.resendApiKeyFile != null)
           "resend-key:${cfg.resendApiKeyFile}";
+        AmbientCapabilities = ["CAP_NET_ADMIN"];
+        CapabilityBoundingSet = ["CAP_NET_ADMIN"];
       };
 
       environment = {
@@ -69,6 +71,8 @@ in {
     };
 
     networking.firewall.interfaces.wg0.allowedTCPPorts = [cfg.port];
+
+    environment.systemPackages = [gatewayPkg];
 
     # IP forwarding and NAT so Firecracker VMs can reach the internet.
     # The gateway creates/destroys per-VM TAP interfaces named fc-<ship>;
