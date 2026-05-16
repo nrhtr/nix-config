@@ -45,7 +45,7 @@
 
     if [ "$RESTART" = "no" ]; then
       echo "urbit: exited with restart disabled, shutting down" >&2
-      reboot -f
+      ${pkgs.util-linux}/sbin/reboot -f
       exit 111
     fi
 
