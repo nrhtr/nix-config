@@ -78,7 +78,14 @@ in {
     authorizedKeys = authKeys;
   };
 
-  users.users.root.openssh.authorizedKeys.keys = authKeys;
+  users.users.root.openssh.authorizedKeys.keys =
+    authKeys
+    ++ [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINvB0TRd3YN3/aQUCC+lNivZ6pRe8iWfX0+SZdRfKDhO root@thinkpad" # lappy nix daemon
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIM/7jyd975XBaZXTP7LzYGvecE3Hk6dJEWy9miWNzYH1 root@minnie" # minnie nix daemon
+    ];
+
+  nix.settings.trusted-users = ["root"];
 
   age.identityPaths = ["/etc/ssh/ssh_host_ed25519_key"];
   age.secrets.fastmail-nix02.file = ../../secrets/fastmail-nix02.age;

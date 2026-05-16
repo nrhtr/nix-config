@@ -51,7 +51,7 @@
   nix.distributedBuilds = true;
   nix.buildMachines = [
     {
-      hostName = "nix02";
+      hostName = "nix03";
       system = "x86_64-linux";
       sshUser = "root";
       sshKey = "/var/root/.ssh/id_ed25519";
@@ -60,10 +60,10 @@
     }
   ];
 
-  # nix daemon (root) needs to reach nix02 over WireGuard on port 22
-  environment.etc."ssh/ssh_config.d/nix02-builder.conf".text = ''
-    Host nix02
-      Hostname 10.100.0.6
+  # nix daemon (root) needs to reach nix03 over WireGuard on port 22
+  environment.etc."ssh/ssh_config.d/nix03-builder.conf".text = ''
+    Host nix03
+      Hostname 10.100.0.8
       Port 22
       IdentityFile /var/root/.ssh/id_ed25519
       StrictHostKeyChecking accept-new

@@ -179,10 +179,12 @@
   # Disable the OpenSSH server.
   services.openssh.enable = false;
 
-  # Make sure we do remote builds on the right port
+  # nix daemon (root) needs to reach nix03 over WireGuard on port 22
   programs.ssh.extraConfig = ''
-    Host nix02
-    Port 22
+    Host nix03
+      Hostname 10.100.0.8
+      Port 22
+      StrictHostKeyChecking accept-new
   '';
 
   system.stateVersion = "22.05";
