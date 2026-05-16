@@ -14,6 +14,7 @@
 
     ./../../common/shared.nix
     ./../../common/wg-hosts.nix
+    ./../../modules/remote-builder.nix
   ];
 
   #displayOutput = "LVDS-1";
@@ -72,22 +73,13 @@
   services.smartd.enable = true;
   services.smartd.defaults.monitored = "-a -o on -s (S/../.././02|L/../../7/04)";
 
-  # Distribute builds to nix02 (consider nix01?)
-  nix.distributedBuilds = true;
   nix.settings.trusted-users = ["@wheel"];
-  nix.extraOptions = ''
-    builders-use-substitutes = true
-  '';
-  nix.buildMachines = [
-    {
-      hostName = "nix03";
-      system = "x86_64-linux";
-      sshUser = "root";
-      sshKey = "/root/.ssh/id_ed25519";
-      speedFactor = 8;
-      supportedFeatures = ["big-parallel"];
-    }
-  ];
+
+  jenga.remoteBuilder.client = {
+    enable = true;
+    sshKey = "/root/.ssh/id_ed25519";
+    speedFactor = 8;
+  };
 
   virtualisation.docker.enable = true;
 
@@ -179,7 +171,6 @@
   # Disable the OpenSSH server.
   services.openssh.enable = false;
 
-  # nix daemon (root) needs to reach nix03 over WireGuard on port 22
   programs.ssh.extraConfig = ''
     Host nix03
       Hostname 10.100.0.8

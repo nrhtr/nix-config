@@ -8,6 +8,7 @@
     ./network.nix
     ./overlays.nix
     ./borg.nix
+    ../../modules/remote-builder.nix
   ];
 
   system.stateVersion = 6;
@@ -48,19 +49,12 @@
     };
   };
 
-  nix.distributedBuilds = true;
-  nix.buildMachines = [
-    {
-      hostName = "nix03";
-      system = "x86_64-linux";
-      sshUser = "root";
-      sshKey = "/var/root/.ssh/id_ed25519";
-      speedFactor = 12;
-      supportedFeatures = ["big-parallel"];
-    }
-  ];
+  jenga.remoteBuilder.client = {
+    enable = true;
+    sshKey = "/var/root/.ssh/id_ed25519";
+    speedFactor = 12;
+  };
 
-  # nix daemon (root) needs to reach nix03 over WireGuard on port 22
   environment.etc."ssh/ssh_config.d/nix03-builder.conf".text = ''
     Host nix03
       Hostname 10.100.0.8
