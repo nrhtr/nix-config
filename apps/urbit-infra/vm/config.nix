@@ -31,6 +31,27 @@
   # First-boot key loading: gateway attaches a small ext2 disk as vdc containing
   # a single .jam keyfile.  Once urbit initialises the pier (.urb/ appears), the
   # gateway no longer needs to attach vdc — subsequent boots skip this block.
+  # Called by runit after urbit exits.  If urbitRestart=no is on the kernel
+  # cmdline the VM shuts down instead of looping — useful for debugging crashes.
+  # A 2-second delay before restart keeps crash output readable in all cases.
+  urbitFinish = pkgs.writeScript "urbit-finish" ''
+    #!${pkgs.bash}/bin/bash
+    RESTART=yes
+    for o in $(cat /proc/cmdline); do
+      case $o in
+        urbitRestart=*) RESTART="''${o#urbitRestart=}" ;;
+      esac
+    done
+
+    if [ "$RESTART" = "no" ]; then
+      echo "urbit: exited with restart disabled, shutting down" >&2
+      reboot -f
+      exit 111
+    fi
+
+    sleep 2
+  '';
+
   urbitRun = pkgs.writeScript "urbit-run" ''
     #!${pkgs.bash}/bin/bash
     set -e
@@ -91,6 +112,10 @@ in {
     };
     "service/urbit/run" = {
       source = urbitRun;
+      mode = "0755";
+    };
+    "service/urbit/finish" = {
+      source = urbitFinish;
       mode = "0755";
     };
 
