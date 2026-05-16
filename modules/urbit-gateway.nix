@@ -138,14 +138,39 @@ in {
           <meta name="viewport" content="width=device-width,initial-scale=1">
           <title>${cfg.domain}</title>
           <style>
-            body { font-family: system-ui, sans-serif; max-width: 560px; margin: 5rem auto; padding: 0 1.5rem; color: #111; }
-            h1 { margin: 0 0 .75rem; }
-            p { color: #555; line-height: 1.6; }
+            *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+            :root{
+              --bg:#0a0a12;--surface:#12121e;--border:#1e1e32;
+              --purple:#7D56F4;--fg:#c8c8d8;--fg-dim:#555570;--fg-muted:#333348;
+              --mono:'SF Mono','Fira Code','Cascadia Code','JetBrains Mono',ui-monospace,monospace;
+            }
+            html,body{height:100%}
+            body{font-family:var(--mono);background:var(--bg);color:var(--fg);
+              display:flex;flex-direction:column;align-items:center;justify-content:center;
+              min-height:100vh;padding:2rem 1.5rem}
+            body::before{content:''';position:fixed;inset:0;
+              background-image:linear-gradient(var(--fg-muted) 1px,transparent 1px),
+                linear-gradient(90deg,var(--fg-muted) 1px,transparent 1px);
+              background-size:48px 48px;opacity:.18;pointer-events:none;z-index:0}
+            main{position:relative;z-index:1;text-align:center;max-width:480px;width:100%}
+            .logo{font-size:clamp(2.5rem,9vw,4rem);font-weight:700;color:var(--purple);letter-spacing:-.03em}
+            .tagline{margin-top:.75rem;font-size:.9rem;color:var(--fg-dim);letter-spacing:.04em}
+            .rule{width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--border) 20%,var(--border) 80%,transparent);margin:2rem 0}
+            .cmd{display:inline-block;background:var(--surface);border:1px solid var(--border);
+              border-radius:6px;padding:.5rem 1.25rem;color:#fff;font-family:var(--mono);font-size:1rem}
+            .hint{margin-top:.75rem;font-size:.75rem;color:var(--fg-dim)}
+            footer{position:relative;z-index:1;margin-top:3rem;font-size:.7rem;color:var(--fg-muted)}
           </style>
         </head>
         <body>
-          <h1>${cfg.domain}</h1>
-          <p>Urbit ships, each running in a dedicated Firecracker microVM.</p>
+        <main>
+          <div class="logo">${cfg.domain}</div>
+          <p class="tagline">Urbit ships — each in a dedicated Firecracker microVM.</p>
+          <div class="rule"></div>
+          <div class="cmd">ssh urbit.sh</div>
+          <p class="hint">Get your planet &nbsp;·&nbsp; No sign-up form required</p>
+        </main>
+        <footer>urbit.sh &nbsp;—&nbsp; calm computing, terminal-first</footer>
         </body>
         </html>` 200
       '';
@@ -170,17 +195,41 @@ in {
           <meta name="viewport" content="width=device-width,initial-scale=1">
           <title>No ship here</title>
           <style>
-            body { font-family: system-ui, sans-serif; max-width: 560px; margin: 5rem auto; padding: 0 1.5rem; color: #888; }
-            h1 { margin: 0 0 .5rem; }
-            p { margin: 0 0 1rem; line-height: 1.5; }
-            .notice { font-size: .9rem; color: #aaa; }
-            code { font-family: ui-monospace, monospace; font-size: .875rem; background: #1a1a1a; color: #e2e2e2; padding: .25rem .5rem; border-radius: 4px; }
+            *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+            :root{
+              --bg:#0a0a12;--surface:#12121e;--border:#1e1e32;
+              --purple:#7D56F4;--fg:#c8c8d8;--fg-dim:#555570;--fg-muted:#333348;
+              --mono:'SF Mono','Fira Code','Cascadia Code','JetBrains Mono',ui-monospace,monospace;
+            }
+            html,body{height:100%}
+            body{font-family:var(--mono);background:var(--bg);color:var(--fg);
+              display:flex;flex-direction:column;align-items:center;justify-content:center;
+              min-height:100vh;padding:2rem 1.5rem}
+            body::before{content:''';position:fixed;inset:0;
+              background-image:linear-gradient(var(--fg-muted) 1px,transparent 1px),
+                linear-gradient(90deg,var(--fg-muted) 1px,transparent 1px);
+              background-size:48px 48px;opacity:.18;pointer-events:none;z-index:0}
+            main{position:relative;z-index:1;text-align:center;max-width:480px;width:100%}
+            .label{font-size:.8rem;color:var(--purple);letter-spacing:.12em;margin-bottom:.75rem}
+            .heading{font-size:clamp(1.8rem,7vw,3rem);font-weight:700;color:var(--fg);letter-spacing:-.03em}
+            .sub{margin-top:.75rem;font-size:.85rem;color:var(--fg-dim);line-height:1.6}
+            .rule{width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--border) 20%,var(--border) 80%,transparent);margin:2rem 0}
+            .cmd{display:inline-block;background:var(--surface);border:1px solid var(--border);
+              border-radius:6px;padding:.5rem 1.25rem;color:#fff;font-family:var(--mono);font-size:1rem}
+            .hint{margin-top:.75rem;font-size:.75rem;color:var(--fg-dim)}
+            footer{position:relative;z-index:1;margin-top:3rem;font-size:.7rem;color:var(--fg-muted)}
           </style>
         </head>
         <body>
-          <h1>No ship here</h1>
-          <p>There is no Urbit ship at this address.</p>
-          <p class="notice">It might just be powered off. If you&rsquo;re the owner of this ship, you can get it running at <code>ssh urbit.sh</code></p>
+        <main>
+          <p class="label">404</p>
+          <div class="heading">No ship here.</div>
+          <p class="sub">There is no Urbit ship at this address.<br>It may be powered off, or not yet provisioned.</p>
+          <div class="rule"></div>
+          <div class="cmd">ssh urbit.sh</div>
+          <p class="hint">Get your own planet &nbsp;·&nbsp; Always-on hosting</p>
+        </main>
+        <footer>urbit.sh &nbsp;—&nbsp; calm computing, terminal-first</footer>
         </body>
         </html>` 404
       '';
