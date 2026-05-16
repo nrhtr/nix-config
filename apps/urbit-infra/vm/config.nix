@@ -82,11 +82,10 @@
         umount "$KEY_MNT"
         exit 1
       fi
-      exec "$VERE" -w "$PIER" -k "$KEYFILE" -d
+      exec "$VERE" -w "$PIER" -k "$KEYFILE" -t
     fi
 
-    "$VERE" -d "$PIER"
-    echo "urbit-run: vere exited with code $?" >&2
+    exec "$VERE" -t "$PIER"
   '';
 in {
   environment.systemPackages = with pkgs; [
