@@ -40,6 +40,12 @@ in {
       description = "Primary domain for ship vhosts (sets SHIP_HOSTNAME).";
     };
 
+    caddyServerName = mkOption {
+      type = types.str;
+      default = "srv0";
+      description = "Caddy server name used when addressing the admin API (sets CADDY_SERVER_NAME).";
+    };
+
     acmeEmail = mkOption {
       type = types.str;
       description = "Email address for ACME/Let's Encrypt certificate registration.";
@@ -83,6 +89,7 @@ in {
         PORT = "${toString cfg.port}";
         URBITS_DIR = cfg.urbitsDir;
         PUBLIC_FRONTEND_URL = "https://urbit-ssh.fly.dev";
+        CADDY_SERVER_NAME = cfg.caddyServerName;
         SHIP_HOSTNAME = cfg.domain;
         VM_KERNEL = "${vmArtifacts.vmlinux}/vmlinux";
         VM_INITRD = "${vmArtifacts.initrd}/initrd";
