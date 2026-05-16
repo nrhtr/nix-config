@@ -90,6 +90,7 @@ in {
         LoadCredential =
           lib.mkIf (cfg.resendApiKeyFile != null)
           "resend-key:${cfg.resendApiKeyFile}";
+        KillMode = "process";
         AmbientCapabilities = ["CAP_NET_ADMIN"];
         CapabilityBoundingSet = ["CAP_NET_ADMIN"];
       };
