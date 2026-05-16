@@ -34,6 +34,12 @@ in {
       description = "Directory containing urbit piers.";
     };
 
+    domain = mkOption {
+      type = types.str;
+      default = "nock.dev";
+      description = "Primary domain for ship vhosts (sets SHIP_HOSTNAME).";
+    };
+
     resendApiKeyFile = mkOption {
       type = types.nullOr types.path;
       default = null;
@@ -71,6 +77,7 @@ in {
         PORT = "${toString cfg.port}";
         URBITS_DIR = cfg.urbitsDir;
         PUBLIC_FRONTEND_URL = "https://urbit-ssh.fly.dev";
+        SHIP_HOSTNAME = cfg.domain;
         VM_KERNEL = "${vmArtifacts.vmlinux}/vmlinux";
         VM_INITRD = "${vmArtifacts.initrd}/initrd";
         VM_ROOTFS = "${vmArtifacts.rootfs}";
