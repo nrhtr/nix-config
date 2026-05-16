@@ -73,9 +73,6 @@
       fi
     fi
 
-    # Clear stale lock from a previous crash before starting.
-    rm -f "$PIER/.vere.lock"
-
     if [ ! -d "$PIER/.urb" ] && [ -b "$KEY_DEV" ]; then
       mkdir -p "$KEY_MNT"
       mount -t ext2 -o ro "$KEY_DEV" "$KEY_MNT"
