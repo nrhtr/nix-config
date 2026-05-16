@@ -69,5 +69,18 @@ in {
     };
 
     networking.firewall.interfaces.wg0.allowedTCPPorts = [cfg.port];
+
+    # IP forwarding and NAT so Firecracker VMs can reach the internet.
+    # The gateway creates/destroys per-VM TAP interfaces named fc-<ship>;
+    # they all fall under the fc-+ wildcard for firewall and NAT purposes.
+    boot.kernel.sysctl."net.ipv4.ip_forward" = 1;
+
+    networking.nat = {
+      enable = true;
+      externalInterface = "eno1";
+      internalInterfaces = ["fc-+"];
+    };
+
+    networking.firewall.trustedInterfaces = ["fc-+"];
   };
 }
