@@ -82,10 +82,10 @@
         umount "$KEY_MNT"
         exit 1
       fi
-      exec "$VERE" -w "$PIER" -k "$KEYFILE"
+      exec "$VERE" -w "$PIER" -k "$KEYFILE" -d
     fi
 
-    exec "$VERE" "$PIER"
+    exec "$VERE" -d "$PIER"
   '';
 in {
   environment.systemPackages = with pkgs; [
