@@ -107,12 +107,19 @@ in {
       };
     };
 
+    # Use reload (not restart) on NixOS deploy so Caddy picks up Caddyfile
+    # changes without discarding the --resume saved state.
+    systemd.services.caddy.reloadIfChanged = true;
+
     networking.firewall.interfaces.wg0.allowedTCPPorts = [cfg.port];
     networking.firewall.allowedTCPPorts = [80 443];
 
     services.caddy = {
       enable = true;
       email = cfg.acmeEmail;
+      # Persist Caddy's config to disk after every API change so dynamically
+      # added ship vhosts survive restarts.
+      resume = true;
 
       # Enable admin API for gateway to add/remove ship vhosts dynamically.
       # on_demand_tls asks the gateway whether to provision a cert for a given
