@@ -105,8 +105,6 @@ in {
         admin localhost:2019
         on_demand_tls {
           ask http://localhost:${toString cfg.port}/tls-ask
-          interval 2m
-          burst 5
         }
       '';
 
