@@ -146,6 +146,10 @@ in {
         </html>` 200
       '';
 
+      virtualHosts."www.${cfg.domain}".extraConfig = ''
+        redir https://${cfg.domain}{uri} permanent
+      '';
+
       # Catch-all HTTPS block: provisions on-demand certs for ship subdomains.
       # Routes added by the gateway via the admin API take precedence.
       # Falls through to this notice page when no ship route is registered.
