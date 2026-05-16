@@ -168,11 +168,15 @@ in {
           <style>
             body { font-family: system-ui, sans-serif; max-width: 560px; margin: 5rem auto; padding: 0 1.5rem; color: #888; }
             h1 { margin: 0 0 .5rem; }
+            p { margin: 0 0 1rem; line-height: 1.5; }
+            .notice { font-size: .9rem; color: #aaa; }
+            code { font-family: ui-monospace, monospace; font-size: .875rem; background: #1a1a1a; color: #e2e2e2; padding: .25rem .5rem; border-radius: 4px; }
           </style>
         </head>
         <body>
           <h1>No ship here</h1>
           <p>There is no Urbit ship at this address.</p>
+          <p class="notice">It might just be powered off. If you&rsquo;re the owner of this ship, you can get it running at <code>ssh urbit.sh</code></p>
         </body>
         </html>` 404
       '';
