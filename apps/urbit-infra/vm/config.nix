@@ -73,6 +73,9 @@
       fi
     fi
 
+    # Clear stale lock from a previous crash before starting.
+    rm -f "$PIER/.vere.lock"
+
     if [ ! -d "$PIER/.urb" ] && [ -b "$KEY_DEV" ]; then
       mkdir -p "$KEY_MNT"
       mount -t ext2 -o ro "$KEY_DEV" "$KEY_MNT"
@@ -82,28 +85,10 @@
         umount "$KEY_MNT"
         exit 1
       fi
-      "$VERE" -w "$PIER" -k "$KEYFILE" -d
-    else
-      "$VERE" -d "$PIER"
+      exec "$VERE" -w "$PIER" -k "$KEYFILE" -d
     fi
 
-    # Urbit daemonises: parent exits and writes PID to /pier/.urb/pid.
-    # Wait for the PID file, then watch the process so runit can detect crashes.
-    ATTEMPTS=0
-    while [ ! -f "$PIER/.urb/pid" ] && [ "$ATTEMPTS" -lt 20 ]; do
-      sleep 0.5
-      ATTEMPTS=$((ATTEMPTS + 1))
-    done
-
-    PID=$(cat "$PIER/.urb/pid" 2>/dev/null)
-    if [ -z "$PID" ]; then
-      echo "urbit-run: PID file not found after daemon start" >&2
-      exit 1
-    fi
-
-    while kill -0 "$PID" 2>/dev/null; do
-      sleep 1
-    done
+    exec "$VERE" -d "$PIER"
   '';
 in {
   environment.systemPackages = with pkgs; [
