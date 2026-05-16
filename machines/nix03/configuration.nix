@@ -97,6 +97,7 @@ in {
   jenga.urbitGateway = {
     enable = true;
     resendApiKeyFile = config.age.secrets.resend-key.path;
+    acmeEmail = "jeremy@jenga.xyz";
   };
 
   time.timeZone = "UTC";

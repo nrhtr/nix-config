@@ -40,6 +40,11 @@ in {
       description = "Primary domain for ship vhosts (sets SHIP_HOSTNAME).";
     };
 
+    acmeEmail = mkOption {
+      type = types.str;
+      description = "Email address for ACME/Let's Encrypt certificate registration.";
+    };
+
     resendApiKeyFile = mkOption {
       type = types.nullOr types.path;
       default = null;
@@ -51,7 +56,8 @@ in {
     systemd.services.urbit-gateway = {
       description = "urbit.sh gateway";
       wantedBy = ["multi-user.target"];
-      after = ["network.target" "wireguard-wg0.service"];
+      after = ["network.target" "wireguard-wg0.service" "caddy.service"];
+      wants = ["caddy.service"];
 
       path = [pkgs.e2fsprogs pkgs.firecracker pkgs.iptables];
 
@@ -86,6 +92,73 @@ in {
     };
 
     networking.firewall.interfaces.wg0.allowedTCPPorts = [cfg.port];
+    networking.firewall.allowedTCPPorts = [80 443];
+
+    services.caddy = {
+      enable = true;
+      email = cfg.acmeEmail;
+
+      # Enable admin API for gateway to add/remove ship vhosts dynamically.
+      # on_demand_tls asks the gateway whether to provision a cert for a given
+      # hostname, preventing cert issuance for arbitrary domains.
+      globalConfig = ''
+        admin localhost:2019
+        on_demand_tls {
+          ask http://localhost:${toString cfg.port}/tls-ask
+          interval 2m
+          burst 5
+        }
+      '';
+
+      virtualHosts.${cfg.domain}.extraConfig = ''
+                encode gzip
+                header Content-Type "text/html; charset=utf-8"
+                respond `<!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width,initial-scale=1">
+          <title>${cfg.domain}</title>
+          <style>
+            body { font-family: system-ui, sans-serif; max-width: 560px; margin: 5rem auto; padding: 0 1.5rem; color: #111; }
+            h1 { margin: 0 0 .75rem; }
+            p { color: #555; line-height: 1.6; }
+          </style>
+        </head>
+        <body>
+          <h1>${cfg.domain}</h1>
+          <p>Urbit ships, each running in a dedicated Firecracker microVM.</p>
+        </body>
+        </html>` 200
+      '';
+
+      # Catch-all HTTPS block: provisions on-demand certs for ship subdomains.
+      # Routes added by the gateway via the admin API take precedence.
+      # Falls through to this notice page when no ship route is registered.
+      virtualHosts.":443".extraConfig = ''
+                tls {
+                  on_demand
+                }
+                encode gzip
+                header Content-Type "text/html; charset=utf-8"
+                respond `<!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width,initial-scale=1">
+          <title>No ship here</title>
+          <style>
+            body { font-family: system-ui, sans-serif; max-width: 560px; margin: 5rem auto; padding: 0 1.5rem; color: #888; }
+            h1 { margin: 0 0 .5rem; }
+          </style>
+        </head>
+        <body>
+          <h1>No ship here</h1>
+          <p>There is no Urbit ship at this address.</p>
+        </body>
+        </html>` 404
+      '';
+    };
 
     environment.systemPackages = [gatewayPkg];
 
