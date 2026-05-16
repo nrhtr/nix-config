@@ -10,6 +10,8 @@
   sources = import ../npins;
   sourcesJson = builtins.fromJSON (builtins.readFile ../npins/sources.json);
 
+  vmArtifacts = import ../apps/urbit-infra/vm;
+
   gatewayPkg = pkgs.buildGoModule {
     pname = "urbit-gateway";
     version = "unstable-${builtins.substring 0 8 sourcesJson.pins."urbit-sh".revision}";
@@ -45,6 +47,8 @@ in {
       wantedBy = ["multi-user.target"];
       after = ["network.target" "wireguard-wg0.service"];
 
+      path = [pkgs.e2fsprogs pkgs.firecracker];
+
       serviceConfig = {
         ExecStart = pkgs.writeShellScript "urbit-gateway" ''
           ${lib.optionalString (cfg.resendApiKeyFile != null) ''
@@ -67,6 +71,10 @@ in {
         PORT = "${toString cfg.port}";
         URBITS_DIR = cfg.urbitsDir;
         PUBLIC_FRONTEND_URL = "https://urbit-ssh.fly.dev";
+        VM_KERNEL = "${vmArtifacts.vmlinux}/vmlinux";
+        VM_INITRD = "${vmArtifacts.initrd}/initrd";
+        VM_ROOTFS = "${vmArtifacts.rootfs}";
+        VM_BOOT_ARGS = "${vmArtifacts.bootArgs}";
       };
     };
 
