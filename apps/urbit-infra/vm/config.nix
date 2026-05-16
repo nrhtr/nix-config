@@ -31,10 +31,21 @@
     #!${pkgs.bash}/bin/bash
     set -e
 
-    URBIT=${pkgs.urbit}/bin/urbit
     PIER=/pier
     KEY_DEV=/dev/vdc
     KEY_MNT=/mnt/keys
+
+    # Prefer the pier's auto-updated vere binary if present.
+    # Layout: /pier/.bin/pace (track name) → /pier/.bin/<pace>/vere-*
+    # Falls back to the rootfs vere for first boot or fresh piers.
+    VERE=${pkgs.urbit}/bin/urbit
+    if [ -f "$PIER/.bin/pace" ]; then
+      PACE=$(cat "$PIER/.bin/pace")
+      PIER_VERE=$(ls "$PIER/.bin/$PACE/vere-"* 2>/dev/null | head -1)
+      if [ -x "$PIER_VERE" ]; then
+        VERE="$PIER_VERE"
+      fi
+    fi
 
     if [ ! -d "$PIER/.urb" ] && [ -b "$KEY_DEV" ]; then
       mkdir -p "$KEY_MNT"
@@ -45,10 +56,10 @@
         umount "$KEY_MNT"
         exit 1
       fi
-      exec "$URBIT" -w "$PIER" -k "$KEYFILE"
+      exec "$VERE" -w "$PIER" -k "$KEYFILE"
     fi
 
-    exec "$URBIT" "$PIER"
+    exec "$VERE" "$PIER"
   '';
 in {
   environment.systemPackages = with pkgs; [
