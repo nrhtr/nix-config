@@ -46,7 +46,7 @@
     if [ "$RESTART" = "no" ]; then
       echo "urbit: exited with restart disabled, shutting down" >&2
       echo 1 > /proc/sys/kernel/sysrq
-      echo o > /proc/sysrq-trigger
+      echo b > /proc/sysrq-trigger
       exit 111
     fi
 
