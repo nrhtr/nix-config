@@ -19,6 +19,7 @@ let
   sources = import ../../../npins;
   nixpkgs = sources.nixpkgs;
   pkgs = import nixpkgs {system = "x86_64-linux";};
+  pkgsUnstable = import sources.nixpkgs-unstable {system = "x86_64-linux";};
   lib = pkgs.lib;
 
   # Firecracker kernel: exact upstream config, vmlinux copied to $out.
@@ -52,6 +53,7 @@ let
       {
         config.nixpkgs.pkgs = pkgs;
         config.nixpkgs.localSystem.system = "x86_64-linux";
+        config._module.args.urbit = pkgsUnstable.urbit;
       }
     ];
   };

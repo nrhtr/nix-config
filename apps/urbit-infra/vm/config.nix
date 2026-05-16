@@ -1,6 +1,10 @@
 # Guest system configuration: packages and /etc entries.
 # Edit this file to change what runs in the Urbit microVM.
-{pkgs, ...}: let
+{
+  pkgs,
+  urbit,
+  ...
+}: let
   # runit stage 1: nothing to do — networking is configured by the kernel via
   # the ip= cmdline parameter (CONFIG_IP_PNP) before userspace starts.
   runit1 = pkgs.writeScript "runit-1" ''
@@ -38,7 +42,7 @@
     # Prefer the pier's auto-updated vere binary if present.
     # Layout: /pier/.bin/pace (track name) → /pier/.bin/<pace>/vere-*
     # Falls back to the rootfs vere for first boot or fresh piers.
-    VERE=${pkgs.urbit}/bin/urbit
+    VERE=${urbit}/bin/urbit
     if [ -f "$PIER/.bin/pace" ]; then
       PACE=$(cat "$PIER/.bin/pace")
       PIER_VERE=$(ls "$PIER/.bin/$PACE/vere-"* 2>/dev/null | head -1)
