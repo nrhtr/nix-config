@@ -107,10 +107,6 @@ in {
       };
     };
 
-    # Use reload (not restart) on NixOS deploy so Caddy picks up Caddyfile
-    # changes without discarding the --resume saved state.
-    systemd.services.caddy.reloadIfChanged = true;
-
     networking.firewall.interfaces.wg0.allowedTCPPorts = [cfg.port];
     networking.firewall.allowedTCPPorts = [80 443];
 
