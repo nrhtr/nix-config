@@ -36,19 +36,7 @@
     KEY_DEV=/dev/vdc
     KEY_MNT=/mnt/keys
 
-    # Parse urbitShip= from kernel cmdline (set by gateway in boot_args).
-    SHIP_NAME=""
-    for o in $(cat /proc/cmdline); do
-      case $o in
-        urbitShip=*) SHIP_NAME="''${o#urbitShip=}" ;;
-      esac
-    done
-
     if [ ! -d "$PIER/.urb" ] && [ -b "$KEY_DEV" ]; then
-      if [ -z "$SHIP_NAME" ]; then
-        echo "urbit-run: first boot but urbitShip= not set on cmdline" >&2
-        exit 1
-      fi
       mkdir -p "$KEY_MNT"
       mount -t ext2 -o ro "$KEY_DEV" "$KEY_MNT"
       KEYFILE=$(find "$KEY_MNT" -maxdepth 1 -name '*.jam' | head -1)
@@ -57,7 +45,7 @@
         umount "$KEY_MNT"
         exit 1
       fi
-      exec "$URBIT" -w "$SHIP_NAME" -k "$KEYFILE" "$PIER"
+      exec "$URBIT" -w "$PIER" -k "$KEYFILE"
     fi
 
     exec "$URBIT" "$PIER"
