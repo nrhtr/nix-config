@@ -47,7 +47,7 @@ in {
       wantedBy = ["multi-user.target"];
       after = ["network.target" "wireguard-wg0.service"];
 
-      path = [pkgs.e2fsprogs pkgs.firecracker];
+      path = [pkgs.e2fsprogs pkgs.firecracker pkgs.iptables];
 
       serviceConfig = {
         ExecStart = pkgs.writeShellScript "urbit-gateway" ''
