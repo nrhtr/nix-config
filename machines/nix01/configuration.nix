@@ -49,6 +49,11 @@
     dnsProvider = "gandiv5";
     credentialsFile = "${config.age.secrets.gandi.path}";
   };
+  security.acme.certs."meals.jenga.xyz" = {
+    group = "nginx";
+    dnsProvider = "gandiv5";
+    credentialsFile = "${config.age.secrets.gandi.path}";
+  };
 
   services.vaultwarden = {
     enable = true;
@@ -59,6 +64,11 @@
       SIGNUPS_ALLOWED = true;
     };
   };
+
+  systemd.tmpfiles.rules = [
+    "d /var/www/boycrisis.net  0755 root root -"
+    "d /var/www/meals.jenga.xyz 0755 root root -"
+  ];
 
   services.nginx = {
     enable = true;
@@ -71,6 +81,13 @@
         forceSSL = true;
         enableACME = true;
         root = "/var/www/boycrisis.net";
+      };
+
+      "meals.jenga.xyz" = {
+        listenAddresses = ["10.100.0.1"];
+        forceSSL = true;
+        useACMEHost = "meals.jenga.xyz";
+        root = "/var/www/meals.jenga.xyz";
       };
 
       "vault.jenga.xyz" = {

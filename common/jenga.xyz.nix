@@ -16,6 +16,7 @@ with dns.lib.combinators; {
     nix02.A = ["10.100.0.6"];
 
     vault.CNAME = ["nix01.jenga.xyz."];
+    meals.CNAME = ["nix01.jenga.xyz."];
 
     git.CNAME = ["nix02.jenga.xyz."];
     actual.CNAME = ["nix02.jenga.xyz."];
