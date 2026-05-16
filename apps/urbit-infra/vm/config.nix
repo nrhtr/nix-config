@@ -85,7 +85,8 @@
       exec "$VERE" -w "$PIER" -k "$KEYFILE" -d
     fi
 
-    exec "$VERE" -d "$PIER"
+    "$VERE" -d "$PIER"
+    echo "urbit-run: vere exited with code $?" >&2
   '';
 in {
   environment.systemPackages = with pkgs; [
