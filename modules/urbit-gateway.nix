@@ -58,7 +58,7 @@ in {
         '';
         Restart = "on-failure";
         DynamicUser = true;
-        StateDirectory = "urbit-gateway";
+        StateDirectory = "urbit-gateway urbit-vms";
         WorkingDirectory = "%S/urbit-gateway";
         LoadCredential =
           lib.mkIf (cfg.resendApiKeyFile != null)
