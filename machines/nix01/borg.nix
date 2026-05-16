@@ -4,7 +4,7 @@
     repoName = "nix01";
     heartbeatEndpoint = "backups_nix01";
     paths = [
-      "/var/www/boycrisis.net"
+      "/var/www" # boycrisis, meals, etc.
       "/var/lib/bitwarden_rs"
     ];
     readWritePaths = ["/var/lib/bitwarden_rs"];
