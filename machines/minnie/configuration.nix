@@ -51,17 +51,15 @@
 
   jenga.remoteBuilder.client = {
     enable = true;
-    sshKey = "/var/root/.ssh/id_ed25519";
-    speedFactor = 12;
+    builders = [
+      {
+        hostName = "nix03";
+        sshAddress = "10.100.0.8";
+        sshKey = "/var/root/.ssh/id_ed25519";
+        speedFactor = 12;
+      }
+    ];
   };
-
-  environment.etc."ssh/ssh_config.d/nix03-builder.conf".text = ''
-    Host nix03
-      Hostname 10.100.0.8
-      Port 22
-      IdentityFile /var/root/.ssh/id_ed25519
-      StrictHostKeyChecking accept-new
-  '';
 
   nix.extraOptions =
     ''

@@ -77,8 +77,14 @@
 
   jenga.remoteBuilder.client = {
     enable = true;
-    sshKey = "/root/.ssh/id_ed25519";
-    speedFactor = 8;
+    builders = [
+      {
+        hostName = "nix03";
+        sshAddress = "10.100.0.8";
+        sshKey = "/root/.ssh/id_ed25519";
+        speedFactor = 8;
+      }
+    ];
   };
 
   virtualisation.docker.enable = true;
@@ -170,13 +176,6 @@
 
   # Disable the OpenSSH server.
   services.openssh.enable = false;
-
-  programs.ssh.extraConfig = ''
-    Host nix03
-      Hostname 10.100.0.8
-      Port 22
-      StrictHostKeyChecking accept-new
-  '';
 
   system.stateVersion = "22.05";
 

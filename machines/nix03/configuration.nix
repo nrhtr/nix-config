@@ -81,13 +81,7 @@ in {
 
   users.users.root.openssh.authorizedKeys.keys = authKeys;
 
-  jenga.remoteBuilder.server = {
-    enable = true;
-    authorizedBuilderKeys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINvB0TRd3YN3/aQUCC+lNivZ6pRe8iWfX0+SZdRfKDhO root@thinkpad"
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIM/7jyd975XBaZXTP7LzYGvecE3Hk6dJEWy9miWNzYH1 root@minnie"
-    ];
-  };
+  jenga.remoteBuilder.server.enable = true;
 
   age.identityPaths = ["/etc/ssh/ssh_host_ed25519_key"];
   age.secrets.fastmail-nix02.file = ../../secrets/fastmail-nix02.age;
