@@ -54,6 +54,7 @@ in {
   environment.systemPackages = with pkgs; [
     bash
     coreutils
+    util-linux
     runit
     urbit
   ];

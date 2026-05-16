@@ -42,16 +42,12 @@
   '';
 
   # Stage 2: PID 1 after switch_root.
-  # Reads systemConfig from the kernel cmdline (same as stage 1) so we avoid
-  # any @VAR@ substitution — pkgs.substituteAll was removed in nixos-25.11.
+  # @systemConfig@ is substituted with the toplevel store path at build time
+  # (see system.build.toplevel below), so PATH is available immediately —
+  # before /proc is mounted and before any shell builtins are needed.
   bootStage2 = pkgs.writeScript "stage2-init" ''
     #!${pkgs.runtimeShell}
-
-    for o in $(cat /proc/cmdline); do
-      case $o in
-        systemConfig=*) sysconfig="''${o#systemConfig=}" ;;
-      esac
-    done
+    export PATH=@systemConfig@/sw/bin
 
     mkdir -p /proc /sys /dev /tmp /var/log /etc /root /run /nix/var/nix/gcroots
     mount -t proc proc /proc
@@ -62,9 +58,7 @@
     mount -t tmpfs tmpfs /run
     mount -t tmpfs tmpfs /dev/shm
 
-    export PATH=$sysconfig/sw/bin
-
-    $sysconfig/activate
+    @systemConfig@/activate
 
     exec runit
   '';
