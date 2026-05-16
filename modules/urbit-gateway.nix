@@ -187,6 +187,63 @@ in {
                   on_demand
                 }
                 encode gzip
+
+                # When a ship route is matched but the upstream isn't yet accepting
+                # connections (still booting), reverse_proxy emits a 502/504. Serve
+                # a friendly maintenance page with auto-refresh instead of the raw
+                # error. handle_errors compiles to server-level errors.routes, so it
+                # covers dynamically added ship routes as well as this block.
+                handle_errors 502 504 {
+                  header Content-Type "text/html; charset=utf-8"
+                  header Retry-After "10"
+                  respond `<!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width,initial-scale=1">
+          <meta http-equiv="refresh" content="8">
+          <title>Ship starting…</title>
+          <style>
+            *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+            :root{
+              --bg:#0a0a12;--surface:#12121e;--border:#1e1e32;
+              --purple:#7D56F4;--fg:#c8c8d8;--fg-dim:#555570;--fg-muted:#333348;
+              --mono:'SF Mono','Fira Code','Cascadia Code','JetBrains Mono',ui-monospace,monospace;
+            }
+            html,body{height:100%}
+            body{font-family:var(--mono);background:var(--bg);color:var(--fg);
+              display:flex;flex-direction:column;align-items:center;justify-content:center;
+              min-height:100vh;padding:2rem 1.5rem}
+            body::before{content:''';position:fixed;inset:0;
+              background-image:linear-gradient(var(--fg-muted) 1px,transparent 1px),
+                linear-gradient(90deg,var(--fg-muted) 1px,transparent 1px);
+              background-size:48px 48px;opacity:.18;pointer-events:none;z-index:0}
+            main{position:relative;z-index:1;text-align:center;max-width:480px;width:100%}
+            .label{font-size:.8rem;color:var(--purple);letter-spacing:.12em;margin-bottom:.75rem}
+            .heading{font-size:clamp(1.8rem,7vw,3rem);font-weight:700;color:var(--fg);letter-spacing:-.03em}
+            .sub{margin-top:.75rem;font-size:.85rem;color:var(--fg-dim);line-height:1.6}
+            .rule{width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--border) 20%,var(--border) 80%,transparent);margin:2rem 0}
+            @keyframes spin{to{transform:rotate(360deg)}}
+            .spinner{display:inline-block;width:1.1em;height:1.1em;border:2px solid var(--border);
+              border-top-color:var(--purple);border-radius:50%;animation:spin .9s linear infinite;
+              vertical-align:middle;margin-right:.4em}
+            .refresh{font-size:.75rem;color:var(--fg-muted);margin-top:1.25rem}
+            footer{position:relative;z-index:1;margin-top:3rem;font-size:.7rem;color:var(--fg-muted)}
+          </style>
+        </head>
+        <body>
+        <main>
+          <p class="label">starting up</p>
+          <div class="heading">Your ship is booting.</div>
+          <p class="sub">The Urbit VM is coming online.<br>This usually takes a few seconds.</p>
+          <div class="rule"></div>
+          <p class="refresh"><span class="spinner"></span>This page will refresh automatically.</p>
+        </main>
+        <footer>urbit.sh &nbsp;—&nbsp; calm computing, terminal-first</footer>
+        </body>
+        </html>` 503
+                }
+
                 header Content-Type "text/html; charset=utf-8"
                 respond `<!DOCTYPE html>
         <html lang="en">
