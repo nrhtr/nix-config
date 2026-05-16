@@ -59,6 +59,13 @@ in {
   };
 
   config = mkIf cfg.enable {
+    users.groups.urbit-gateway = {};
+    users.users.urbit-gateway = {
+      isSystemUser = true;
+      group = "urbit-gateway";
+      extraGroups = ["kvm"];
+    };
+
     systemd.services.urbit-gateway = {
       description = "urbit.sh gateway";
       wantedBy = ["multi-user.target"];
@@ -75,8 +82,10 @@ in {
           exec ${gatewayPkg}/bin/gateway
         '';
         Restart = "on-failure";
-        DynamicUser = true;
+        User = "urbit-gateway";
+        Group = "urbit-gateway";
         StateDirectory = "urbit-gateway urbit-vms";
+        StateDirectoryMode = "0750";
         WorkingDirectory = "%S/urbit-gateway";
         LoadCredential =
           lib.mkIf (cfg.resendApiKeyFile != null)
