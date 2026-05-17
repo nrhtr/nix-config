@@ -17,7 +17,7 @@
     version = "unstable-${builtins.substring 0 8 sourcesJson.pins."urbit-sh".revision}";
     src = sources."urbit-sh";
     subPackages = ["cmd/gateway" "cmd/fcboot"];
-    vendorHash = "sha256-0H643eZCu8G/rP1694MKkwm3d/UVnxQ4aV1SKHpr3xs=";
+    vendorHash = "sha256-E+EMnSLQ2ykD1gEQftQmPSrQPuFS7BFdmOed1gsm3lU=";
   };
 in {
   options.jenga.urbitGateway = {
