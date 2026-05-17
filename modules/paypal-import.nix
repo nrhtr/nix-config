@@ -67,10 +67,12 @@ in {
   };
 
   config = mkIf cfg.enable {
+    users.groups.actual-import = {};
     users.groups.paypal-import = {};
     users.users.paypal-import = {
       isSystemUser = true;
       group = "paypal-import";
+      extraGroups = ["actual-import"];
     };
 
     systemd.tmpfiles.rules = [

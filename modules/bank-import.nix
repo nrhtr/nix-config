@@ -56,10 +56,12 @@ in {
   };
 
   config = mkIf cfg.enable {
+    users.groups.actual-import = {};
     users.groups.bank-import = {};
     users.users.bank-import = {
       isSystemUser = true;
       group = "bank-import";
+      extraGroups = ["actual-import"];
     };
 
     systemd.tmpfiles.rules = [

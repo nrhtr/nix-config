@@ -117,7 +117,7 @@ in {
     };
     actual-password = {
       file = ../../secrets/actual-password.age;
-      group = "paypal-import";
+      group = "actual-import";
       mode = "0440";
     };
   };
