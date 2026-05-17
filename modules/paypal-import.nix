@@ -73,6 +73,10 @@ in {
       group = "paypal-import";
     };
 
+    systemd.tmpfiles.rules = [
+      "d ${cfg.inboxDir} 0700 paypal-import paypal-import -"
+    ];
+
     systemd.services.paypal-import = {
       description = "Import PayPal CSV into Actual Budget";
       after = ["network.target"];

@@ -62,6 +62,10 @@ in {
       group = "bank-import";
     };
 
+    systemd.tmpfiles.rules = [
+      "d ${cfg.inboxDir} 0700 bank-import bank-import -"
+    ];
+
     systemd.services.bank-import = {
       description = "Import ME Bank PDF statement into Actual Budget";
       after = ["network.target"];
