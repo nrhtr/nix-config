@@ -6,6 +6,7 @@
     startAt = "hourly";
     paths = [
       "/var/lib/minecraft/world"
+      "/var/lib/immich"
       "/tmp/borg-git-bundles"
     ];
     preHook = ''
