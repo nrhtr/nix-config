@@ -92,6 +92,7 @@ in {
     ../../modules/disk-health.nix
     ../../modules/boot-alerts.nix
     ../../modules/paypal-import.nix
+    ../../modules/bank-import.nix
   ];
 
   age.secrets = {
@@ -221,6 +222,14 @@ in {
   };
 
   jenga.bootAlerts.enable = true;
+
+  jenga.bankImport = {
+    enable = true;
+    actualServerUrl = "https://actual.jenga.xyz";
+    actualSyncId = "af24af5e-b26c-4460-90c3-2d0374c7719a";
+    actualPasswordFile = config.age.secrets.actual-password.path;
+    accountName = "SpendME";
+  };
 
   jenga.paypalImport = {
     enable = true;

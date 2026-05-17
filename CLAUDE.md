@@ -57,7 +57,7 @@ agenix -e secrets/wifi.age -i ~/.ssh/id_ed25519
 - `home/` — Home Manager modules loaded by `home/all.nix`: terminal (fish, direnv), desktop (sway, waybar, foot), colours (nix-colors/dracula), gpg, ssh, nvim, borg.
 - `modules/` — Custom NixOS service modules (genesis ColdC, gitleaks pre-commit, sonata, websockify).
 - `packages/` — Custom Nix derivations (gitleaks, jsonfui, silk-guardian, darktable, obsidian, genesis, minecraft-overviewer).
-- `deploy/all.nix` — Morph network file; targets nix01 and nix02. Pinned to nixos-23.05.
+- `deploy/all.nix` — Morph network file; targets nix01 and nix02. nixpkgs version is managed via npins — check `npins/sources.json` for the current pin.
 - `secrets/` — Agenix-encrypted `.age` files. `secrets/secrets.nix` declares which public keys can decrypt each secret.
 - `jobs/` — Nomad job files.
 

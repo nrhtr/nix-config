@@ -27,6 +27,8 @@ in
         agenix
         colmena
         npins
+        nodejs
+        poppler-utils
         prek
         gen-wg-conf
         push-monitor

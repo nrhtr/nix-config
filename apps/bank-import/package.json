@@ -1,0 +1,9 @@
+{
+  "name": "bank-import",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "bank-import.mjs",
+  "dependencies": {
+    "@actual-app/api": "*"
+  }
+}

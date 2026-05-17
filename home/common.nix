@@ -35,6 +35,7 @@
       gopass.body = "printf 'Deprecated: use rbw instead. To override: command gopass\\n'; return 1";
       pass.body = "printf 'Deprecated: use rbw instead. To override: command pass\\n'; return 1";
       import-paypal.body = "scp $argv root@nix02:/var/lib/paypal-import/inbox/";
+      import-bank.body = "scp $argv root@nix02:/var/lib/bank-import/inbox/";
     };
   };
 
