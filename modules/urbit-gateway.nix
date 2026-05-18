@@ -98,7 +98,7 @@ in {
       environment = {
         PORT = "${toString cfg.port}";
         URBITS_DIR = cfg.urbitsDir;
-        PUBLIC_FRONTEND_URL = "https://urbit-ssh.fly.dev";
+        PUBLIC_FRONTEND_URL = "https://urbit.sh";
         CADDY_SERVER_NAME = cfg.caddyServerName;
         WEB_DOMAIN = cfg.domain;
         VM_KERNEL = "${vmArtifacts.vmlinux}/vmlinux";
