@@ -37,7 +37,7 @@ in {
     domain = mkOption {
       type = types.str;
       default = "nock.dev";
-      description = "Primary domain for ship vhosts (sets SHIP_HOSTNAME).";
+      description = "Primary domain for ship vhosts (sets WEB_DOMAIN).";
     };
 
     caddyServerName = mkOption {
@@ -100,7 +100,7 @@ in {
         URBITS_DIR = cfg.urbitsDir;
         PUBLIC_FRONTEND_URL = "https://urbit-ssh.fly.dev";
         CADDY_SERVER_NAME = cfg.caddyServerName;
-        SHIP_HOSTNAME = cfg.domain;
+        WEB_DOMAIN = cfg.domain;
         VM_KERNEL = "${vmArtifacts.vmlinux}/vmlinux";
         VM_INITRD = "${vmArtifacts.initrd}/initrd";
         VM_ROOTFS = "${vmArtifacts.rootfs}";
