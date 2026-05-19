@@ -8,7 +8,6 @@ const SERVER_URL       = process.env.ACTUAL_SERVER_URL;
 const SYNC_ID          = process.env.ACTUAL_SYNC_ID;
 const PASSWORD         = readFileSync(process.env.ACTUAL_PASSWORD_FILE, 'utf8').trim();
 const AUD_ACCOUNT_NAME = process.env.PAYPAL_AUD_ACCOUNT ?? process.env.ACCOUNT_NAME ?? 'PayPal AUD';
-const USD_ACCOUNT_NAME = process.env.PAYPAL_USD_ACCOUNT; // optional; USD rows skipped if unset
 const INBOX_DIR        = process.env.INBOX_DIR;
 const DONE_DIR         = join(INBOX_DIR, '..', 'done');
 const DATA_DIR         = join(INBOX_DIR, '..', 'actual-data');
@@ -25,7 +24,12 @@ function parseDate(str) {
   return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
 }
 
-// Returns { audTxns, usdTxns } — each a list ready for importTransactions.
+// Returns AUD transactions ready for importTransactions.
+//
+// Currency conversion events produce two rows at the same timestamp: an AUD
+// debit and a USD payment that carries the real payee name. We index payees
+// from USD payment rows by timestamp so they can be applied to the matching
+// AUD conversion row — giving the AUD account correct amounts AND payees.
 function toTransactions(csvContent) {
   const rows = parse(csvContent, {
     columns: header => header.map(h => h.trim()),
@@ -35,46 +39,45 @@ function toTransactions(csvContent) {
   });
   if (rows.length > 0) console.log('  CSV columns:', Object.keys(rows[0]).join(', '));
 
-  const audTxns = [];
-  const usdTxns = [];
   const skipped = [];
 
-  for (const r of rows) {
+  const active = rows.filter(r => {
     const id = r['Transaction ID'];
-
     if (r['Status'] !== 'Completed') {
       skipped.push(`${id} (status: ${r['Status']})`);
-      continue;
+      return false;
     }
     // Bank funding — tracked on the bank account side, not here.
     if (r['Type'] === 'Transfer to PayPal account') {
       skipped.push(`${id} (bank transfer)`);
-      continue;
+      return false;
     }
+    return true;
+  });
 
-    const currency = r['Currency'];
-    const notes = [r['Type'], r['Item Title']].filter(Boolean).join(' – ') || undefined;
-
-    const txn = {
-      date:        parseDate(r['Date']),
-      amount:      parseAmount(r['Amount']),
-      payee_name:  r['Name'] || undefined,
-      notes,
-      imported_id: id,
-      cleared:     true,
-    };
-
-    if (currency === 'AUD') {
-      audTxns.push(txn);
-    } else if (currency === 'USD') {
-      usdTxns.push(txn);
-    } else {
-      skipped.push(`${id} (currency: ${currency})`);
+  // Index payees from USD payment rows by timestamp.
+  // "General Currency Conversion" rows have no payee; the real merchant name
+  // lives on the accompanying USD payment row at the same timestamp.
+  const payeeByTimestamp = new Map();
+  for (const r of active) {
+    if (r['Currency'] === 'USD' && r['Name'] && r['Type'] !== 'General Currency Conversion') {
+      payeeByTimestamp.set(`${r['Date']}|${r['Time']}`, r['Name']);
     }
   }
 
+  const audTxns = active
+    .filter(r => r['Currency'] === 'AUD')
+    .map(r => ({
+      date:        parseDate(r['Date']),
+      amount:      parseAmount(r['Amount']),
+      payee_name:  r['Name'] || payeeByTimestamp.get(`${r['Date']}|${r['Time']}`) || undefined,
+      notes:       [r['Type'], r['Item Title']].filter(Boolean).join(' – ') || undefined,
+      imported_id: r['Transaction ID'],
+      cleared:     true,
+    }));
+
   if (skipped.length) console.log(`  Skipped ${skipped.length}:`, skipped.join(', '));
-  return { audTxns, usdTxns };
+  return audTxns;
 }
 
 async function main() {
@@ -91,33 +94,19 @@ async function main() {
   await api.downloadBudget(SYNC_ID);
 
   const accounts = await api.getAccounts();
-  const findAccount = name => {
-    const a = accounts.find(a => a.name === name);
-    if (!a) throw new Error(`Account "${name}" not found. Available: ${accounts.map(a => a.name).join(', ')}`);
-    return a;
-  };
-
-  const audAccount = findAccount(AUD_ACCOUNT_NAME);
-  const usdAccount = USD_ACCOUNT_NAME ? findAccount(USD_ACCOUNT_NAME) : null;
+  const account = accounts.find(a => a.name === AUD_ACCOUNT_NAME);
+  if (!account) throw new Error(`Account "${AUD_ACCOUNT_NAME}" not found. Available: ${accounts.map(a => a.name).join(', ')}`);
 
   for (const file of csvFiles) {
     const filePath = join(INBOX_DIR, file);
     console.log(`Processing ${file}...`);
 
-    const { audTxns, usdTxns } = toTransactions(readFileSync(filePath, 'utf8'));
+    const txns = toTransactions(readFileSync(filePath, 'utf8'));
+    console.log(`  ${txns.length} AUD transactions to import`);
 
-    if (audTxns.length > 0) {
-      const r = await api.importTransactions(audAccount.id, audTxns, { defaultCleared: true });
-      console.log(`  AUD (${AUD_ACCOUNT_NAME}): added ${r.added}, updated ${r.updated}`);
-    }
-
-    if (usdTxns.length > 0) {
-      if (usdAccount) {
-        const r = await api.importTransactions(usdAccount.id, usdTxns, { defaultCleared: true });
-        console.log(`  USD (${USD_ACCOUNT_NAME}): added ${r.added}, updated ${r.updated}`);
-      } else {
-        console.log(`  USD: ${usdTxns.length} transactions not imported (set PAYPAL_USD_ACCOUNT to enable)`);
-      }
+    if (txns.length > 0) {
+      const r = await api.importTransactions(account.id, txns, { defaultCleared: true });
+      console.log(`  Added: ${r.added}, Updated: ${r.updated}`);
     }
 
     renameSync(filePath, join(DONE_DIR, file));
