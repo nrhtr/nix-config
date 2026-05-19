@@ -28,8 +28,8 @@ in {
 
     accountName = mkOption {
       type = types.str;
-      default = "Paypal AUD";
-      description = "Actual Budget account name to import AUD PayPal transactions into.";
+      default = "Paypal";
+      description = "Actual Budget account name to import PayPal transactions into.";
     };
 
     dateFormat = mkOption {

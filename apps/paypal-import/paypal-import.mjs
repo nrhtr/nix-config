@@ -7,7 +7,7 @@ import { join } from 'node:path';
 const SERVER_URL       = process.env.ACTUAL_SERVER_URL;
 const SYNC_ID          = process.env.ACTUAL_SYNC_ID;
 const PASSWORD         = readFileSync(process.env.ACTUAL_PASSWORD_FILE, 'utf8').trim();
-const AUD_ACCOUNT_NAME = process.env.PAYPAL_AUD_ACCOUNT ?? process.env.ACCOUNT_NAME ?? 'PayPal AUD';
+const ACCOUNT_NAME = process.env.PAYPAL_AUD_ACCOUNT ?? process.env.ACCOUNT_NAME ?? 'Paypal';
 const INBOX_DIR        = process.env.INBOX_DIR;
 const DONE_DIR         = join(INBOX_DIR, '..', 'done');
 const DATA_DIR         = join(INBOX_DIR, '..', 'actual-data');
@@ -94,8 +94,8 @@ async function main() {
   await api.downloadBudget(SYNC_ID);
 
   const accounts = await api.getAccounts();
-  const account = accounts.find(a => a.name === AUD_ACCOUNT_NAME);
-  if (!account) throw new Error(`Account "${AUD_ACCOUNT_NAME}" not found. Available: ${accounts.map(a => a.name).join(', ')}`);
+  const account = accounts.find(a => a.name === ACCOUNT_NAME);
+  if (!account) throw new Error(`Account "${ACCOUNT_NAME}" not found. Available: ${accounts.map(a => a.name).join(', ')}`);
 
   for (const file of csvFiles) {
     const filePath = join(INBOX_DIR, file);
