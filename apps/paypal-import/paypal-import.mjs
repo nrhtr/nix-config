@@ -109,8 +109,12 @@ async function main() {
       console.log(`  Added: ${r.added}, Updated: ${r.updated}`);
     }
 
-    renameSync(filePath, join(DONE_DIR, file));
-    console.log(`  Moved to done/`);
+    const stamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+    const ext = file.lastIndexOf('.') !== -1 ? file.slice(file.lastIndexOf('.')) : '';
+    const base = file.slice(0, file.length - ext.length);
+    const dstName = `${base}_${stamp}${ext}`;
+    renameSync(filePath, join(DONE_DIR, dstName));
+    console.log(`  Moved to done/${dstName}`);
   }
 
   await api.shutdown();
