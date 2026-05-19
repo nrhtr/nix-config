@@ -71,7 +71,7 @@ function toTransactions(csvContent) {
       date:        parseDate(r['Date']),
       amount:      parseAmount(r['Amount']),
       payee_name:  r['Name'] || payeeByTimestamp.get(`${r['Date']}|${r['Time']}`) || undefined,
-      notes:       [r['Type'], r['Item Title']].filter(Boolean).join(' – ') || undefined,
+      notes:       [r['Type'], r['Item Title'], r['Transaction ID']].filter(Boolean).join(' – ') || undefined,
       imported_id: r['Transaction ID'],
       cleared:     true,
     }));
