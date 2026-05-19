@@ -26,16 +26,16 @@ in {
   options.jenga.paypalImport = {
     enable = mkEnableOption "PayPal CSV → Actual Budget importer";
 
-    accountName = mkOption {
+    audAccountName = mkOption {
       type = types.str;
-      default = "Paypal";
-      description = "Name of the Actual Budget account to import into.";
+      default = "Paypal AUD";
+      description = "Actual Budget account name for AUD PayPal transactions.";
     };
 
-    currency = mkOption {
+    usdAccountName = mkOption {
       type = types.str;
-      default = "AUD";
-      description = "Only import rows with this currency; skip others.";
+      default = "Paypal USD";
+      description = "Actual Budget account name for USD PayPal transactions.";
     };
 
     dateFormat = mkOption {
@@ -96,8 +96,8 @@ in {
         ACTUAL_SERVER_URL = cfg.actualServerUrl;
         ACTUAL_SYNC_ID = cfg.actualSyncId;
         ACTUAL_PASSWORD_FILE = cfg.actualPasswordFile;
-        ACCOUNT_NAME = cfg.accountName;
-        CURRENCY = cfg.currency;
+        PAYPAL_AUD_ACCOUNT = cfg.audAccountName;
+        PAYPAL_USD_ACCOUNT = cfg.usdAccountName;
         DATE_FORMAT = cfg.dateFormat;
         INBOX_DIR = cfg.inboxDir;
       };
