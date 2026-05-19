@@ -57,10 +57,10 @@ function toTransactions(csvContent) {
 
   // Index payees from USD payment rows by timestamp.
   // "General Currency Conversion" rows have no payee; the real merchant name
-  // lives on the accompanying USD payment row at the same timestamp.
+  // lives on the accompanying foreign-currency payment row at the same timestamp.
   const payeeByTimestamp = new Map();
   for (const r of active) {
-    if (r['Currency'] === 'USD' && r['Name'] && r['Type'] !== 'General Currency Conversion') {
+    if (r['Currency'] !== 'AUD' && r['Name'] && r['Type'] !== 'General Currency Conversion') {
       payeeByTimestamp.set(`${r['Date']}|${r['Time']}`, r['Name']);
     }
   }
