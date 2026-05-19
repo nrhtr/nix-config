@@ -90,7 +90,7 @@ in {
         ACTUAL_SERVER_URL = cfg.actualServerUrl;
         ACTUAL_SYNC_ID = cfg.actualSyncId;
         ACTUAL_PASSWORD_FILE = cfg.actualPasswordFile;
-        PAYPAL_AUD_ACCOUNT = cfg.accountName;
+        ACCOUNT_NAME = cfg.accountName;
         DATE_FORMAT = cfg.dateFormat;
         INBOX_DIR = cfg.inboxDir;
       };

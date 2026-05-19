@@ -236,7 +236,7 @@ in {
     actualServerUrl = "https://actual.jenga.xyz";
     actualSyncId = "af24af5e-b26c-4460-90c3-2d0374c7719a";
     actualPasswordFile = config.age.secrets.actual-password.path;
-    accountName = "Paypal AUD";
+    accountName = "Paypal";
   };
 
   virtualisation.podman.enable = true;

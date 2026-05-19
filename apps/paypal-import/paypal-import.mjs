@@ -7,7 +7,7 @@ import { join } from 'node:path';
 const SERVER_URL       = process.env.ACTUAL_SERVER_URL;
 const SYNC_ID          = process.env.ACTUAL_SYNC_ID;
 const PASSWORD         = readFileSync(process.env.ACTUAL_PASSWORD_FILE, 'utf8').trim();
-const ACCOUNT_NAME = process.env.PAYPAL_AUD_ACCOUNT ?? process.env.ACCOUNT_NAME ?? 'Paypal';
+const ACCOUNT_NAME     = process.env.ACCOUNT_NAME ?? 'Paypal';
 const INBOX_DIR        = process.env.INBOX_DIR;
 const DONE_DIR         = join(INBOX_DIR, '..', 'done');
 const DATA_DIR         = join(INBOX_DIR, '..', 'actual-data');
