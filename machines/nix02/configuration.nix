@@ -68,7 +68,7 @@
           echo "Invalid repository path." >&2
           exit 1
         fi
-        [[ -d "$repo" ]] || ${pkgs.git}/bin/git init --bare "$repo" >&2
+        [[ -d "$repo" ]] || ${pkgs.git}/bin/git init --bare -b main "$repo" >&2
       fi
       exec ${pkgs.git}/bin/git-shell -c "$cmd"
     ''
