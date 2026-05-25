@@ -302,6 +302,7 @@ in {
     package = pkgs.keebsig;
     port = 8091;
     environmentFile = config.age.secrets.keebsig-env.path;
+    siteUrl = "https://keebsig.jenga.dev";
   };
 
   services.actual = {
