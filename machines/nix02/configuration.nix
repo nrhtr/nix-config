@@ -85,6 +85,7 @@ in {
     ../../common/shared.nix
     ../../common/wg-hosts.nix
     ../../modules/genesis.nix
+    "${sources.keebsig}/nix/module.nix"
     # override module using python 2 package
     ../../modules/websockify.nix
     ../../modules/git-mirror.nix
@@ -104,6 +105,7 @@ in {
     twilio-env.file = ../../secrets/twilio-env.age;
     gandi.file = ../../secrets/gandi.age;
     kbfirmware-env.file = ../../secrets/kbfirmware-env.age;
+    keebsig-env.file = ../../secrets/keebsig-env.age;
     spruce-env.file = ../../secrets/spruce-env.age;
     kbfirmware-xyz-key = {
       file = ../../secrets/kbfirmware-xyz-key.age;
@@ -156,6 +158,7 @@ in {
   nixpkgs.overlays = [
     (self: super: {
       genesis = self.callPackage ./../../packages/genesis/default.nix {};
+      keebsig = self.callPackage "${sources.keebsig}/nix/package.nix" {};
       kbfirmware = self.callPackage ./../../packages/kbfirmware/default.nix {};
       spruce = let
         pkgs-unstable = import (import ../../npins).nixpkgs-unstable {
@@ -292,6 +295,13 @@ in {
       dnsProvider = "gandiv5";
       credentialsFile = "${config.age.secrets.gandi.path}";
     };
+  };
+
+  services.keebsig = {
+    enable = true;
+    package = pkgs.keebsig;
+    port = 8091;
+    environmentFile = config.age.secrets.keebsig-env.path;
   };
 
   services.actual = {
@@ -598,6 +608,15 @@ in {
         sslCertificateKey = config.age.secrets.jenga-dev-key.path;
         locations."/" = {
           return = "301 https://kbfirmware.xyz$request_uri";
+        };
+      };
+      "keebsig.jenga.dev" = {
+        listenAddresses = [ipv4.address "10.100.0.6"];
+        forceSSL = true;
+        sslCertificate = ../../secrets/jenga.dev.cert;
+        sslCertificateKey = config.age.secrets.jenga-dev-key.path;
+        locations."/" = {
+          proxyPass = "http://127.0.0.1:8091/";
         };
       };
       "www.kbfirmware.xyz" = {

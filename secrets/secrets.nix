@@ -22,6 +22,7 @@ in {
   "fastmail-nix02.age".publicKeys = all;
   "gandi.age".publicKeys = all;
   "kbfirmware-env.age".publicKeys = all;
+  "keebsig-env.age".publicKeys = all;
   "kbfirmware-xyz-key.age".publicKeys = all;
   "jenga-dev-key.age".publicKeys = all;
   "spruce-env.age".publicKeys = all;
