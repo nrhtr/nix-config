@@ -7,6 +7,10 @@
   sources = import ../npins;
   agenix = sources.agenix;
   sshKeys = import ./ssh-keys.nix;
+  ghostty-terminfo = pkgs.runCommand "ghostty-terminfo" {} ''
+    mkdir -p $out/share/terminfo
+    cp -r ${pkgs.ghostty}/share/terminfo/. $out/share/terminfo/
+  '';
 in {
   imports = [
     "${agenix}/modules/age.nix"
@@ -14,6 +18,7 @@ in {
   ];
 
   environment.systemPackages = with pkgs; [
+    ghostty-terminfo
     screen
     vim
     git
