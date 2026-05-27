@@ -307,7 +307,7 @@ in {
     environmentFile = config.age.secrets.keebsig-env.path;
     siteUrl = "https://keebsig.jenga.dev";
     adminEmail = "jeremy@jenga.xyz";
-    adminAllowedIps = [wgIp];
+    adminAllowedIPs = [wgIp];
   };
 
   services.actual = {
