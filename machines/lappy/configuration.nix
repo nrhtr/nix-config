@@ -4,7 +4,9 @@
   fetchFromGitHub,
   lib,
   ...
-}: {
+}: let
+  wgNodes = import ./../../common/wg-nodes.nix;
+in {
   imports = [
     ./hardware-configuration.nix
     <home-manager/nixos>
@@ -80,7 +82,7 @@
     builders = [
       {
         hostName = "nix03";
-        sshAddress = "10.100.0.8";
+        sshAddress = wgNodes.nix03.ip;
         sshKey = "/root/.ssh/id_ed25519";
         speedFactor = 8;
       }

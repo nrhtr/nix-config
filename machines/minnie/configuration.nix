@@ -54,7 +54,7 @@
     builders = [
       {
         hostName = "nix03";
-        sshAddress = "10.100.0.8";
+        sshAddress = (import ../../common/wg-nodes.nix).nix03.ip;
         sshKey = "/var/root/.ssh/id_ed25519";
         speedFactor = 12;
       }

@@ -19,6 +19,7 @@
   hostId = "1145a50a";
 
   sources = import ../../npins;
+  wgNodes = import ../../common/wg-nodes.nix;
 in {
   imports = [
     ./disko.nix
@@ -42,7 +43,7 @@ in {
     ipv4.addresses = [{inherit (ipv4) address prefixLength;}];
   };
   networking.defaultGateway = ipv4.gateway;
-  networking.nameservers = ["10.100.0.6" "1.1.1.1" "1.0.0.1"];
+  networking.nameservers = [wgNodes.nix02.ip "1.1.1.1" "1.0.0.1"];
 
   boot.supportedFilesystems = ["zfs"];
   boot.loader.systemd-boot.enable = false;

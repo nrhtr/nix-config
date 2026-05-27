@@ -2,7 +2,10 @@
   config,
   pkgs,
   ...
-}: {
+}: let
+  wgNodes = import ../../common/wg-nodes.nix;
+  wgIp = wgNodes.nix01.ip;
+in {
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
@@ -84,14 +87,14 @@
       };
 
       "meals.jenga.xyz" = {
-        listenAddresses = ["10.100.0.1"];
+        listenAddresses = [wgIp];
         forceSSL = true;
         useACMEHost = "meals.jenga.xyz";
         root = "/var/www/meals.jenga.xyz";
       };
 
       "vault.jenga.xyz" = {
-        listenAddresses = ["10.100.0.1"];
+        listenAddresses = [wgIp];
         forceSSL = true;
         useACMEHost = "vault.jenga.xyz";
         locations."/" = {

@@ -49,6 +49,9 @@
 
   sources = import ../../npins;
   dns = import sources."dns.nix" {inherit pkgs;};
+  wgNodes = import ../../common/wg-nodes.nix;
+  wgIp = wgNodes.nix02.ip;
+  flyMonitorIp = wgNodes.fly-monitor.ip;
 
   # Restricted shell for the git user: auto-inits bare repos on first push,
   # then hands off to real git-shell for security and command execution.
@@ -303,6 +306,8 @@ in {
     port = 8091;
     environmentFile = config.age.secrets.keebsig-env.path;
     siteUrl = "https://keebsig.jenga.dev";
+    adminEmail = "jeremy@jenga.xyz";
+    adminAllowedIps = [wgIp];
   };
 
   services.actual = {
@@ -461,7 +466,7 @@ in {
     enable = true;
     settings = {
       server = {
-        interface = ["10.100.0.6" "127.0.0.1" "::1"];
+        interface = [wgIp "127.0.0.1" "::1"];
         access-control = ["10.100.0.0/16 allow" "127.0.0.0/8 allow" "::1/128 allow"];
         do-not-query-localhost = "no";
         domain-insecure = ["jenga.xyz"];
@@ -523,7 +528,7 @@ in {
         };
       };
       "git.jenga.xyz" = {
-        listenAddresses = [ipv4.address "10.100.0.6"];
+        listenAddresses = [ipv4.address wgIp];
         forceSSL = true;
         enableACME = true;
         root = "${pkgs.cgit}/cgit";
@@ -549,7 +554,7 @@ in {
         };
       };
       "actual.jenga.xyz" = {
-        listenAddresses = ["10.100.0.6"];
+        listenAddresses = [wgIp];
         forceSSL = true;
         useACMEHost = "actual.jenga.xyz";
         locations."/" = {
@@ -557,7 +562,7 @@ in {
         };
       };
       "photos.jenga.xyz" = {
-        listenAddresses = ["10.100.0.6"];
+        listenAddresses = [wgIp];
         forceSSL = true;
         useACMEHost = "photos.jenga.xyz";
         locations."/" = {
@@ -566,7 +571,7 @@ in {
         };
       };
       "sorpex-fighut.nock.dev" = {
-        listenAddresses = [ipv4.address "10.100.0.6"];
+        listenAddresses = [ipv4.address wgIp];
         forceSSL = true;
         useACMEHost = "nock.dev";
         locations."/" = {
@@ -574,7 +579,7 @@ in {
         };
       };
       "fonpub.nock.dev" = {
-        listenAddresses = [ipv4.address "10.100.0.6"];
+        listenAddresses = [ipv4.address wgIp];
         forceSSL = true;
         useACMEHost = "nock.dev";
         locations."/" = {
@@ -582,7 +587,7 @@ in {
         };
       };
       "spruce.jenga.xyz" = {
-        listenAddresses = ["10.100.0.6"];
+        listenAddresses = [wgIp];
         forceSSL = true;
         useACMEHost = "spruce.jenga.xyz";
         locations."/" = {
@@ -590,7 +595,7 @@ in {
         };
       };
       "up.jenga.xyz" = {
-        listenAddresses = [ipv4.address "10.100.0.6"];
+        listenAddresses = [ipv4.address wgIp];
         forceSSL = true;
         useACMEHost = "up.jenga.xyz";
         locations = {
@@ -598,7 +603,7 @@ in {
             alias = "${../../monitoring/logo.jpeg}";
           };
           "/" = {
-            proxyPass = "http://10.100.0.7:8080/";
+            proxyPass = "http://${flyMonitorIp}:8080/";
           };
         };
       };
@@ -612,7 +617,7 @@ in {
         };
       };
       "keebsig.jenga.dev" = {
-        listenAddresses = [ipv4.address "10.100.0.6"];
+        listenAddresses = [ipv4.address wgIp];
         forceSSL = true;
         sslCertificate = ../../secrets/jenga.dev.cert;
         sslCertificateKey = config.age.secrets.jenga-dev-key.path;
