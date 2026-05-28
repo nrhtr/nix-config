@@ -6,5 +6,8 @@
   "dependencies": {
     "@actual-app/api": "*",
     "csv-parse": "^5.0.0"
+  },
+  "overrides": {
+    "uuid": ">=11.1.1"
   }
 }
