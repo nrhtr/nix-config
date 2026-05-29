@@ -11,7 +11,7 @@
     pname = "paypal-import";
     version = "1.0.0";
     src = ../apps/paypal-import;
-    npmDepsHash = "sha256-781IvS2OsfdtPlYb2eYMg/arCs/lQqdXYafThmQwEX4=";
+    npmDepsHash = "sha256-i9Eb4bogI2pMXtqPtq+61ynaLAgP2A5nVEHOMjRqYQ8=";
     dontNpmBuild = true;
     installPhase = ''
       mkdir -p $out/bin $out/lib
