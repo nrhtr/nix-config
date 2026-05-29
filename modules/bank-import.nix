@@ -11,7 +11,7 @@
     pname = "bank-import";
     version = "1.0.0";
     src = ../apps/bank-import;
-    npmDepsHash = "sha256-UslO/Hnbbcx4cF1pXgPz+U0sT9pbic46mL+sI01UMJ0=";
+    npmDepsHash = "sha256-9lyCdbuXaynrbGS3BV7vpFjz8NHahvwgxiqf9CvGawk=";
     dontNpmBuild = true;
     installPhase = ''
       mkdir -p $out/bin $out/lib
