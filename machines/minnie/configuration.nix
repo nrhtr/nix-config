@@ -61,9 +61,10 @@
     ];
   };
 
+  nix.optimise.automatic = true;
+
   nix.extraOptions =
     ''
-      auto-optimise-store = false
       experimental-features = nix-command flakes
     ''
     + lib.optionalString (pkgs.stdenv.hostPlatform.system == "aarch64-darwin") ''
