@@ -730,8 +730,8 @@ in {
     "d /var/lib/cgit/repos 0755 git git -"
     "d /var/lib/rtorrent/downloads 0755 rtorrent rtorrent -"
     "d /var/lib/rtorrent/watch 0755 rtorrent rtorrent -"
-    "d /home/jenga/.config/pyrosimple 0755 jenga jenga -"
-    "L /home/jenga/.config/pyrosimple/config.toml - jenga jenga - ${pyrosimpleConfig}"
+    "d /home/jenga/.config/pyrosimple 0755 jenga users -"
+    "L /home/jenga/.config/pyrosimple/config.toml - jenga users - ${pyrosimpleConfig}"
   ];
 
   services.rtorrent = {
