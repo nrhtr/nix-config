@@ -3,6 +3,7 @@
 {
   config,
   pkgs,
+  lib,
   ...
 }: let
   hostName = "nix02";
@@ -736,26 +737,26 @@ in {
 
   systemd.tmpfiles.rules = [
     "d /var/lib/cgit/repos 0755 git git -"
-    "d /home/jenga/torrents 0755 jenga jenga -"
-    "d /home/jenga/.rtorrent 0755 jenga jenga -"
+    "d /var/lib/rtorrent/downloads 0755 rtorrent rtorrent -"
+    "d /var/lib/rtorrent/watch 0755 rtorrent rtorrent -"
   ];
 
-  services.flood = {
-    enable = true;
-    user = "jenga";
-    group = "jenga";
+  services.flood.enable = true;
+
+  # flood uses DynamicUser; override to run as rtorrent so it can reach the socket
+  systemd.services.flood.serviceConfig = {
+    DynamicUser = lib.mkForce false;
+    User = lib.mkForce "rtorrent";
+    Group = lib.mkForce "rtorrent";
   };
 
   services.rtorrent = {
     enable = true;
-    user = "jenga";
-    group = "jenga";
-    dataDir = "/home/jenga/.rtorrent";
-    downloadDir = "/home/jenga/downloads";
+    downloadDir = "/var/lib/rtorrent/downloads";
     port = 50000;
     openFirewall = true;
     configText = ''
-      schedule2 = watch_directory, 5, 5, "load.start=/home/jenga/torrents/*.torrent"
+      schedule2 = watch_directory, 5, 5, "load.start=/var/lib/rtorrent/watch/*.torrent"
     '';
   };
 
