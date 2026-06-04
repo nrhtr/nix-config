@@ -722,7 +722,22 @@ in {
 
   systemd.tmpfiles.rules = [
     "d /var/lib/cgit/repos 0755 git git -"
+    "d /home/jenga/torrents 0755 jenga jenga -"
+    "d /home/jenga/.rtorrent 0755 jenga jenga -"
   ];
+
+  services.rtorrent = {
+    enable = true;
+    user = "jenga";
+    group = "jenga";
+    dataDir = "/home/jenga/.rtorrent";
+    downloadDir = "/home/jenga/downloads";
+    port = 50000;
+    openFirewall = true;
+    configText = ''
+      schedule2 = watch_directory, 5, 5, "load.start=/home/jenga/torrents/*.torrent"
+    '';
+  };
 
   services.fcgiwrap.instances.cgit = {
     socket = {
