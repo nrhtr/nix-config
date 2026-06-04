@@ -288,11 +288,6 @@ in {
       dnsProvider = "gandiv5";
       credentialsFile = "${config.age.secrets.gandi.path}";
     };
-    "flood.jenga.xyz" = {
-      group = "nginx";
-      dnsProvider = "gandiv5";
-      credentialsFile = "${config.age.secrets.gandi.path}";
-    };
     "spruce.jenga.xyz" = {
       group = "nginx";
       dnsProvider = "gandiv5";
@@ -599,15 +594,6 @@ in {
           proxyPass = "http://127.0.0.1:8090/";
         };
       };
-      "flood.jenga.xyz" = {
-        listenAddresses = [wgIp];
-        forceSSL = true;
-        useACMEHost = "flood.jenga.xyz";
-        locations."/" = {
-          proxyPass = "http://127.0.0.1:3000/";
-          proxyWebsockets = true;
-        };
-      };
       "up.jenga.xyz" = {
         listenAddresses = [ipv4.address wgIp];
         forceSSL = true;
@@ -740,8 +726,6 @@ in {
     "d /var/lib/rtorrent/watch 0755 rtorrent rtorrent -"
   ];
 
-  services.flood.enable = true;
-
   services.rtorrent = {
     enable = true;
     downloadDir = "/var/lib/rtorrent/downloads";
@@ -769,7 +753,7 @@ in {
     };
   };
 
-  environment.systemPackages = [pkgs.claude-code];
+  environment.systemPackages = [pkgs.claude-code pkgs.pyrosimple];
 
   programs.neovim = {
     enable = true;

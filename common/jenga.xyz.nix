@@ -26,7 +26,6 @@ with dns.lib.combinators; {
     tlon.CNAME = ["nix02.jenga.xyz."];
     photos.CNAME = ["nix02.jenga.xyz."];
     spruce.CNAME = ["nix02.jenga.xyz."];
-    flood.CNAME = ["nix02.jenga.xyz."];
     up.CNAME = ["nix02.jenga.xyz."];
   };
 }
