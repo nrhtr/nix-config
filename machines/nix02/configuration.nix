@@ -47,6 +47,10 @@
     scan-path=/var/lib/cgit/repos
   '';
 
+  pyrosimpleConfig = pkgs.writeText "pyrosimple-config.toml" ''
+    scgi_url = "scgi+unix:///run/rtorrent/rpc.sock"
+  '';
+
   sources = import ../../npins;
   dns = import sources."dns.nix" {inherit pkgs;};
   wgNodes = import ../../common/wg-nodes.nix;
@@ -339,6 +343,8 @@ in {
       ++ [25565]; # minecraft
     allowedUDPPorts = [25565]; # minecraft
   };
+
+  users.users.jenga.extraGroups = ["rtorrent"];
 
   users.users.kbfirmware = {
     isSystemUser = true;
@@ -724,6 +730,8 @@ in {
     "d /var/lib/cgit/repos 0755 git git -"
     "d /var/lib/rtorrent/downloads 0755 rtorrent rtorrent -"
     "d /var/lib/rtorrent/watch 0755 rtorrent rtorrent -"
+    "d /home/jenga/.config/pyrosimple 0755 jenga jenga -"
+    "L /home/jenga/.config/pyrosimple/config.toml - jenga jenga - ${pyrosimpleConfig}"
   ];
 
   services.rtorrent = {
@@ -732,7 +740,6 @@ in {
     port = 50000;
     openFirewall = true;
     configText = ''
-      scgi_port = 127.0.0.1:8092
       schedule2 = watch_directory, 5, 5, "load.start=/var/lib/rtorrent/watch/*.torrent"
     '';
   };
