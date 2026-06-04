@@ -344,8 +344,6 @@ in {
     allowedUDPPorts = [25565]; # minecraft
   };
 
-  users.groups.rtorrent.members = ["jenga"];
-
   users.users.kbfirmware = {
     isSystemUser = true;
     group = "kbfirmware";
@@ -736,6 +734,7 @@ in {
 
   services.rtorrent = {
     enable = true;
+    group = "users";
     downloadDir = "/var/lib/rtorrent/downloads";
     port = 50000;
     openFirewall = true;
