@@ -740,6 +740,9 @@ in {
     port = 50000;
     openFirewall = true;
     configText = ''
+      dht.mode.set = auto
+      protocol.pex.set = yes
+      trackers.use_udp.set = yes
       schedule2 = watch_directory, 5, 5, "load.start=/var/lib/rtorrent/watch/*.torrent"
     '';
   };
