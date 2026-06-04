@@ -3,7 +3,6 @@
 {
   config,
   pkgs,
-  lib,
   ...
 }: let
   hostName = "nix02";
@@ -743,19 +742,13 @@ in {
 
   services.flood.enable = true;
 
-  # flood uses DynamicUser; override to run as rtorrent so it can reach the socket
-  systemd.services.flood.serviceConfig = {
-    DynamicUser = lib.mkForce false;
-    User = lib.mkForce "rtorrent";
-    Group = lib.mkForce "rtorrent";
-  };
-
   services.rtorrent = {
     enable = true;
     downloadDir = "/var/lib/rtorrent/downloads";
     port = 50000;
     openFirewall = true;
     configText = ''
+      scgi_port = 127.0.0.1:8092
       schedule2 = watch_directory, 5, 5, "load.start=/var/lib/rtorrent/watch/*.torrent"
     '';
   };
