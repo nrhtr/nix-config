@@ -344,7 +344,7 @@ in {
     allowedUDPPorts = [25565]; # minecraft
   };
 
-  users.users.jenga.extraGroups = ["rtorrent"];
+  users.groups.rtorrent.members = ["jenga"];
 
   users.users.kbfirmware = {
     isSystemUser = true;
