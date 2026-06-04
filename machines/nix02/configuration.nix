@@ -288,6 +288,11 @@ in {
       dnsProvider = "gandiv5";
       credentialsFile = "${config.age.secrets.gandi.path}";
     };
+    "flood.jenga.xyz" = {
+      group = "nginx";
+      dnsProvider = "gandiv5";
+      credentialsFile = "${config.age.secrets.gandi.path}";
+    };
     "spruce.jenga.xyz" = {
       group = "nginx";
       dnsProvider = "gandiv5";
@@ -594,6 +599,15 @@ in {
           proxyPass = "http://127.0.0.1:8090/";
         };
       };
+      "flood.jenga.xyz" = {
+        listenAddresses = [wgIp];
+        forceSSL = true;
+        useACMEHost = "flood.jenga.xyz";
+        locations."/" = {
+          proxyPass = "http://127.0.0.1:3000/";
+          proxyWebsockets = true;
+        };
+      };
       "up.jenga.xyz" = {
         listenAddresses = [ipv4.address wgIp];
         forceSSL = true;
@@ -725,6 +739,12 @@ in {
     "d /home/jenga/torrents 0755 jenga jenga -"
     "d /home/jenga/.rtorrent 0755 jenga jenga -"
   ];
+
+  services.flood = {
+    enable = true;
+    user = "jenga";
+    group = "jenga";
+  };
 
   services.rtorrent = {
     enable = true;
