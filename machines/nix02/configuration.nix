@@ -732,9 +732,10 @@ in {
     "L /home/jenga/.config/pyrosimple/config.toml - jenga users - ${pyrosimpleConfig}"
   ];
 
+  users.groups.rtorrent.members = ["jenga"];
+
   services.rtorrent = {
     enable = true;
-    group = "users";
     downloadDir = "/var/lib/rtorrent/downloads";
     port = 50000;
     openFirewall = true;
