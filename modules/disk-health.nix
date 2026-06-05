@@ -78,6 +78,11 @@ in {
       };
     };
 
+    services.zfs.autoScrub = lib.mkIf cfg.enableZed {
+      enable = true;
+      interval = "monthly";
+    };
+
     services.zfs.zed.enableMail = lib.mkIf cfg.enableZed true;
     services.zfs.zed.settings = lib.mkIf cfg.enableZed {
       ZED_EMAIL_ADDR = [cfg.emailTo];
