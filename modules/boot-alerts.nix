@@ -39,7 +39,13 @@ in {
 
   config = mkIf cfg.enable (let
     sendEmailEvent = event: ''
-      printf "Subject: ${config.networking.hostName} ${event} ''$(${pkgs.coreutils}/bin/date --iso-8601=seconds)\n\nzpool status:\n\n''$(${pkgs.zfs}/bin/zpool status)" | ${pkgs.msmtp}/bin/msmtp -a default ${cfg.emailTo}
+      pool_status=$(${pkgs.zfs}/bin/zpool status)
+      if echo "$pool_status" | ${pkgs.gnugrep}/bin/grep -qE "FAULTED|DEGRADED|REMOVED|UNAVAIL"; then
+        zfs_tag=" [ZFS DEGRADED]"
+      else
+        zfs_tag=""
+      fi
+      printf "Subject: ${config.networking.hostName} ${event}$zfs_tag $(${pkgs.coreutils}/bin/date --iso-8601=seconds)\n\nzpool status:\n\n%s\n" "$pool_status" | ${pkgs.msmtp}/bin/msmtp -a default ${cfg.emailTo}
     '';
   in {
     programs.msmtp = lib.mkIf (cfg.smtpPasswordFile != null) {
