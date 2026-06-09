@@ -193,7 +193,7 @@ in {
           cp ${qbtInitialConfig} "$XDG_CONFIG_HOME/qBittorrent/qBittorrent.conf"
         fi
       '';
-      ExecStart = "${pkgs.qbittorrent-nox}/bin/qbittorrent-nox";
+      ExecStart = "${pkgs.qbittorrent-nox}/bin/qbittorrent-nox --confirm-legal-notice";
     };
   };
 
@@ -215,8 +215,10 @@ in {
   # Navidrome reads it as world-readable (0755).
   # Downloads dir is owned by qbittorrent:qbittorrent; jenga is in that group.
   systemd.tmpfiles.rules = [
+    "z /home/jenga 0711 jenga users -"
     "d /home/jenga/music 0755 jenga users -"
     "d /home/jenga/downloads 0775 jenga qbittorrent -"
+    "d /home/jenga/watch 0775 jenga qbittorrent -"
     "d /home/jenga/.local/share/beets 0755 jenga users -"
     "d /home/jenga/.config/beets 0755 jenga users -"
     "L+ /home/jenga/.config/beets/config.yaml - jenga users - ${beetsConfig}"
