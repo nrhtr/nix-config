@@ -729,7 +729,7 @@ in {
     "d /var/lib/rtorrent/downloads 0755 rtorrent rtorrent -"
     "d /var/lib/rtorrent/watch 0755 rtorrent rtorrent -"
     "d /home/jenga/.config/pyrosimple 0755 jenga users -"
-    "L /home/jenga/.config/pyrosimple/config.toml - jenga users - ${pyrosimpleConfig}"
+    "L+ /home/jenga/.config/pyrosimple/config.toml - jenga users - ${pyrosimpleConfig}"
   ];
 
   users.groups.rtorrent.members = ["jenga"];
