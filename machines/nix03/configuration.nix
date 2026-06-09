@@ -20,6 +20,26 @@
 
   sources = import ../../npins;
   wgNodes = import ../../common/wg-nodes.nix;
+  wgIp = wgNodes.nix03.ip;
+
+  qbtInitialConfig = pkgs.writeText "qbittorrent-initial.conf" ''
+    [Preferences]
+    WebUI\Address=127.0.0.1
+    WebUI\Port=8080
+    WebUI\HostHeaderValidation=false
+    WebUI\ReverseProxySupportEnabled=true
+    WebUI\TrustedReverseProxiesList=127.0.0.1
+    Downloads\SavePath=/var/lib/qbittorrent/downloads/
+  '';
+
+  beetsConfig = pkgs.writeText "beets-config.yaml" ''
+    directory: /var/lib/music
+    library: /var/lib/beets/musiclibrary.blb
+    import:
+      hardlink: yes
+      copy: no
+      move: no
+  '';
 in {
   imports = [
     ./disko.nix
@@ -87,6 +107,7 @@ in {
   age.identityPaths = ["/etc/ssh/ssh_host_ed25519_key"];
   age.secrets.fastmail-nix02.file = ../../secrets/fastmail-nix02.age;
   age.secrets.resend-key.file = ../../secrets/resend-key.age;
+  age.secrets.gandi.file = ../../secrets/gandi.age;
 
   jenga.diskHealth = {
     enable = true;
@@ -99,6 +120,104 @@ in {
     enable = true;
     resendApiKeyFile = config.age.secrets.resend-key.path;
     acmeEmail = "jeremy@jenga.xyz";
+  };
+
+  # ACME cert for nix03.jenga.xyz via Gandi DNS (used by Caddy for /torrents and /navidrome)
+  security.acme = {
+    acceptTerms = true;
+    defaults.email = "jeremy@jenga.xyz";
+    certs."nix03.jenga.xyz" = {
+      dnsProvider = "gandiv5";
+      credentialsFile = config.age.secrets.gandi.path;
+      group = "caddy";
+      reloadServices = ["caddy.service"];
+    };
+  };
+
+  # Caddy must wait for cert on first deploy
+  systemd.services.caddy = {
+    wants = ["acme-nix03.jenga.xyz.service"];
+    after = ["acme-nix03.jenga.xyz.service"];
+  };
+
+  # qBittorrent (no NixOS module; custom service)
+  users.users.qbittorrent = {
+    isSystemUser = true;
+    group = "qbittorrent";
+    home = "/var/lib/qbittorrent";
+  };
+  users.groups.qbittorrent = {
+    members = ["jenga"];
+  };
+
+  systemd.services.qbittorrent = {
+    description = "qBittorrent-nox daemon";
+    after = ["network.target"];
+    wantedBy = ["multi-user.target"];
+    environment = {
+      HOME = "/var/lib/qbittorrent";
+      XDG_CONFIG_HOME = "/var/lib/qbittorrent/.config";
+      XDG_DATA_HOME = "/var/lib/qbittorrent/.local/share";
+    };
+    serviceConfig = {
+      User = "qbittorrent";
+      Group = "qbittorrent";
+      Type = "simple";
+      Restart = "on-failure";
+      StateDirectory = "qbittorrent";
+      UMask = "0002";
+      ExecStartPre = pkgs.writeShellScript "qbittorrent-init" ''
+        if [ ! -f "$XDG_CONFIG_HOME/qBittorrent/qBittorrent.conf" ]; then
+          mkdir -p "$XDG_CONFIG_HOME/qBittorrent"
+          cp ${qbtInitialConfig} "$XDG_CONFIG_HOME/qBittorrent/qBittorrent.conf"
+        fi
+        mkdir -p /var/lib/qbittorrent/downloads
+      '';
+      ExecStart = "${pkgs.qbittorrent-nox}/bin/qbittorrent-nox";
+    };
+  };
+
+  # Navidrome (subsonic-compatible server)
+  services.navidrome = {
+    enable = true;
+    settings = {
+      Address = "127.0.0.1";
+      Port = 4533;
+      MusicFolder = "/var/lib/music";
+      BaseURL = "/navidrome";
+    };
+  };
+
+  # Music library dir (owned by jenga so beets can write there)
+  # Navidrome reads it as world-readable (0755).
+  # Downloads dir is owned by qbittorrent:qbittorrent; jenga is in that group.
+  systemd.tmpfiles.rules = [
+    "d /var/lib/music 0755 jenga users -"
+    "d /var/lib/beets 0755 jenga users -"
+    "d /home/jenga/.config/beets 0755 jenga users -"
+    "L /home/jenga/.config/beets/config.yaml - jenga users - ${beetsConfig}"
+  ];
+
+  environment.systemPackages = [pkgs.beets];
+
+  # qBittorrent at /torrents, Navidrome at /navidrome — WireGuard only
+  services.caddy.virtualHosts."nix03.jenga.xyz" = {
+    extraConfig = ''
+      bind ${wgIp}
+      tls /var/lib/acme/nix03.jenga.xyz/cert.pem /var/lib/acme/nix03.jenga.xyz/key.pem
+
+      handle_path /torrents* {
+        reverse_proxy 127.0.0.1:8080
+      }
+
+      handle /navidrome* {
+        reverse_proxy 127.0.0.1:4533
+      }
+
+      handle {
+        respond 404
+      }
+    '';
   };
 
   time.timeZone = "UTC";

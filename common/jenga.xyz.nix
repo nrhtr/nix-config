@@ -3,7 +3,7 @@ with dns.lib.combinators; {
   SOA = {
     nameServer = "nix02.jenga.xyz.";
     adminEmail = "jeremy@jenga.xyz";
-    serial = 2026051301;
+    serial = 2026060901;
   };
 
   NS = ["nix02.jenga.xyz."];
@@ -14,6 +14,7 @@ with dns.lib.combinators; {
     www.CNAME = ["nrhtr.github.io."];
     nix01.A = ["10.100.0.1"];
     nix02.A = ["10.100.0.6"];
+    nix03.A = ["10.100.0.8"];
 
     vault.CNAME = ["nix01.jenga.xyz."];
     meals.CNAME = ["nix01.jenga.xyz."];
