@@ -35,8 +35,8 @@
   bandsnatch = (builtins.getFlake "path:${sources.bandsnatch}").packages.${pkgs.system}.default;
 
   beetsConfig = pkgs.writeText "beets-config.yaml" ''
-    directory: /var/lib/music
-    library: /var/lib/beets/musiclibrary.blb
+    directory: /home/jenga/music
+    library: /home/jenga/.local/share/beets/musiclibrary.blb
     import:
       hardlink: yes
       copy: no
@@ -189,7 +189,7 @@ in {
     settings = {
       Address = "127.0.0.1";
       Port = 4533;
-      MusicFolder = "/var/lib/music";
+      MusicFolder = "/home/jenga/music";
       BaseURL = "/navidrome";
     };
   };
@@ -198,8 +198,8 @@ in {
   # Navidrome reads it as world-readable (0755).
   # Downloads dir is owned by qbittorrent:qbittorrent; jenga is in that group.
   systemd.tmpfiles.rules = [
-    "d /var/lib/music 0755 jenga users -"
-    "d /var/lib/beets 0755 jenga users -"
+    "d /home/jenga/music 0755 jenga users -"
+    "d /home/jenga/.local/share/beets 0755 jenga users -"
     "d /home/jenga/.config/beets 0755 jenga users -"
     "L /home/jenga/.config/beets/config.yaml - jenga users - ${beetsConfig}"
   ];
