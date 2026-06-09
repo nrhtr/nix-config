@@ -214,7 +214,7 @@ in {
     "d /home/jenga/downloads 0775 jenga qbittorrent -"
     "d /home/jenga/.local/share/beets 0755 jenga users -"
     "d /home/jenga/.config/beets 0755 jenga users -"
-    "L /home/jenga/.config/beets/config.yaml - jenga users - ${beetsConfig}"
+    "L+ /home/jenga/.config/beets/config.yaml - jenga users - ${beetsConfig}"
   ];
 
   environment.systemPackages = [
