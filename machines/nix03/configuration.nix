@@ -197,6 +197,9 @@ in {
     };
   };
 
+  # ProtectHome=true in the navidrome service hides /home; expose only the music dir
+  systemd.services.navidrome.serviceConfig.BindReadOnlyPaths = ["/home/jenga/music"];
+
   # Navidrome (subsonic-compatible server)
   services.navidrome = {
     enable = true;
