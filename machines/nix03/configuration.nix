@@ -48,8 +48,10 @@
       copy: no
       move: no
     plugins:
+      - musicbrainz
       - fetchart
       - embedart
+      - mbsync
     fetchart:
       auto: yes
     embedart:
