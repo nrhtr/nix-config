@@ -26,7 +26,7 @@
     [Preferences]
     WebUI\Address=127.0.0.1
     WebUI\Port=8080
-    WebUI\URLBase=/torrents
+    WebUI\BasePath=/torrents
     WebUI\HostHeaderValidation=false
     WebUI\ReverseProxySupportEnabled=true
     WebUI\TrustedReverseProxiesList=127.0.0.1
@@ -217,6 +217,8 @@ in {
     extraConfig = ''
       bind ${wgIp}
       tls /var/lib/acme/nix03.jenga.xyz/cert.pem /var/lib/acme/nix03.jenga.xyz/key.pem
+
+      redir /torrents /torrents/ 301
 
       handle_path /torrents* {
         reverse_proxy 127.0.0.1:8080
