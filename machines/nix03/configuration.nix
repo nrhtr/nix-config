@@ -32,7 +32,12 @@
     Downloads\SavePath=/home/jenga/downloads/
   '';
 
-  bandsnatch = (builtins.getFlake "path:${sources.bandsnatch}").packages.${pkgs.system}.default;
+  bandsnatch = pkgs.rustPlatform.buildRustPackage {
+    pname = "bandsnatch";
+    version = "unstable";
+    src = sources.bandsnatch;
+    cargoLock.lockFile = "${sources.bandsnatch}/Cargo.lock";
+  };
 
   beetsConfig = pkgs.writeText "beets-config.yaml" ''
     directory: /home/jenga/music
