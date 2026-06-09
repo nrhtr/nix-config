@@ -32,6 +32,8 @@
     Downloads\SavePath=/var/lib/qbittorrent/downloads/
   '';
 
+  bandsnatch = (builtins.getFlake "path:${sources.bandsnatch}").packages.${pkgs.system}.default;
+
   beetsConfig = pkgs.writeText "beets-config.yaml" ''
     directory: /var/lib/music
     library: /var/lib/beets/musiclibrary.blb
@@ -198,7 +200,7 @@ in {
     "L /home/jenga/.config/beets/config.yaml - jenga users - ${beetsConfig}"
   ];
 
-  environment.systemPackages = [pkgs.beets];
+  environment.systemPackages = [pkgs.beets bandsnatch];
 
   # qBittorrent at /torrents, Navidrome at /navidrome — WireGuard only
   services.caddy.virtualHosts."nix03.jenga.xyz" = {
