@@ -26,6 +26,7 @@
     [Preferences]
     WebUI\Address=127.0.0.1
     WebUI\Port=8080
+    WebUI\URLBase=/torrents
     WebUI\HostHeaderValidation=false
     WebUI\ReverseProxySupportEnabled=true
     WebUI\TrustedReverseProxiesList=127.0.0.1
