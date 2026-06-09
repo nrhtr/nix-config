@@ -47,6 +47,13 @@
       hardlink: yes
       copy: no
       move: no
+    plugins:
+      - fetchart
+      - embedart
+    fetchart:
+      auto: yes
+    embedart:
+      auto: yes
   '';
 in {
   imports = [
@@ -210,7 +217,10 @@ in {
     "L /home/jenga/.config/beets/config.yaml - jenga users - ${beetsConfig}"
   ];
 
-  environment.systemPackages = [pkgs.beets bandsnatch];
+  environment.systemPackages = [
+    (pkgs.beets.override {enabledPlugins = ["fetchart" "embedart"];})
+    bandsnatch
+  ];
 
   # qBittorrent at /torrents, Navidrome at /navidrome — WireGuard only
   services.caddy.virtualHosts."nix03.jenga.xyz" = {
