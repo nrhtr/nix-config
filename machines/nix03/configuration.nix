@@ -29,7 +29,7 @@
     WebUI\HostHeaderValidation=false
     WebUI\ReverseProxySupportEnabled=true
     WebUI\TrustedReverseProxiesList=127.0.0.1
-    Downloads\SavePath=/var/lib/qbittorrent/downloads/
+    Downloads\SavePath=/home/jenga/downloads/
   '';
 
   bandsnatch = (builtins.getFlake "path:${sources.bandsnatch}").packages.${pkgs.system}.default;
@@ -177,7 +177,6 @@ in {
           mkdir -p "$XDG_CONFIG_HOME/qBittorrent"
           cp ${qbtInitialConfig} "$XDG_CONFIG_HOME/qBittorrent/qBittorrent.conf"
         fi
-        mkdir -p /var/lib/qbittorrent/downloads
       '';
       ExecStart = "${pkgs.qbittorrent-nox}/bin/qbittorrent-nox";
     };
@@ -199,6 +198,7 @@ in {
   # Downloads dir is owned by qbittorrent:qbittorrent; jenga is in that group.
   systemd.tmpfiles.rules = [
     "d /home/jenga/music 0755 jenga users -"
+    "d /home/jenga/downloads 0775 jenga qbittorrent -"
     "d /home/jenga/.local/share/beets 0755 jenga users -"
     "d /home/jenga/.config/beets 0755 jenga users -"
     "L /home/jenga/.config/beets/config.yaml - jenga users - ${beetsConfig}"
