@@ -133,6 +133,10 @@ in {
       credentialsFile = config.age.secrets.gandi.path;
       group = "caddy";
       reloadServices = ["caddy.service"];
+      # Internal DNS (nix02 nsd) doesn't have the challenge TXT record;
+      # Gandi public NS does. Skip lego's pre-check — Let's Encrypt validates
+      # against the public NS directly, so issuance still works.
+      dnsPropagationCheck = false;
     };
   };
 
