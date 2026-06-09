@@ -217,10 +217,7 @@ in {
     "L+ /home/jenga/.config/beets/config.yaml - jenga users - ${beetsConfig}"
   ];
 
-  environment.systemPackages = [
-    (pkgs.beets.override {enabledPlugins = ["fetchart" "embedart"];})
-    bandsnatch
-  ];
+  environment.systemPackages = [pkgs.beets bandsnatch];
 
   # qBittorrent at /torrents, Navidrome at /navidrome — WireGuard only
   services.caddy.virtualHosts."nix03.jenga.xyz" = {
