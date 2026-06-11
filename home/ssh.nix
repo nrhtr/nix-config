@@ -23,6 +23,8 @@
         user = "jenga";
         port = 2223;
         controlMaster = "no";
+        serverAliveInterval = 30;
+        serverAliveCountMax = 10;
       };
       "hk-s020.rsync.net" = {extraOptions.UpdateHostKeys = "no";};
       "git.jenga.xyz" = {
