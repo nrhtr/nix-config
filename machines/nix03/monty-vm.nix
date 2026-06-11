@@ -84,15 +84,6 @@
   # passwordless sudo for wheel (no passwords set on this VM)
   security.sudo.wheelNeedsPassword = false;
 
-  # Create home directories on the persistent /home volume at activation time.
-  system.activationScripts.createHomeDirs = {
-    deps = ["users"];
-    text = ''
-      install -d -m 700 -o jenga -g users /home/jenga
-      install -d -m 700 -o tom -g users /home/tom
-    '';
-  };
-
   # SSH
   services.openssh.enable = true;
   services.openssh.settings.PermitRootLogin = "no";
