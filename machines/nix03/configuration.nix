@@ -285,17 +285,18 @@ in {
   # Port 2223 for SSH to monty VM
   networking.firewall.allowedTCPPorts = [2223];
 
-  services.caddy.virtualHosts."monty.jenga.dev" = {
+  services.caddy.virtualHosts."monty.jenga.xyz" = {
     extraConfig = ''
       reverse_proxy 127.0.0.1:8000
     '';
   };
 
-  security.acme.certs."monty.jenga.dev" = {
+  security.acme.certs."monty.jenga.xyz" = {
     dnsProvider = "gandiv5";
     credentialsFile = config.age.secrets.gandi.path;
     group = "caddy";
     reloadServices = ["caddy.service"];
+    dnsPropagationCheck = false;
   };
 
   time.timeZone = "UTC";
