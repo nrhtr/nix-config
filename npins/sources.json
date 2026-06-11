@@ -126,20 +126,17 @@
       "hash": "1p4hzz46pzzrzih6px13c1hglqrmiazhy0f30f4jd4b2cj0ddsz0"
     },
     "microvm-nix": {
-      "type": "GitRelease",
+      "type": "Git",
       "repository": {
         "type": "GitHub",
         "owner": "microvm-nix",
         "repo": "microvm.nix"
       },
-      "pre_releases": false,
-      "version_upper_bound": null,
-      "release_prefix": null,
+      "branch": "main",
       "submodules": false,
-      "version": "v0.5.0",
-      "revision": "1e746a8987eb893adc8dd317b84e73d72803b650",
-      "url": "https://api.github.com/repos/microvm-nix/microvm.nix/tarball/v0.5.0",
-      "hash": "1vj996175kzhjqkqj1aw72skgfzz06k9yfsxnmq6k61sd7ac6vgd"
+      "revision": "4d3fb17437944ea57eef2b9e6108ca777b1209ca",
+      "url": "https://github.com/microvm-nix/microvm.nix/archive/4d3fb17437944ea57eef2b9e6108ca777b1209ca.tar.gz",
+      "hash": "0yzwbkhx62mz7kxi49qn9cxdl2xkfx5m2xc9d1nkzyffl8d3w2fd"
     },
     "morph": {
       "type": "Git",
