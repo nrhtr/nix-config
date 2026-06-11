@@ -93,8 +93,8 @@
             type = "zfs_fs";
             mountpoint = "/home";
           };
-          # MicroVM state (monty VM volume images live here)
-          "enc/monty" = {
+          # MicroVM state (VM volume images live here)
+          "enc/microvms" = {
             type = "zfs_fs";
             mountpoint = "/var/lib/microvms";
           };
