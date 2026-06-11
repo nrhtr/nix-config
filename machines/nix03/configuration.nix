@@ -253,7 +253,7 @@ in {
     config = import ./monty-vm.nix;
     autostart = true;
     restartIfChanged = false;
-    flake = false;
+    flake = null;
   };
 
   # Port 2223 for SSH to monty VM
