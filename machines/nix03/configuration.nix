@@ -57,40 +57,12 @@
     embedart:
       auto: yes
   '';
-
-  cloudInitIso = pkgs.runCommand "cloud-init-monty.iso" {} ''
-        mkdir -p iso/nocloud
-        cat > iso/nocloud/meta-data <<'EOF'
-    instance-id: monty-vm
-    local-hostname: monty
-    EOF
-        cat > iso/nocloud/user-data <<'EOF'
-    #cloud-config
-    users:
-      - name: jenga
-        sudo: ALL=(ALL) NOPASSWD:ALL
-        ssh-authorized-keys:
-          - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIJBLHeD2QmiFu75rRXYKuhLLY1SpI3LCyUH5TO7iVHr jenga@Jeremys-Mini
-      - name: tom
-        sudo: ALL=(ALL) NOPASSWD:ALL
-        ssh-authorized-keys:
-          - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDummyTomKeyPlaceholderReplaceMe tom@collaborator
-
-    packages:
-      - docker.io
-      - docker-compose
-
-    runcmd:
-      - usermod -aG docker jenga
-      - usermod -aG docker tom
-    EOF
-        ${pkgs.xorriso}/bin/xorriso -as mkisofs -R -V CIDATA -o $out iso/
-  '';
 in {
   imports = [
     ./disko.nix
     ./wireguard.nix
     "${sources.disko}/module.nix"
+    "${sources.microvm}/nixos-modules"
 
     ../../common/shared.nix
     ../../common/wg-hosts.nix
@@ -276,26 +248,15 @@ in {
     '';
   };
 
-  # Monty project VM (Debian + Docker)
-  systemd.services.monty-vm = {
-    description = "Debian VM for monty project";
-    after = ["network.target"];
-    wantedBy = ["multi-user.target"];
-    serviceConfig = {
-      Type = "simple";
-      Restart = "on-failure";
-      RestartSec = "5s";
-      ExecStart = ''        ${pkgs.qemu}/bin/qemu-system-x86_64 \
-                -m 2G \
-                -smp 1 \
-                -drive file=/dev/zvol/zroot/enc/monty,if=virtio,cache=writeback \
-                -cdrom ${cloudInitIso} \
-                -net user,hostfwd=tcp:127.0.0.1:2223-:22 \
-                -net nic,model=virtio \
-                -nographic -serial mon:stdio'';
-    };
+  # Monty project VM (NixOS + Firecracker via microvm)
+  microvm.vms.monty = {
+    config = import ./monty-vm.nix;
+    autostart = true;
+    restartIfChanged = false;
+    flake = false;
   };
 
+  # Port 2223 for SSH to monty VM
   networking.firewall.allowedTCPPorts = [2223];
 
   services.caddy.virtualHosts."monty.jenga.dev" = {
