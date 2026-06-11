@@ -30,13 +30,10 @@
       --exclude-caches \
       --exclude '/Users/jenga/Downloads' \
       --exclude '/Users/jenga/media' \
+      --exclude '/Users/jenga/backup' \
       --exclude '/Users/jenga/Movies' \
       --exclude '/Users/jenga/.cache' \
-      --exclude '/Users/jenga/Library/Caches' \
-      --exclude '/Users/jenga/Library/CloudStorage' \
-      --exclude '/Users/jenga/Library/Developer/CoreSimulator' \
-      --exclude '/Users/jenga/Library/Developer/Xcode/DerivedData' \
-      --exclude '/Users/jenga/Library/Containers' \
+      --exclude '/Users/jenga/Library' \
       --exclude '/Users/jenga/.Trash' \
       --exclude 'sh:**/node_modules' \
       --exclude 'sh:**/.npm' \
