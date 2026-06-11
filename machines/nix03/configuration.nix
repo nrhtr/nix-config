@@ -40,13 +40,12 @@
     cargoLock.lockFile = "${sources.bandsnatch}/Cargo.lock";
   };
 
-  montySystem = import "${sources.nixpkgs}/nixos" {
-    configuration = {
-      imports = [
-        "${sources.microvm-nix}/nixos-modules/microvm"
-        ./monty-vm.nix
-      ];
-    };
+  montySystem = (import sources.nixpkgs {system = "x86_64-linux";}).lib.nixosSystem {
+    system = "x86_64-linux";
+    modules = [
+      "${sources.microvm-nix}/nixos-modules/microvm"
+      ./monty-vm.nix
+    ];
   };
 
   beetsConfig = pkgs.writeText "beets-config.yaml" ''
