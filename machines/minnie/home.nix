@@ -119,5 +119,6 @@ in {
     ++ lib.optionals stdenv.isDarwin [
       cocoapods
       m-cli
+      yoink
     ];
 }
