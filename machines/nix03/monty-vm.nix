@@ -3,9 +3,7 @@
   pkgs,
   lib,
   ...
-}: let
-  sources = import ../../npins;
-in {
+}: {
   microvm = {
     hypervisor = "cloud-hypervisor";
     mem = 2048;
@@ -19,10 +17,6 @@ in {
       }
     ];
   };
-
-  imports = [
-    "${sources.microvm-nix}/nixos-modules/microvm"
-  ];
 
   # Network: user-mode networking, SSH port forwarded to host 2223
   networking.hostName = "monty";

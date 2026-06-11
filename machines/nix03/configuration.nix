@@ -40,6 +40,14 @@
     cargoLock.lockFile = "${sources.bandsnatch}/Cargo.lock";
   };
 
+  montySystem = (import sources.nixpkgs {}).lib.nixosSystem {
+    system = "x86_64-linux";
+    modules = [
+      "${sources.microvm-nix}/nixos-modules/microvm"
+      ./monty-vm.nix
+    ];
+  };
+
   beetsConfig = pkgs.writeText "beets-config.yaml" ''
     directory: /home/jenga/music
     library: /home/jenga/.local/share/beets/musiclibrary.blb
@@ -250,7 +258,7 @@ in {
 
   # Monty project VM (NixOS + Firecracker via microvm)
   microvm.vms.monty = {
-    config = import ./monty-vm.nix;
+    config = montySystem;
     autostart = true;
     restartIfChanged = false;
     flake = null;
