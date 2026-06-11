@@ -253,9 +253,7 @@ in {
     # Plain NixOS module; the host module runs eval-config and auto-imports
     # the microvm guest module for us.
     config = import ./monty-vm.nix;
-    # Do NOT autostart: bring the VM up manually (systemctl start
-    # microvm@monty) and watch it, until first boot is proven stable.
-    autostart = false;
+    autostart = true;
     restartIfChanged = false;
   };
 
