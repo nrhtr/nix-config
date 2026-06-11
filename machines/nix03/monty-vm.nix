@@ -3,7 +3,24 @@
   pkgs,
   lib,
   ...
-}: {
+}: let
+  # Add users here. Each gets a normal account in docker+wheel groups
+  # with SSH key auth. Tom's key is a placeholder — replace before use.
+  vmUsers = [
+    {
+      name = "jenga";
+      sshKeys = [
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIJBLHeD2QmiFu75rRXYKuhLLY1SpI3LCyUH5TO7iVHr jenga@Jeremys-Mini"
+      ];
+    }
+    {
+      name = "tom";
+      sshKeys = [
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDummyTomKeyPlaceholderReplaceMe tom@collaborator"
+      ];
+    }
+  ];
+in {
   microvm = {
     hypervisor = "firecracker";
     mem = 2048;
@@ -53,7 +70,6 @@
   };
   networking.nameservers = ["1.1.1.1"];
 
-  # Packages
   environment.systemPackages = with pkgs; [
     docker-compose
     git
@@ -61,37 +77,28 @@
     vim
   ];
 
-  # Docker daemon
   virtualisation.docker.enable = true;
 
-  # Users
-  users.users.jenga = {
-    isNormalUser = true;
-    extraGroups = ["docker" "wheel"];
-    openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIJBLHeD2QmiFu75rRXYKuhLLY1SpI3LCyUH5TO7iVHr jenga@Jeremys-Mini"
-    ];
-  };
-
-  users.users.tom = {
-    isNormalUser = true;
-    extraGroups = ["docker" "wheel"];
-    openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDummyTomKeyPlaceholderReplaceMe tom@collaborator"
-    ];
-  };
+  users.users = lib.listToAttrs (map (u: {
+      name = u.name;
+      value = {
+        isNormalUser = true;
+        extraGroups = ["docker" "wheel"];
+        openssh.authorizedKeys.keys = u.sshKeys;
+      };
+    })
+    vmUsers);
 
   # passwordless sudo for wheel (no passwords set on this VM)
   security.sudo.wheelNeedsPassword = false;
 
   # Home dirs on the persistent /home volume. tmpfiles runs after all
   # filesystems are mounted, unlike the users activation script.
-  systemd.tmpfiles.rules = [
-    "d /home/jenga 0700 jenga users -"
-    "d /home/tom 0700 tom users -"
-  ];
+  # Also create the SSH host key dir on the persistent /var volume.
+  systemd.tmpfiles.rules =
+    map (u: "d /home/${u.name} 0700 ${u.name} users -") vmUsers
+    ++ ["d /var/lib/ssh 0755 root root -"];
 
-  # SSH
   services.openssh.enable = true;
   services.openssh.settings.PermitRootLogin = "no";
   services.openssh.settings.PasswordAuthentication = false;
@@ -109,7 +116,6 @@
       bits = 4096;
     }
   ];
-  systemd.tmpfiles.rules = ["d /var/lib/ssh 0755 root root -"];
 
   system.stateVersion = "25.11";
 }
