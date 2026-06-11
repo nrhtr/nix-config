@@ -283,7 +283,7 @@ in {
   # Port 2223 for SSH to monty VM
   networking.firewall.allowedTCPPorts = [2223];
 
-  services.caddy.virtualHosts."monty.jenga.xyz" = {
+  services.caddy.virtualHosts."monty.jenga.xyz:443" = {
     extraConfig = ''
       tls /var/lib/acme/monty.jenga.xyz/cert.pem /var/lib/acme/monty.jenga.xyz/key.pem
       reverse_proxy 127.0.0.1:8000
