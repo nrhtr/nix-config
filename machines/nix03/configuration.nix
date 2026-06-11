@@ -259,11 +259,10 @@ in {
     restartIfChanged = false;
   };
 
-  # Assign 10.0.0.1/24 to the monty tap after the VM starts.
-  # Not in networking.interfaces — the tap only exists while the VM is running
-  # and a missing device unit would time out and fail during boot.
-  systemd.services."microvm@monty".serviceConfig.ExecStartPost = pkgs.writeShellScript "monty-tap-setup" ''
-    ${pkgs.iproute2}/bin/ip addr add 10.0.0.1/24 dev monty 2>/dev/null || true
+  # Assign 10.0.0.1/24 to the monty tap whenever it appears.
+  # udev fires on interface creation, avoiding ExecStartPost race conditions.
+  services.udev.extraRules = ''
+    ACTION=="add", SUBSYSTEM=="net", KERNEL=="monty", RUN+="${pkgs.iproute2}/bin/ip addr add 10.0.0.1/24 dev monty"
   '';
 
   # NAT outbound traffic from the VM so it can reach the internet
