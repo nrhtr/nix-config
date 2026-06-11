@@ -37,6 +37,11 @@
         mountPoint = "/var";
         size = 20480;
       }
+      {
+        image = "home.img";
+        mountPoint = "/home";
+        size = 10240;
+      }
     ];
 
     # User-mode (SLiRP) networking with port forwards to the host.
@@ -102,6 +107,21 @@
   services.openssh.enable = true;
   services.openssh.settings.PermitRootLogin = "no";
   services.openssh.settings.PasswordAuthentication = false;
+
+  # Persist host keys on the /var volume so the VM's identity is stable
+  # across reboots (the tmpfs root would otherwise regenerate them).
+  services.openssh.hostKeys = [
+    {
+      path = "/var/lib/ssh/ssh_host_ed25519_key";
+      type = "ed25519";
+    }
+    {
+      path = "/var/lib/ssh/ssh_host_rsa_key";
+      type = "rsa";
+      bits = 4096;
+    }
+  ];
+  systemd.tmpfiles.rules = ["d /var/lib/ssh 0755 root root -"];
 
   system.stateVersion = "25.11";
 }
