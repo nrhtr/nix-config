@@ -105,7 +105,10 @@ in {
   # Also create the SSH host key dir on the persistent /var volume.
   systemd.tmpfiles.rules =
     map (u: "d /home/${u.name} 0700 ${u.name} users -") vmUsers
-    ++ ["d /var/lib/ssh 0755 root root -"];
+    ++ [
+      "d /var/lib/ssh 0755 root root -"
+      "d /var/lib/yoink 0755 yoink users -"
+    ];
 
   services.openssh.enable = true;
   services.openssh.settings.PermitRootLogin = "no";
