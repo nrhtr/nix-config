@@ -85,6 +85,7 @@ in {
   ];
 
   virtualisation.docker.enable = true;
+  virtualisation.containerd.enable = true;
 
   users.users = lib.listToAttrs (map (u: {
       name = u.name;
