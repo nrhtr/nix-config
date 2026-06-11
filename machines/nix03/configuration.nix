@@ -156,10 +156,10 @@ in {
     };
   };
 
-  # Caddy must wait for cert on first deploy
+  # Caddy must wait for certs on first deploy
   systemd.services.caddy = {
-    wants = ["acme-nix03.jenga.xyz.service"];
-    after = ["acme-nix03.jenga.xyz.service"];
+    wants = ["acme-nix03.jenga.xyz.service" "acme-monty.jenga.xyz.service"];
+    after = ["acme-nix03.jenga.xyz.service" "acme-monty.jenga.xyz.service"];
   };
 
   # qBittorrent (no NixOS module; custom service)
@@ -287,6 +287,7 @@ in {
 
   services.caddy.virtualHosts."monty.jenga.xyz" = {
     extraConfig = ''
+      tls /var/lib/acme/monty.jenga.xyz/cert.pem /var/lib/acme/monty.jenga.xyz/key.pem
       reverse_proxy 127.0.0.1:8000
     '';
   };
