@@ -38,6 +38,7 @@
   };
 
   networking.hostName = "monty";
+  networking.usePredictableInterfaceNames = false;
 
   # Static IP on the tap network (host is 10.0.0.1, guest is 10.0.0.2)
   networking.interfaces.eth0.ipv4.addresses = [
