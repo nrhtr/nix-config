@@ -22,6 +22,7 @@
       "monty.jenga.xyz" = {
         user = "jenga";
         port = 2223;
+        controlMaster = "no";
       };
       "hk-s020.rsync.net" = {extraOptions.UpdateHostKeys = "no";};
       "git.jenga.xyz" = {
