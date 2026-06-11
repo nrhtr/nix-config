@@ -5,33 +5,15 @@
   ...
 }: {
   microvm = {
-    # qemu: the only hypervisor supporting BOTH virtiofs store-sharing
-    # AND user-mode networking with host<->guest port forwarding.
-    hypervisor = "qemu";
+    hypervisor = "firecracker";
     mem = 2048;
     vcpu = 1;
 
-    # Share the host's /nix/store read-only via virtiofs.
-    shares = [
-      {
-        proto = "virtiofs";
-        tag = "ro-store";
-        source = "/nix/store";
-        mountPoint = "/nix/.ro-store";
-      }
-    ];
+    # storeOnDisk = true is implicit when there are no virtiofs shares.
+    # The microvm module builds a self-contained store disk image.
 
-    # Writable overlay so the guest store is mutable (nixos-rebuild etc.)
-    writableStoreOverlay = "/nix/.rw-store";
-
-    # Persistent disks: store overlay + /var (docker images, container state).
-    # Images live under microvm.stateDir on the host (zroot/enc/monty).
+    # Persistent disks: /var (docker images, container state) + /home.
     volumes = [
-      {
-        image = "store-overlay.img";
-        mountPoint = config.microvm.writableStoreOverlay;
-        size = 8192;
-      }
       {
         image = "var.img";
         mountPoint = "/var";
@@ -44,33 +26,31 @@
       }
     ];
 
-    # User-mode (SLiRP) networking with port forwards to the host.
+    # Firecracker supports tap networking only — the host module creates
+    # a tap interface; port forwarding handled via iptables DNAT below.
     interfaces = [
       {
-        type = "user";
-        id = "qemu";
+        type = "tap";
+        id = "monty";
         mac = "02:00:00:01:01:01";
-      }
-    ];
-
-    # host:2223 -> guest:22 (SSH), host:8000 -> guest:8000 (app for Caddy)
-    forwardPorts = [
-      {
-        from = "host";
-        host.address = "127.0.0.1";
-        host.port = 2223;
-        guest.port = 22;
-      }
-      {
-        from = "host";
-        host.address = "127.0.0.1";
-        host.port = 8000;
-        guest.port = 8000;
       }
     ];
   };
 
   networking.hostName = "monty";
+
+  # Static IP on the tap network (host is 10.0.0.1, guest is 10.0.0.2)
+  networking.interfaces.eth0.ipv4.addresses = [
+    {
+      address = "10.0.0.2";
+      prefixLength = 24;
+    }
+  ];
+  networking.defaultGateway = {
+    address = "10.0.0.1";
+    interface = "eth0";
+  };
+  networking.nameservers = ["1.1.1.1"];
 
   # Packages
   environment.systemPackages = with pkgs; [

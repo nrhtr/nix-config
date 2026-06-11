@@ -259,6 +259,29 @@ in {
     restartIfChanged = false;
   };
 
+  # Tap interface for monty VM (10.0.0.1 = host, 10.0.0.2 = guest)
+  networking.interfaces.monty.ipv4.addresses = [
+    {
+      address = "10.0.0.1";
+      prefixLength = 24;
+    }
+  ];
+
+  # NAT outbound traffic from the VM so it can reach the internet
+  networking.nat = {
+    enable = true;
+    internalInterfaces = ["monty"];
+    externalInterface = networkInterface;
+  };
+
+  # DNAT: host:2223 -> monty:22, host:8000 -> monty:8000
+  networking.firewall.extraCommands = ''
+    iptables -t nat -A PREROUTING -i lo -p tcp --dport 2223 -j DNAT --to-destination 10.0.0.2:22
+    iptables -t nat -A PREROUTING -i lo -p tcp --dport 8000 -j DNAT --to-destination 10.0.0.2:8000
+    iptables -t nat -A OUTPUT -p tcp --dport 2223 -j DNAT --to-destination 10.0.0.2:22
+    iptables -t nat -A OUTPUT -p tcp --dport 8000 -j DNAT --to-destination 10.0.0.2:8000
+  '';
+
   # Port 2223 for SSH to monty VM
   networking.firewall.allowedTCPPorts = [2223];
 
