@@ -62,7 +62,7 @@ in {
     ./disko.nix
     ./wireguard.nix
     "${sources.disko}/module.nix"
-    "${sources.microvm.nix}/nixos-modules"
+    "${sources.microvm-nix}/nixos-modules"
 
     ../../common/shared.nix
     ../../common/wg-hosts.nix

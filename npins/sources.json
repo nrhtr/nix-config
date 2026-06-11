@@ -125,7 +125,7 @@
       "url": null,
       "hash": "1p4hzz46pzzrzih6px13c1hglqrmiazhy0f30f4jd4b2cj0ddsz0"
     },
-    "microvm.nix": {
+    "microvm-nix": {
       "type": "GitRelease",
       "repository": {
         "type": "GitHub",

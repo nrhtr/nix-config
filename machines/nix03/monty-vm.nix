@@ -19,7 +19,7 @@
   };
 
   imports = [
-    "${sources.microvm.nix}/modules/firecracker"
+    "${sources.microvm-nix}/modules/firecracker"
   ];
 
   sources = import ../../npins;
