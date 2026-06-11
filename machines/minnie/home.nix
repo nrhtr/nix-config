@@ -68,9 +68,12 @@ in {
   # Suppress deprecation warning; controlMaster is set in hm-common.nix
   programs.ssh.enableDefaultConfig = false;
 
-  home.packages = with pkgs;
+  home.packages = with pkgs; let
+    yoink = callPackage ../../packages/yoink {};
+  in
     [
       wg-exit-node
+      yoink
 
       # Some basics
       coreutils
@@ -119,6 +122,5 @@ in {
     ++ lib.optionals stdenv.isDarwin [
       cocoapods
       m-cli
-      yoink
     ];
 }

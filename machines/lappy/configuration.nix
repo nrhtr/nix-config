@@ -35,6 +35,7 @@ in {
       };
       jsonfui = self.callPackage ./../../packages/jsonfui/default.nix {};
       darktable = self.callPackage ./../../packages/darktable/default.nix {};
+      yoink = self.callPackage ./../../packages/yoink/default.nix {};
       wine = super.wine.override {wineBuild = "wine64";};
       niri = self.callPackage ./../../packages/niri/package.nix {};
       #niri = let
@@ -237,6 +238,7 @@ in {
     mpv
     blightmud
     flyctl
+    yoink
 
     waynergy
 
