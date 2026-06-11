@@ -3,7 +3,9 @@
   pkgs,
   lib,
   ...
-}: {
+}: let
+  sources = import ../../npins;
+in {
   microvm = {
     hypervisor = "firecracker";
     mem = 2048;
@@ -17,8 +19,6 @@
       }
     ];
   };
-
-  sources = import ../../npins;
 
   imports = [
     "${sources.microvm-nix}/nixos-modules/microvm"
