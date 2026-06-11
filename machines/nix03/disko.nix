@@ -94,7 +94,7 @@
             mountpoint = "/home";
           };
           # MicroVM state (VM volume images live here)
-          "enc/microvms" = {
+          "enc/vms" = {
             type = "zfs_fs";
             mountpoint = "/var/lib/microvms";
           };
