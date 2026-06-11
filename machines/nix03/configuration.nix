@@ -273,11 +273,13 @@ in {
   };
 
   # DNAT: host:2223 -> monty:22, host:8000 -> monty:8000
+  # PREROUTING handles external traffic (eno1); OUTPUT handles locally-originated traffic.
   networking.firewall.extraCommands = ''
-    iptables -t nat -A PREROUTING -i lo -p tcp --dport 2223 -j DNAT --to-destination 10.0.0.2:22
-    iptables -t nat -A PREROUTING -i lo -p tcp --dport 8000 -j DNAT --to-destination 10.0.0.2:8000
+    iptables -t nat -A PREROUTING -i ${networkInterface} -p tcp --dport 2223 -j DNAT --to-destination 10.0.0.2:22
+    iptables -t nat -A PREROUTING -i ${networkInterface} -p tcp --dport 8000 -j DNAT --to-destination 10.0.0.2:8000
     iptables -t nat -A OUTPUT -p tcp --dport 2223 -j DNAT --to-destination 10.0.0.2:22
     iptables -t nat -A OUTPUT -p tcp --dport 8000 -j DNAT --to-destination 10.0.0.2:8000
+    iptables -A FORWARD -d 10.0.0.2 -j ACCEPT
   '';
 
   # Port 2223 for SSH to monty VM
