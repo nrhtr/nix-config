@@ -97,6 +97,7 @@
           "enc/vms" = {
             type = "zfs_fs";
             mountpoint = "/var/lib/microvms";
+            mountOptions = ["nofail"];
           };
         };
       };
