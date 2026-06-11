@@ -1,10 +1,7 @@
-{
-  pkgs,
-  system ? builtins.currentSystem,
-}: let
+{pkgs}: let
   sources = import ../../npins;
-  fenix = import "${sources.fenix}";
-  toolchain = fenix.packages.${system}.minimal.toolchain;
+  fenix = import "${sources.fenix}" {};
+  toolchain = fenix.minimal.toolchain;
   customRustPlatform = pkgs.makeRustPlatform {
     cargo = toolchain;
     rustc = toolchain;
