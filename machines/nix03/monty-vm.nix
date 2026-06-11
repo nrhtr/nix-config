@@ -19,8 +19,10 @@
   };
 
   imports = [
-    "${pkgs.microvm.hypervisor-modules}/firecracker"
+    "${sources.microvm.nix}/modules/firecracker"
   ];
+
+  sources = import ../../npins;
 
   # Network: user-mode networking, SSH port forwarded to host 2223
   networking.hostName = "monty";
