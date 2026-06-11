@@ -61,6 +61,19 @@
       "url": "https://api.github.com/repos/kirelagin/dns.nix/tarball/v1.2.0",
       "hash": "011b6ahj4qcf7jw009qgbf6k5dvjmgls88khwzgjr9kxlgbypb90"
     },
+    "fenix": {
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "nix-community",
+        "repo": "fenix"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "640606300f74b4891bfa1a51f5756450f9fdc7f1",
+      "url": "https://github.com/nix-community/fenix/archive/640606300f74b4891bfa1a51f5756450f9fdc7f1.tar.gz",
+      "hash": "1wm65gbz1bcnryqg4q6dy5yf9rp96yln5rx4gx9vvswb2xq6g06s"
+    },
     "git-hooks.nix": {
       "type": "Git",
       "repository": {
@@ -179,19 +192,6 @@
       "revision": "bc57abace07689cfd34203aa5fb4027514895987",
       "url": "https://github.com/NixOS/nixpkgs/archive/bc57abace07689cfd34203aa5fb4027514895987.tar.gz",
       "hash": "112fa4cgf5aack5iqp9d5vva5zhxic06pp4l04z1kixsh46df3cb"
-    },
-    "rust-overlay": {
-      "type": "Git",
-      "repository": {
-        "type": "GitHub",
-        "owner": "oxalica",
-        "repo": "rust-overlay"
-      },
-      "branch": "master",
-      "submodules": false,
-      "revision": "107c334f141854f563f8adf1db781dc453d92639",
-      "url": "https://github.com/oxalica/rust-overlay/archive/107c334f141854f563f8adf1db781dc453d92639.tar.gz",
-      "hash": "138jwq564qji7dc5yav2j2c1c1mr65smqqk00mni9lvqhx0n45w4"
     },
     "spruce": {
       "type": "Git",
