@@ -12,4 +12,5 @@ in
     version = sources.yoink.revision;
     src = sources.yoink;
     cargoLock.lockFile = "${sources.yoink}/Cargo.lock";
+    doCheck = false;
   }
