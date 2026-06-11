@@ -7,7 +7,7 @@
   sources = import ../../npins;
 in {
   microvm = {
-    hypervisor = "firecracker";
+    hypervisor = "cloud-hypervisor";
     mem = 2048;
     vcpu = 1;
     shares = [
