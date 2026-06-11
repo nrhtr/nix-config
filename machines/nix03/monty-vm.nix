@@ -84,6 +84,13 @@
   # passwordless sudo for wheel (no passwords set on this VM)
   security.sudo.wheelNeedsPassword = false;
 
+  # Home dirs on the persistent /home volume. tmpfiles runs after all
+  # filesystems are mounted, unlike the users activation script.
+  systemd.tmpfiles.rules = [
+    "d /home/jenga 0700 jenga users -"
+    "d /home/tom 0700 tom users -"
+  ];
+
   # SSH
   services.openssh.enable = true;
   services.openssh.settings.PermitRootLogin = "no";
