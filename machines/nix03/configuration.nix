@@ -259,13 +259,10 @@ in {
     restartIfChanged = false;
   };
 
-  # Tap interface for monty VM (10.0.0.1 = host, 10.0.0.2 = guest)
-  networking.interfaces.monty.ipv4.addresses = [
-    {
-      address = "10.0.0.1";
-      prefixLength = 24;
-    }
-  ];
+  # Assign 10.0.0.1/24 to the monty tap after the VM starts.
+  # Not in networking.interfaces — the tap only exists while the VM is running
+  # and a missing device unit would time out and fail during boot.
+  systemd.services."microvm@monty".serviceConfig.ExecStartPost = "${pkgs.iproute2}/bin/ip addr add 10.0.0.1/24 dev monty || true";
 
   # NAT outbound traffic from the VM so it can reach the internet
   networking.nat = {
