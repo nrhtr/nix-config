@@ -18,11 +18,11 @@
     ];
   };
 
-  imports = [
-    "${sources.microvm-nix}/modules/firecracker"
-  ];
-
   sources = import ../../npins;
+
+  imports = [
+    "${sources.microvm-nix}/nixos-modules/microvm"
+  ];
 
   # Network: user-mode networking, SSH port forwarded to host 2223
   networking.hostName = "monty";
