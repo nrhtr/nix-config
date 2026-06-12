@@ -138,6 +138,8 @@ in {
     enable = true;
     resendApiKeyFile = config.age.secrets.resend-key.path;
     acmeEmail = "jeremy@jenga.xyz";
+    # layer4 owns :443 for SNI passthrough; urbit catch-all moves to :11443
+    caddyListenPort = 11443;
   };
 
   # ACME cert for nix03.jenga.xyz via Gandi DNS (used by Caddy for /torrents and /navidrome)
@@ -172,8 +174,9 @@ in {
     doInstallCheck = false;
   };
 
-  # L4 SNI passthrough per VM — each gets its own rule and upstream IP.
-  # Other SNIs fall through to Caddy's normal HTTP/TLS handling.
+  # Layer4 owns :443 exclusively for SNI-based routing.
+  # VM SNIs get raw TCP passthrough; everything else forwarded to :11443
+  # where the urbit gateway's Caddy HTTP app listens.
   services.caddy.globalConfig = ''
     layer4 {
       :443 {
@@ -181,6 +184,11 @@ in {
         route @monty {
           proxy {
             upstream 10.0.0.2:443
+          }
+        }
+        route {
+          proxy {
+            upstream 127.0.0.1:11443
           }
         }
       }
