@@ -133,7 +133,7 @@ in {
   ];
 
   users.motd = ''
-    Welcome to monty.jenga.xyz!
+    Welcome to vm-monty.nix03.jenga.xyz!
 
     stats:
     vCPUs: ${toString vcpu}
@@ -147,14 +147,11 @@ in {
     and so things are mostly read-only, with the exception of /home (for random stuff) and /var (for container volumes, etc.). This could
     also be changed to a standard Debian/Ubuntu/etc. VM if needed, but it was quicker to setup with Nix / microvm.nix.
 
-    This VM shares an IP with the host servers (ugh) because I am too lazy to purchase an additional IP and work that out. Sorry, that kinda sucks.
+    This VM shares an IP with the host server (ugh) because I am too lazy to purchase an additional IP and work that out. Sorry, that kinda sucks.
 
     The network works thusly:
-    2223 is forwarded -> 22 on guest VM
-    443 -> Caddy (matches SNI, monty.jenga.xyz TLS cert) -> 8000 on guest VM
-
-    (Ideally with a separate IP we get rid of this port-forwarding / TLS-termination. We could also just change the port 443 but figured
-    it would be easier to setup in Cloudflare this way)
+    SSH:  vm-monty.nix03.jenga.xyz:2223 -> host iptables DNAT -> guest:22
+    HTTPS: vm-*.nix03.jenga.xyz:443 -> host Caddy (L4 SNI passthrough) -> guest Caddy:443 -> app container
 
     Deployments all happen with `yoink` so you shouldn't generally need to SSH in, but the option is there
     in case it's needed for troubleshooting, etc.

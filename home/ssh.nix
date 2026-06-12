@@ -19,7 +19,7 @@
         user = "jenga";
         port = 22;
       };
-      "monty.jenga.xyz" = {
+      "vm-monty.nix03.jenga.xyz" = {
         user = "jenga";
         port = 2223;
         controlMaster = "no";
