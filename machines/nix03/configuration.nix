@@ -165,7 +165,8 @@ in {
   # Build Caddy with the caddy-l4 plugin for SNI-based TCP passthrough.
   # Run `nix build` with the fake hash to get the real one from the error output.
   services.caddy.package = pkgs.caddy.withPlugins {
-    plugins = ["github.com/mholt/caddy-l4@v0.0.0-20250109202841-b0a87dfb9c57"];
+    # Get version: nix-shell -p go --run "go list -m github.com/mholt/caddy-l4@latest"
+    plugins = ["github.com/mholt/caddy-l4@REPLACEME"];
     hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
   };
 
