@@ -118,7 +118,36 @@ in {
       };
     };
 
-    services.borgbackup.jobs.main = let
+    services.borgbackup.jobs.main = {
+      inherit (cfg) exclude user readWritePaths persistentTimer preHook;
+      paths =
+        if builtins.isList cfg.paths
+        then cfg.paths
+        else [cfg.paths];
+      postHook = ''
+        ${heartbeatScript} "${heartbeatUrl}" "${heartbeatToken}" true
+      '';
+      repo = BORG_REPO;
+      encryption = {
+        mode = "repokey";
+        passCommand = BORG_PASSCOMMAND;
+      };
+      compression = "auto,lzma";
+      startAt = cfg.startAt;
+      prune.keep = {
+        within = "1d";
+        daily = 7;
+        weekly = 4;
+        monthly = 12;
+        yearly = -1;
+      };
+      environment = {
+        inherit BORG_RSH BORG_REMOTE_PATH;
+      };
+    };
+
+    # Separate job for ZFS snapshot backups — independent schedule and retention.
+    services.borgbackup.jobs.zfs-snapshots = mkIf (cfg.zfsSnapshots != []) (let
       snapshotName = "borg";
       snapshotPaths = map (s: "${s.mountPoint}/.zfs/snapshot/${snapshotName}") cfg.zfsSnapshots;
       snapshotPreHook =
@@ -132,42 +161,30 @@ in {
         '')
         cfg.zfsSnapshots;
     in {
-      inherit (cfg) exclude user readWritePaths persistentTimer;
-      paths =
-        (
-          if builtins.isList cfg.paths
-          then cfg.paths
-          else [cfg.paths]
-        )
-        ++ snapshotPaths;
-      preHook = snapshotPreHook + cfg.preHook;
+      inherit (cfg) exclude user readWritePaths;
+      paths = snapshotPaths;
+      preHook = snapshotPreHook;
       postHook =
         snapshotPostHook
         + ''
           ${heartbeatScript} "${heartbeatUrl}" "${heartbeatToken}" true
         '';
       repo = BORG_REPO;
-
       encryption = {
         mode = "repokey";
         passCommand = BORG_PASSCOMMAND;
       };
-
       compression = "auto,lzma";
-      startAt = cfg.startAt;
-
+      startAt = "weekly";
       prune.keep = {
-        within = "1d";
-        daily = 7;
         weekly = 4;
-        monthly = 12;
+        monthly = 6;
         yearly = -1;
       };
-
       environment = {
         inherit BORG_RSH BORG_REMOTE_PATH;
       };
-    };
+    });
 
     systemd.services.borgbackup-job-main.unitConfig.OnFailure = "borgbackup-heartbeat-fail.service";
     systemd.services.borgbackup-heartbeat-fail = {
