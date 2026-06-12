@@ -27,6 +27,8 @@
       ];
     }
   ];
+  vmName = "monty";
+  vmHost = "vm-${vmName}.nix03.jenga.xyz";
   mem = 2048;
   vcpu = 1;
   varSize = 20480;
@@ -64,7 +66,7 @@ in {
     ];
   };
 
-  networking.hostName = "monty";
+  networking.hostName = vmName;
   networking.usePredictableInterfaceNames = false;
 
   # Static IP on the tap network (host is 10.0.0.1, guest is 10.0.0.2)
@@ -133,7 +135,7 @@ in {
   ];
 
   users.motd = ''
-    Welcome to vm-monty.nix03.jenga.xyz!
+    Welcome to ${vmHost}!
 
     stats:
     vCPUs: ${toString vcpu}
@@ -150,7 +152,7 @@ in {
     This VM shares an IP with the host server (ugh) because I am too lazy to purchase an additional IP and work that out. Sorry, that kinda sucks.
 
     The network works thusly:
-    SSH:  vm-monty.nix03.jenga.xyz:2223 -> host iptables DNAT -> guest:22
+    SSH:  ${vmHost}:2223 -> host iptables DNAT -> guest:22
     HTTPS: vm-*.nix03.jenga.xyz:443 -> host Caddy (L4 SNI passthrough) -> guest Caddy:443 -> app container
 
     Deployments all happen with `yoink` so you shouldn't generally need to SSH in, but the option is there
