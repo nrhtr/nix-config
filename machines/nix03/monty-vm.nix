@@ -27,11 +27,14 @@
       ];
     }
   ];
+  mem = 2048;
+  vcpu = 1;
+  varSize = 20480;
+  homeSize = 10240;
 in {
   microvm = {
     hypervisor = "firecracker";
-    mem = 2048;
-    vcpu = 1;
+    inherit mem vcpu;
 
     # storeOnDisk = true is implicit when there are no virtiofs shares.
     # The microvm module builds a self-contained store disk image.
@@ -41,12 +44,12 @@ in {
       {
         image = "var.img";
         mountPoint = "/var";
-        size = 20480;
+        size = varSize;
       }
       {
         image = "home.img";
         mountPoint = "/home";
-        size = 10240;
+        size = homeSize;
       }
     ];
 
@@ -131,6 +134,8 @@ in {
 
   users.motd = ''
     Welcome to monty.jenga.xyz (temp / dev hostname for now)!
+    vCPUs: ${toString vcpu}  RAM: ${toString mem}MB  /var: ${toString (varSize / 1024)}GB  /home: ${toString (homeSize / 1024)}GB
+    vCPUs: ${toString config.microvm.vcpu}  RAM: ${toString config.microvm.mem}MB  /var: 20GB  /home: 10GB
 
     You should already be in the 'wheel' group, so you can `sudo -i` and poke around as root if you like.
 
