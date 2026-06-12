@@ -156,11 +156,33 @@ in {
     };
   };
 
-  # Caddy must wait for certs on first deploy
+  # Caddy must wait for cert on first deploy
   systemd.services.caddy = {
-    wants = ["acme-nix03.jenga.xyz.service" "acme-monty.jenga.xyz.service"];
-    after = ["acme-nix03.jenga.xyz.service" "acme-monty.jenga.xyz.service"];
+    wants = ["acme-nix03.jenga.xyz.service"];
+    after = ["acme-nix03.jenga.xyz.service"];
   };
+
+  # Build Caddy with the caddy-l4 plugin for SNI-based TCP passthrough.
+  # Run `nix build` with the fake hash to get the real one from the error output.
+  services.caddy.package = pkgs.caddy.withPlugins {
+    plugins = ["github.com/mholt/caddy-l4@v0.0.0-20250109202841-b0a87dfb9c57"];
+    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+  };
+
+  # L4 SNI passthrough: monty.jenga.xyz → VM's Caddy on :443 (no TLS termination).
+  # Other SNIs fall through to Caddy's normal HTTP/TLS handling.
+  services.caddy.globalConfig = ''
+    layer4 {
+      :443 {
+        @monty tls sni monty.jenga.xyz
+        route @monty {
+          proxy {
+            upstream 10.0.0.2:443
+          }
+        }
+      }
+    }
+  '';
 
   # qBittorrent (no NixOS module; custom service)
   users.users.qbittorrent = {
@@ -270,34 +292,16 @@ in {
     externalInterface = networkInterface;
   };
 
-  # DNAT: host:2223 -> monty:22, host:8000 -> monty:8000
+  # DNAT: host:2223 -> monty:22 (SSH only; web traffic handled by Caddy L4)
   # PREROUTING handles external traffic (eno1); OUTPUT handles locally-originated traffic.
   networking.firewall.extraCommands = ''
     iptables -t nat -A PREROUTING -i ${networkInterface} -p tcp --dport 2223 -j DNAT --to-destination 10.0.0.2:22
-    iptables -t nat -A PREROUTING -i ${networkInterface} -p tcp --dport 8000 -j DNAT --to-destination 10.0.0.2:8000
     iptables -t nat -A OUTPUT -p tcp --dport 2223 -j DNAT --to-destination 10.0.0.2:22
-    iptables -t nat -A OUTPUT -p tcp --dport 8000 -j DNAT --to-destination 10.0.0.2:8000
     iptables -A FORWARD -d 10.0.0.2 -j ACCEPT
   '';
 
   # Port 2223 for SSH to monty VM
   networking.firewall.allowedTCPPorts = [2223];
-
-  services.caddy.virtualHosts."monty.jenga.xyz" = {
-    extraConfig = ''
-      bind ${ipv4.address}
-      tls /var/lib/acme/monty.jenga.xyz/cert.pem /var/lib/acme/monty.jenga.xyz/key.pem
-      reverse_proxy 10.0.0.2:8000
-    '';
-  };
-
-  security.acme.certs."monty.jenga.xyz" = {
-    dnsProvider = "gandiv5";
-    credentialsFile = config.age.secrets.gandi.path;
-    group = "caddy";
-    reloadServices = ["caddy.service"];
-    dnsPropagationCheck = false;
-  };
 
   time.timeZone = "UTC";
 
