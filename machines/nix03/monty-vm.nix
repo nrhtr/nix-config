@@ -129,5 +129,9 @@ in {
     }
   ];
 
+  users.motd = ''
+    Welcome to monty!
+  '';
+
   system.stateVersion = "25.11";
 }
