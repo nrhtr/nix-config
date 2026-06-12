@@ -69,9 +69,37 @@ in {
       default = "";
       description = "Shell commands to run before the backup";
     };
+
+    zfsSnapshots = mkOption {
+      type = types.listOf (types.submodule {
+        options = {
+          dataset = mkOption {
+            type = types.str;
+            description = "ZFS dataset to snapshot (e.g. zroot/enc/vms)";
+          };
+          mountPoint = mkOption {
+            type = types.str;
+            description = "Mountpoint of the dataset (e.g. /var/lib/microvms)";
+          };
+        };
+      });
+      default = [];
+      description = ''
+        ZFS datasets to snapshot before backup. Each snapshot is exposed via
+        ZFS auto-mount at <mountPoint>/.zfs/snapshot/borg and added to the
+        backup paths automatically. Snapshots are destroyed after the job.
+      '';
+    };
   };
 
   config = mkIf cfg.enable {
+    # Validate: zfsSnapshots requires zfs in PATH (root job only)
+    assertions =
+      map (s: {
+        assertion = cfg.user == "root";
+        message = "jenga.borg.zfsSnapshots requires user = \"root\" (zfs commands need root)";
+      })
+      cfg.zfsSnapshots;
     age.secrets = {
       borg-phrase = {
         owner = "jenga";
@@ -90,8 +118,34 @@ in {
       };
     };
 
-    services.borgbackup.jobs.main = {
-      inherit (cfg) paths exclude user readWritePaths preHook persistentTimer;
+    services.borgbackup.jobs.main = let
+      snapshotName = "borg";
+      snapshotPaths = map (s: "${s.mountPoint}/.zfs/snapshot/${snapshotName}") cfg.zfsSnapshots;
+      snapshotPreHook =
+        concatMapStrings (s: ''
+          ${pkgs.zfs}/bin/zfs snapshot ${s.dataset}@${snapshotName}
+        '')
+        cfg.zfsSnapshots;
+      snapshotPostHook =
+        concatMapStrings (s: ''
+          ${pkgs.zfs}/bin/zfs destroy ${s.dataset}@${snapshotName}
+        '')
+        cfg.zfsSnapshots;
+    in {
+      inherit (cfg) exclude user readWritePaths persistentTimer;
+      paths =
+        (
+          if builtins.isList cfg.paths
+          then cfg.paths
+          else [cfg.paths]
+        )
+        ++ snapshotPaths;
+      preHook = snapshotPreHook + cfg.preHook;
+      postHook =
+        snapshotPostHook
+        + ''
+          ${heartbeatScript} "${heartbeatUrl}" "${heartbeatToken}" true
+        '';
       repo = BORG_REPO;
 
       encryption = {
@@ -101,10 +155,6 @@ in {
 
       compression = "auto,lzma";
       startAt = cfg.startAt;
-
-      postHook = ''
-        ${heartbeatScript} "${heartbeatUrl}" "${heartbeatToken}" true
-      '';
 
       prune.keep = {
         within = "1d";
