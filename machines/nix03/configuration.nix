@@ -172,13 +172,13 @@ in {
     doInstallCheck = false;
   };
 
-  # L4 SNI passthrough: vm-*.nix03.jenga.xyz → VM's Caddy on :443 (no TLS termination).
+  # L4 SNI passthrough per VM — each gets its own rule and upstream IP.
   # Other SNIs fall through to Caddy's normal HTTP/TLS handling.
   services.caddy.globalConfig = ''
     layer4 {
       :443 {
-        @vms tls sni vm-*.nix03.jenga.xyz
-        route @vms {
+        @monty tls sni vm-monty.nix03.jenga.xyz
+        route @monty {
           proxy {
             upstream 10.0.0.2:443
           }

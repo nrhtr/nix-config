@@ -153,7 +153,7 @@ in {
 
     The network works thusly:
     SSH:  ${vmHost}:2223 -> host iptables DNAT -> guest:22
-    HTTPS: vm-*.nix03.jenga.xyz:443 -> host Caddy (L4 SNI passthrough) -> guest Caddy:443 -> app container
+    HTTPS: ${vmHost}:443 -> host Caddy (L4 SNI passthrough) -> guest Caddy:443 -> app container
 
     Deployments all happen with `yoink` so you shouldn't generally need to SSH in, but the option is there
     in case it's needed for troubleshooting, etc.
