@@ -283,12 +283,19 @@ in {
   # Port 2223 for SSH to monty VM
   networking.firewall.allowedTCPPorts = [2223];
 
-  services.caddy.virtualHosts."vm-monty.nix03.jenga.xyz" = {
-    extraConfig = ''
-      bind ${ipv4.address}
-      tls /var/lib/acme/vm-monty.nix03.jenga.xyz/cert.pem /var/lib/acme/vm-monty.nix03.jenga.xyz/key.pem
-      reverse_proxy 10.0.0.2:80
-    '';
+  # Monty VM vhosts — vanity domain reuses the same cert (Cloudflare in front,
+  # so cert hostname mismatch is fine; switch to CF origin cert later).
+  services.caddy.virtualHosts = let
+    montyVhost = {
+      extraConfig = ''
+        bind ${ipv4.address}
+        tls /var/lib/acme/vm-monty.nix03.jenga.xyz/cert.pem /var/lib/acme/vm-monty.nix03.jenga.xyz/key.pem
+        reverse_proxy 10.0.0.2:80
+      '';
+    };
+  in {
+    "vm-monty.nix03.jenga.xyz" = montyVhost;
+    "howmanydayssincemontaguestreetbridgehasbeenhit.com" = montyVhost;
   };
 
   security.acme.certs."vm-monty.nix03.jenga.xyz" = {
