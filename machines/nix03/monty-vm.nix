@@ -130,7 +130,17 @@ in {
   ];
 
   users.motd = ''
-    Welcome to monty!
+    Welcome to monty.jenga.xyz (temp / dev hostname for now)!
+
+    You should already be in the 'wheel' group, so you can `sudo -i` and poke around as root if you like.
+
+    The actual VM config is all defined as a Nix expression. I will push this to my public github, but for now its just on my internal git
+    and so things are mostly read-only, with the exception of /home (for random stuff) and /var (for container volumes, etc.)
+
+    Deployments all happen with `yoink` so you shouldn't generally need to SSH in, but the option is there
+    in case it's needed for troubleshooting, etc.
+
+    :)
   '';
 
   system.stateVersion = "25.11";
