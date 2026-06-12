@@ -124,6 +124,7 @@ in {
         if builtins.isList cfg.paths
         then cfg.paths
         else [cfg.paths];
+      doInit = true;
       postHook = ''
         ${heartbeatScript} "${heartbeatUrl}" "${heartbeatToken}" true
       '';
@@ -163,6 +164,7 @@ in {
     in {
       inherit (cfg) exclude user readWritePaths;
       paths = snapshotPaths;
+      doInit = true;
       preHook = snapshotPreHook;
       postHook =
         snapshotPostHook
@@ -195,6 +197,8 @@ in {
         ExecStart = "${heartbeatScript} ${heartbeatUrl} ${heartbeatToken} false";
       };
     };
+
+    environment.systemPackages = [pkgs.borgbackup];
 
     environment.sessionVariables = {
       inherit BORG_REPO BORG_RSH BORG_REMOTE_PATH BORG_PASSCOMMAND;
