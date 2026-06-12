@@ -108,7 +108,7 @@ in {
     ++ [
       "d /var/lib/ssh 0755 root root -"
       "d /var/lib/yoink 0755 yoink users -"
-      "d /var/data/monty/media 0755 yoink users -"
+      "d /var/data/monty 0755 yoink users -"
     ];
 
   services.openssh.enable = true;
