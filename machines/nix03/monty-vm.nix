@@ -137,6 +137,14 @@ in {
     The actual VM config is all defined as a Nix expression. I will push this to my public github, but for now its just on my internal git
     and so things are mostly read-only, with the exception of /home (for random stuff) and /var (for container volumes, etc.)
 
+    This VM shares an IP with the host servers (ugh) because I am too lazy to purchasean additional IP and working that out. Sorry, that kinda sucks.
+
+    The network works thusly:
+    2223 is forwarded -> 22 on guest VM
+    443 -> Caddy (w/ monty.jenga.xyz TLS cert) -> 8000 on guest VM
+
+    (Ideally with a separate IP we get rid of this port-forwarding / TLS-termination!)
+
     Deployments all happen with `yoink` so you shouldn't generally need to SSH in, but the option is there
     in case it's needed for troubleshooting, etc.
 
