@@ -165,18 +165,17 @@ in {
   # Build Caddy with the caddy-l4 plugin for SNI-based TCP passthrough.
   # Run `nix build` with the fake hash to get the real one from the error output.
   services.caddy.package = pkgs.caddy.withPlugins {
-    # Get version: nix-shell -p go --run "go list -m github.com/mholt/caddy-l4@latest"
-    plugins = ["github.com/mholt/caddy-l4@REPLACEME"];
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    plugins = ["github.com/mholt/caddy-l4@962399cbcfd790e5aa263590f80049e2a23d2066"];
+    hash = "sha256-s+AO7NR2HS0Y6dE3kv7trtpAZ6f+4MJDgXmyuqT8GSI=";
   };
 
-  # L4 SNI passthrough: monty.jenga.xyz → VM's Caddy on :443 (no TLS termination).
+  # L4 SNI passthrough: vm-*.nix03.jenga.xyz → VM's Caddy on :443 (no TLS termination).
   # Other SNIs fall through to Caddy's normal HTTP/TLS handling.
   services.caddy.globalConfig = ''
     layer4 {
       :443 {
-        @monty tls sni monty.jenga.xyz
-        route @monty {
+        @vms tls sni vm-*.nix03.jenga.xyz
+        route @vms {
           proxy {
             upstream 10.0.0.2:443
           }
