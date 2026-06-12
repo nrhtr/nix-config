@@ -133,22 +133,28 @@ in {
   ];
 
   users.motd = ''
-    Welcome to monty.jenga.xyz (temp / dev hostname for now)!
-    vCPUs: ${toString vcpu}  RAM: ${toString mem}MB  /var: ${toString (varSize / 1024)}GB  /home: ${toString (homeSize / 1024)}GB
-    vCPUs: ${toString config.microvm.vcpu}  RAM: ${toString config.microvm.mem}MB  /var: 20GB  /home: 10GB
+    Welcome to monty.jenga.xyz!
+
+    stats:
+    vCPUs: ${toString vcpu}
+    RAM:   ${toString mem}MB
+    /var: ${toString (varSize / 1024)}GB
+    /home: ${toString (homeSize / 1024)}GB
 
     You should already be in the 'wheel' group, so you can `sudo -i` and poke around as root if you like.
 
     The actual VM config is all defined as a Nix expression. I will push this to my public github, but for now its just on my internal git
-    and so things are mostly read-only, with the exception of /home (for random stuff) and /var (for container volumes, etc.)
+    and so things are mostly read-only, with the exception of /home (for random stuff) and /var (for container volumes, etc.). This could
+    also be changed to a standard Debian/Ubuntu/etc. VM if needed, but it was quicker to setup with Nix / microvm.nix.
 
-    This VM shares an IP with the host servers (ugh) because I am too lazy to purchasean additional IP and working that out. Sorry, that kinda sucks.
+    This VM shares an IP with the host servers (ugh) because I am too lazy to purchase an additional IP and work that out. Sorry, that kinda sucks.
 
     The network works thusly:
     2223 is forwarded -> 22 on guest VM
-    443 -> Caddy (w/ monty.jenga.xyz TLS cert) -> 8000 on guest VM
+    443 -> Caddy (matches SNI, monty.jenga.xyz TLS cert) -> 8000 on guest VM
 
-    (Ideally with a separate IP we get rid of this port-forwarding / TLS-termination!)
+    (Ideally with a separate IP we get rid of this port-forwarding / TLS-termination. We could also just change the port 443 but figured
+    it would be easier to setup in Cloudflare this way)
 
     Deployments all happen with `yoink` so you shouldn't generally need to SSH in, but the option is there
     in case it's needed for troubleshooting, etc.
