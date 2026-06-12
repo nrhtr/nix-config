@@ -138,8 +138,6 @@ in {
     enable = true;
     resendApiKeyFile = config.age.secrets.resend-key.path;
     acmeEmail = "jeremy@jenga.xyz";
-    # layer4 owns :443 for SNI passthrough; urbit catch-all moves to :11443
-    caddyListenPort = 11443;
   };
 
   # ACME cert for nix03.jenga.xyz via Gandi DNS (used by Caddy for /torrents and /navidrome)
@@ -158,42 +156,11 @@ in {
     };
   };
 
-  # Caddy must wait for cert on first deploy
+  # Caddy must wait for certs on first deploy
   systemd.services.caddy = {
-    wants = ["acme-nix03.jenga.xyz.service"];
-    after = ["acme-nix03.jenga.xyz.service"];
+    wants = ["acme-nix03.jenga.xyz.service" "acme-vm-monty.nix03.jenga.xyz.service"];
+    after = ["acme-nix03.jenga.xyz.service" "acme-vm-monty.nix03.jenga.xyz.service"];
   };
-
-  # Build Caddy with the caddy-l4 plugin for SNI-based TCP passthrough.
-  # Run `nix build` with the fake hash to get the real one from the error output.
-  services.caddy.package = pkgs.caddy.withPlugins {
-    plugins = ["github.com/mholt/caddy-l4@962399cbcfd790e5aa263590f80049e2a23d2066"];
-    hash = "sha256-s+AO7NR2HS0Y6dE3kv7trtpAZ6f+4MJDgXmyuqT8GSI=";
-    # Nixpkgs checks the tag format but we're using a commit hash (pre-release);
-    # the actual binary is correct — xcaddy resolved it to v0.1.1-0.20260316183735-962399cbcfd7
-    doInstallCheck = false;
-  };
-
-  # Layer4 owns :443 exclusively for SNI-based routing.
-  # VM SNIs get raw TCP passthrough; everything else forwarded to :11443
-  # where the urbit gateway's Caddy HTTP app listens.
-  services.caddy.globalConfig = ''
-    layer4 {
-      :443 {
-        @monty tls sni vm-monty.nix03.jenga.xyz
-        route @monty {
-          proxy {
-            upstream 10.0.0.2:443
-          }
-        }
-        route {
-          proxy {
-            upstream 127.0.0.1:11443
-          }
-        }
-      }
-    }
-  '';
 
   # qBittorrent (no NixOS module; custom service)
   users.users.qbittorrent = {
@@ -303,16 +270,33 @@ in {
     externalInterface = networkInterface;
   };
 
-  # DNAT: host:2223 -> monty:22 (SSH only; web traffic handled by Caddy L4)
-  # PREROUTING handles external traffic (eno1); OUTPUT handles locally-originated traffic.
+  # DNAT: host:2223 -> monty:22 (SSH), host:8000 -> monty:8000 (app for Caddy)
   networking.firewall.extraCommands = ''
     iptables -t nat -A PREROUTING -i ${networkInterface} -p tcp --dport 2223 -j DNAT --to-destination 10.0.0.2:22
+    iptables -t nat -A PREROUTING -i ${networkInterface} -p tcp --dport 8000 -j DNAT --to-destination 10.0.0.2:8000
     iptables -t nat -A OUTPUT -p tcp --dport 2223 -j DNAT --to-destination 10.0.0.2:22
+    iptables -t nat -A OUTPUT -p tcp --dport 8000 -j DNAT --to-destination 10.0.0.2:8000
     iptables -A FORWARD -d 10.0.0.2 -j ACCEPT
   '';
 
   # Port 2223 for SSH to monty VM
   networking.firewall.allowedTCPPorts = [2223];
+
+  services.caddy.virtualHosts."vm-monty.nix03.jenga.xyz" = {
+    extraConfig = ''
+      bind ${ipv4.address}
+      tls /var/lib/acme/vm-monty.nix03.jenga.xyz/cert.pem /var/lib/acme/vm-monty.nix03.jenga.xyz/key.pem
+      reverse_proxy 10.0.0.2:8000
+    '';
+  };
+
+  security.acme.certs."vm-monty.nix03.jenga.xyz" = {
+    dnsProvider = "gandiv5";
+    credentialsFile = config.age.secrets.gandi.path;
+    group = "caddy";
+    reloadServices = ["caddy.service"];
+    dnsPropagationCheck = false;
+  };
 
   time.timeZone = "UTC";
 

@@ -46,12 +46,6 @@ in {
       description = "Caddy server name used when addressing the admin API (sets CADDY_SERVER_NAME).";
     };
 
-    caddyListenPort = mkOption {
-      type = types.port;
-      default = 443;
-      description = "Port for Caddy's catch-all HTTPS listener. Set to a non-443 port when layer4 SNI passthrough owns :443.";
-    };
-
     acmeEmail = mkOption {
       type = types.str;
       description = "Email address for ACME/Let's Encrypt certificate registration.";
@@ -188,7 +182,7 @@ in {
       # Catch-all HTTPS block: provisions on-demand certs for ship subdomains.
       # Routes added by the gateway via the admin API take precedence.
       # Falls through to this notice page when no ship route is registered.
-      virtualHosts.":${toString cfg.caddyListenPort}".extraConfig = ''
+      virtualHosts.":443".extraConfig = ''
                 tls {
                   on_demand
                 }
