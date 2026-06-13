@@ -32,6 +32,10 @@
     { echo "#cloud-config"
       cat ${(pkgs.formats.yaml {}).generate "${vmName}-user-data-yaml" {
       ssh_pwauth = false;
+      chpasswd = {
+        list = "root:cosmo";
+        expire = false;
+      };
       users = [
         {
           name = "jenga";
