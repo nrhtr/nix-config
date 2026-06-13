@@ -62,6 +62,7 @@ in {
     ./disko.nix
     ./borg.nix
     ./wireguard.nix
+    ./cosmo-vm.nix
     "${sources.disko}/module.nix"
     "${sources.microvm-nix}/nixos-modules/host"
 
