@@ -157,10 +157,10 @@ in {
     };
   };
 
-  # Caddy must wait for certs on first deploy
+  # Caddy must wait for cert on first deploy
   systemd.services.caddy = {
-    wants = ["acme-nix03.jenga.xyz.service" "acme-vm-monty.nix03.jenga.xyz.service"];
-    after = ["acme-nix03.jenga.xyz.service" "acme-vm-monty.nix03.jenga.xyz.service"];
+    wants = ["acme-nix03.jenga.xyz.service"];
+    after = ["acme-nix03.jenga.xyz.service"];
   };
 
   # qBittorrent (no NixOS module; custom service)
@@ -271,46 +271,23 @@ in {
     externalInterface = networkInterface;
   };
 
-  # DNAT: host:2223 -> monty:22 (SSH), host:8000 -> monty:8000 (app for Caddy)
+  # DNAT: host:2223 -> monty:22 (SSH), host:8443 -> monty:443 (raw TLS
+  # passthrough; the VM's yoink proxy terminates TLS, not Caddy),
+  # host:8080 -> monty:80 (plain HTTP, e.g. ACME redirects).
   networking.firewall.extraCommands = ''
     iptables -t nat -A PREROUTING -i ${networkInterface} -p tcp --dport 2223 -j DNAT --to-destination 10.0.0.2:22
-    iptables -t nat -A PREROUTING -i ${networkInterface} -p tcp --dport 8000 -j DNAT --to-destination 10.0.0.2:8000
+    iptables -t nat -A PREROUTING -i ${networkInterface} -p tcp --dport 8443 -j DNAT --to-destination 10.0.0.2:443
+    iptables -t nat -A PREROUTING -i ${networkInterface} -p tcp --dport 8080 -j DNAT --to-destination 10.0.0.2:80
     iptables -t nat -A OUTPUT -p tcp --dport 2223 -j DNAT --to-destination 10.0.0.2:22
-    iptables -t nat -A OUTPUT -p tcp --dport 8000 -j DNAT --to-destination 10.0.0.2:8000
+    iptables -t nat -A OUTPUT -p tcp --dport 8443 -j DNAT --to-destination 10.0.0.2:443
+    iptables -t nat -A OUTPUT -p tcp --dport 8080 -j DNAT --to-destination 10.0.0.2:80
     iptables -A FORWARD -d 10.0.0.2 -j ACCEPT
   '';
 
-  # Port 2223 for SSH to monty VM
-  networking.firewall.allowedTCPPorts = [2223];
-
-  # Monty VM vhosts — vanity domain reuses the same cert (Cloudflare in front,
-  # so cert hostname mismatch is fine; switch to CF origin cert later).
-  services.caddy.virtualHosts = {
-    "vm-monty.nix03.jenga.xyz".extraConfig = ''
-      bind ${ipv4.address}
-      tls /var/lib/acme/vm-monty.nix03.jenga.xyz/fullchain.pem /var/lib/acme/vm-monty.nix03.jenga.xyz/key.pem
-      reverse_proxy 10.0.0.2:80 {
-        header_up X-Forwarded-Proto https
-      }
-    '';
-    # Temporary: tls internal (self-signed) until Cloudflare origin cert is set up.
-    # Switch to: tls /path/origin.crt /path/origin.key + CF SSL Full (strict).
-    "howmanydayssincemontaguestreetbridgehasbeenhit.com".extraConfig = ''
-      bind ${ipv4.address}
-      tls internal
-      reverse_proxy 10.0.0.2:80 {
-        header_up X-Forwarded-Proto https
-      }
-    '';
-  };
-
-  security.acme.certs."vm-monty.nix03.jenga.xyz" = {
-    dnsProvider = "gandiv5";
-    credentialsFile = config.age.secrets.gandi.path;
-    group = "caddy";
-    reloadServices = ["caddy.service"];
-    dnsPropagationCheck = false;
-  };
+  # SSH (2223) and raw HTTPS forward (8443) to the monty VM.
+  # 8443 -> VM:443 is a TCP DNAT: TLS passes through untouched to the
+  # yoink proxy on the VM, which terminates it. Caddy handles Urbit only.
+  networking.firewall.allowedTCPPorts = [2223 8443 8080];
 
   time.timeZone = "UTC";
 
