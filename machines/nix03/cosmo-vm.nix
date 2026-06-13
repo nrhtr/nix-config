@@ -46,9 +46,21 @@
     local-hostname: ${vmName}
   '';
 
+  networkConfig = pkgs.writeText "${vmName}-network-config" ''
+    version: 2
+    ethernets:
+      eth0:
+        addresses:
+          - ${guestIp}/30
+        gateway4: ${hostIp}
+        nameservers:
+          addresses:
+            - 1.1.1.1
+  '';
+
   cloudInitSeed = pkgs.runCommand "${vmName}-cloud-init-seed.iso" {
     buildInputs = [pkgs.cloud-utils];
-  } "cloud-localds $out ${userData} ${metaData}";
+  } "cloud-localds --network-config=${networkConfig} $out ${userData} ${metaData}";
 in {
   systemd.tmpfiles.rules = [
     "d /var/lib/microvms/${vmName} 0755 root root -"
@@ -103,7 +115,7 @@ in {
   };
 
   services.udev.extraRules = ''
-    ACTION=="add", SUBSYSTEM=="net", KERNEL=="${tapName}", RUN+="${pkgs.iproute2}/bin/ip addr add ${hostIp}/24 dev ${tapName}"
+    ACTION=="add", SUBSYSTEM=="net", KERNEL=="${tapName}", RUN+="${pkgs.iproute2}/bin/ip addr add ${hostIp}/30 dev ${tapName}"
   '';
 
   networking.nat.internalInterfaces = [tapName];
