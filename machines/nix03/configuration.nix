@@ -264,25 +264,33 @@ in {
     ACTION=="add", SUBSYSTEM=="net", KERNEL=="monty", RUN+="${pkgs.iproute2}/bin/ip addr add 10.0.0.1/24 dev monty"
   '';
 
-  # NAT outbound traffic from the VM so it can reach the internet
+  # NAT: masquerade outbound VM traffic + declarative DNAT forwards.
+  # host:2223 -> monty:22 (SSH), host:8443 -> monty:443 (raw TLS passthrough;
+  # the VM's yoink proxy terminates TLS, not Caddy), host:8080 -> monty:80.
+  # NixOS manages these in its own nat chains and flushes them on reload,
+  # so no duplicate-rule accumulation.
   networking.nat = {
     enable = true;
     internalInterfaces = ["monty"];
     externalInterface = networkInterface;
+    forwardPorts = [
+      {
+        sourcePort = 2223;
+        proto = "tcp";
+        destination = "10.0.0.2:22";
+      }
+      {
+        sourcePort = 8443;
+        proto = "tcp";
+        destination = "10.0.0.2:443";
+      }
+      {
+        sourcePort = 8080;
+        proto = "tcp";
+        destination = "10.0.0.2:80";
+      }
+    ];
   };
-
-  # DNAT: host:2223 -> monty:22 (SSH), host:8443 -> monty:443 (raw TLS
-  # passthrough; the VM's yoink proxy terminates TLS, not Caddy),
-  # host:8080 -> monty:80 (plain HTTP, e.g. ACME redirects).
-  networking.firewall.extraCommands = ''
-    iptables -t nat -A PREROUTING -i ${networkInterface} -p tcp --dport 2223 -j DNAT --to-destination 10.0.0.2:22
-    iptables -t nat -A PREROUTING -i ${networkInterface} -p tcp --dport 8443 -j DNAT --to-destination 10.0.0.2:443
-    iptables -t nat -A PREROUTING -i ${networkInterface} -p tcp --dport 8080 -j DNAT --to-destination 10.0.0.2:80
-    iptables -t nat -A OUTPUT -p tcp --dport 2223 -j DNAT --to-destination 10.0.0.2:22
-    iptables -t nat -A OUTPUT -p tcp --dport 8443 -j DNAT --to-destination 10.0.0.2:443
-    iptables -t nat -A OUTPUT -p tcp --dport 8080 -j DNAT --to-destination 10.0.0.2:80
-    iptables -A FORWARD -d 10.0.0.2 -j ACCEPT
-  '';
 
   # SSH (2223) and raw HTTPS forward (8443) to the monty VM.
   # 8443 -> VM:443 is a TCP DNAT: TLS passes through untouched to the
