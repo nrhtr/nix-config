@@ -42,7 +42,7 @@
           groups = "wheel";
           sudo = "ALL=(ALL) NOPASSWD:ALL";
           shell = "/bin/ash";
-          lock_passwd = true;
+          lock_passwd = false;
           ssh_authorized_keys = authKeys;
         }
       ];
