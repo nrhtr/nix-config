@@ -152,8 +152,9 @@ in {
     This VM shares an IP with the host server (ugh) because I am too lazy to purchase an additional IP and work that out. Sorry, that kinda sucks.
 
     The network works thusly:
-    SSH:   ${vmHost}:2223 -> host iptables DNAT -> guest:22
-    HTTPS: ${vmHost}:443 -> host Caddy (TLS termination, ACME cert) -> guest:8000 -> app container
+    2223 is forwarded -> 22 on guest VM
+    8443 is forwarded -> 443 on guest VM
+    8080 is forwarded -> 80 on guest VM
 
     Btw I really went into the weeds on this network setup, trying a SNI passthrough thing with caddy-l4, so the "yoink" stuff
     would terminate TLS, respond to ACME challenges, etc. in the end it was too much pain so went back to this dumb setup instead.
