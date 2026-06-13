@@ -288,14 +288,19 @@ in {
   services.caddy.virtualHosts = {
     "vm-monty.nix03.jenga.xyz".extraConfig = ''
       bind ${ipv4.address}
-      tls /var/lib/acme/vm-monty.nix03.jenga.xyz/cert.pem /var/lib/acme/vm-monty.nix03.jenga.xyz/key.pem
-      reverse_proxy 10.0.0.2:80
+      tls /var/lib/acme/vm-monty.nix03.jenga.xyz/fullchain.pem /var/lib/acme/vm-monty.nix03.jenga.xyz/key.pem
+      reverse_proxy 10.0.0.2:80 {
+        header_up X-Forwarded-Proto https
+      }
     '';
     # Temporary: tls internal (self-signed) until Cloudflare origin cert is set up.
+    # Switch to: tls /path/origin.crt /path/origin.key + CF SSL Full (strict).
     "howmanydayssincemontaguestreetbridgehasbeenhit.com".extraConfig = ''
       bind ${ipv4.address}
       tls internal
-      reverse_proxy 10.0.0.2:80
+      reverse_proxy 10.0.0.2:80 {
+        header_up X-Forwarded-Proto https
+      }
     '';
   };
 
