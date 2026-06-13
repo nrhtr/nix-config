@@ -17,6 +17,11 @@
 
   authKeys = import ../../common/ssh-keys.nix;
 
+  # Stable console password derived from the VM name. Not secret (visible in
+  # the Nix store) — only exists so Alpine's PAM doesn't treat the account as
+  # locked and block SSH key auth. In practice, only key auth is used.
+  consolePasswd = builtins.substring 0 20 (builtins.hashString "sha256" "${vmName}-console-pw");
+
   # Alpine 3.23.4 cloud image (BIOS, cloudinit variant).
   # On first boot cloud-init provisions the jenga user and SSH keys automatically.
   # The runtime disk is a thin QCOW2 overlay backed by this read-only store path.
@@ -32,10 +37,7 @@
     { echo "#cloud-config"
       cat ${(pkgs.formats.yaml {}).generate "${vmName}-user-data-yaml" {
       ssh_pwauth = false;
-      chpasswd = {
-        list = "root:cosmo";
-        expire = false;
-      };
+      disable_root = true;
       users = [
         {
           name = "jenga";
@@ -43,6 +45,7 @@
           sudo = "ALL=(ALL) NOPASSWD:ALL";
           shell = "/bin/ash";
           lock_passwd = false;
+          passwd = consolePasswd;
           ssh_authorized_keys = authKeys;
         }
       ];
