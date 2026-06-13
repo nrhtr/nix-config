@@ -28,18 +28,23 @@
   # NoCloud seed ISO — cloud-init reads this from vdb on first boot.
   # SSH keys come from common/ssh-keys.nix; updating them here won't affect
   # an already-provisioned VM (cloud-init only runs once).
-  userData = pkgs.writeText "${vmName}-user-data" (''
-      #cloud-config
-      ssh_pwauth: false
-      users:
-        - name: jenga
-          groups: [wheel]
-          sudo: ALL=(ALL) NOPASSWD:ALL
-          shell: /bin/ash
-          lock_passwd: true
-          ssh_authorized_keys:
-    ''
-    + lib.concatMapStrings (key: "      - ${key}\n") authKeys);
+  userData = pkgs.runCommand "${vmName}-user-data" {} ''
+    { echo "#cloud-config"
+      cat ${(pkgs.formats.yaml {}).generate "${vmName}-user-data-yaml" {
+      ssh_pwauth = false;
+      users = [
+        {
+          name = "jenga";
+          groups = "wheel";
+          sudo = "ALL=(ALL) NOPASSWD:ALL";
+          shell = "/bin/ash";
+          lock_passwd = true;
+          ssh_authorized_keys = authKeys;
+        }
+      ];
+    }}
+    } > $out
+  '';
 
   metaData = pkgs.writeText "${vmName}-meta-data" ''
     instance-id: ${vmName}
@@ -85,6 +90,7 @@ in {
         ${pkgs.qemu}/bin/qemu-img resize ${diskPath} ${toString diskSizeG}G
       fi
       ${pkgs.iproute2}/bin/ip tuntap add mode tap name ${tapName} 2>/dev/null || true
+      ${pkgs.iproute2}/bin/ip link set ${tapName} up
     '';
 
     postStop = ''
