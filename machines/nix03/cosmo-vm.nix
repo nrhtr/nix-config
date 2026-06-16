@@ -38,6 +38,14 @@
       cat ${(pkgs.formats.yaml {}).generate "${vmName}-user-data-yaml" {
       ssh_pwauth = false;
       disable_root = true;
+      write_files = [
+        {
+          path = "/etc/resolv.conf";
+          content = "nameserver 1.1.1.1\n";
+          owner = "root:root";
+          permissions = "0644";
+        }
+      ];
       users = [
         {
           name = "jenga";

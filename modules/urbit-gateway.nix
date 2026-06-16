@@ -79,6 +79,12 @@ in {
           ${lib.optionalString (cfg.resendApiKeyFile != null) ''
             export RESEND_API_KEY="$(cat "$CREDENTIALS_DIRECTORY/resend-key")"
           ''}
+          # Resolve which Caddy server owns the public :443 listener at runtime
+          # so CADDY_SERVER_NAME stays correct if Caddy renumbers its servers.
+          _srv=$(${pkgs.curl}/bin/curl -sf http://localhost:2019/config/apps/http/servers/ \
+            | ${pkgs.jq}/bin/jq -r 'to_entries[] | select(.value.listen[] == ":443") | .key' \
+            | head -1)
+          export CADDY_SERVER_NAME="''${_srv:-${cfg.caddyServerName}}"
           exec ${gatewayPkg}/bin/gateway
         '';
         Restart = "on-failure";
